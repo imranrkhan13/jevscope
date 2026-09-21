@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: reposcope
+      POSTGRES_PASSWORD: reposcope
+      POSTGRES_DB: reposcope
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reposcope"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: { context: ., dockerfile: docker/api.Dockerfile }
+    environment:
+      REPOSCOPE_DATABASE_URL: postgresql+psycopg://reposcope:reposcope@db:5432/reposcope
+      REPOSCOPE_JEV_API_KEY: ${JEV_API_KEY}
+      REPOSCOPE_TS_PARSER_URL: http://ts-parser:7001
+    ports: ["8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+    volumes:
+      - ./reposcope:/app/reposcope
+      - scratch:/tmp/reposcope
+
+  # Stage 2. Owns TypeScript symbol and call resolution via the real
+  # TypeScript compiler; the Python side treats it as a parse service.
+  ts-parser:
+    build: { context: ./ts-parser }
+    ports: ["7001:7001"]
+    volumes: ["scratch:/tmp/reposcope:ro"]
+
+  web:
+    build: { context: ./web }
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports: ["5173:5173"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  scratch:

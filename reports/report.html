@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jev Calibration Lab</title><style>
+:root{--bg:#fbfbf9;--fg:#1a1a17;--mut:#6b6b63;--line:#e0e0d8;--acc:#2f5d50;
+--warn:#8a5a1f;--bad:#9b3232;--card:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15150f;
+--fg:#eceae1;--mut:#9a988d;--line:#32322a;--card:#1e1e17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 ui-sans-serif,
+system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:40px 22px 90px}
+h1{font-size:1.9rem;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:1.15rem;margin:44px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+h3{font-size:.95rem;margin:26px 0 8px;font-weight:600}
+.sub{color:var(--mut);margin:0 0 28px;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:9px;
+padding:18px 20px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.87rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:.76rem;text-transform:uppercase;
+letter-spacing:.04em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.kpi{display:flex;flex-wrap:wrap;gap:26px;margin:14px 0 4px}
+.kpi div{min-width:110px}
+.kpi b{display:block;font-size:1.45rem;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi span{color:var(--mut);font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}
+.note{border-left:3px solid var(--warn);padding:9px 14px;margin:12px 0;
+background:color-mix(in srgb,var(--warn) 7%,transparent);font-size:.87rem;border-radius:0 6px 6px 0}
+.ok{border-left-color:var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent)}
+.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,transparent)}
+figure{margin:16px 0}figcaption{color:var(--mut);font-size:.8rem;margin-top:6px}
+svg{max-width:100%;height:auto}
+code{font:.85em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--line);
+padding:1px 5px;border-radius:4px}
+footer{margin-top:60px;color:var(--mut);font-size:.8rem;border-top:1px solid var(--line);
+padding-top:16px}
+</style></head>
+<body><div class="wrap">
+<h1>Jev Calibration Lab</h1>
+<p class="sub">Is the confidence score worth thresholding on? Measured on
+1200 hand-labelled file classifications from
+real repositories. Generated 2026-09-21 15:41 UTC from <code>datasets/demo.jsonl</code>.</p>
+
+<div class="card">
+<h3>How to read this</h3>
+<p style="font-size:.9rem;margin:0">Two independent properties are measured.
+<b>Calibration</b> (ECE, reliability diagram) asks whether a stated 0.9 really
+means 90%. <b>Discrimination</b> (AURC, risk-coverage) asks whether the
+confidence ordering separates right answers from wrong ones. A model can have
+either without the other, and routing needs both: discrimination decides
+whether a threshold helps at all, calibration decides where to put it without
+re-measuring.</p>
+</div>
+
+<h2>file_type &middot; jev <span style="color:var(--mut);
+font-weight:400">(choice, n=400)</span></h2>
+<div class="kpi">
+  <div><b>87.5%</b><span>accuracy</span></div>
+  <div><b>0.048</b><span>ECE</span></div>
+  <div><b>0.061</b><span>AURC</span></div>
+  <div><b>0.099</b><span>Brier</span></div>
+  <div><b>0.96</b><span>chosen threshold</span></div>
+</div>
+<div class="note">Underconfident by 3.2 points. Safe, but you are deferring work a threshold on true accuracy would automate.</div><div class="note">The reported <code>confidence</code> field sits +0.058 from the margin of the returned distribution. They are not the same signal — pick one and threshold on it consistently.</div>
+<div class="card">
+  <h3>Reliability</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Reliability diagram"><line x1="42" y1="274" x2="446" y2="42" stroke="currentColor" stroke-dasharray="4 4" opacity=".35"/><line x1="42" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="35" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.00</text><text x="42.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.00</text><line x1="42" y1="216.0" x2="446" y2="216.0" stroke="currentColor" opacity=".1"/><text x="35" y="220.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.25</text><text x="143.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.25</text><line x1="42" y1="158.0" x2="446" y2="158.0" stroke="currentColor" opacity=".1"/><text x="35" y="162.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.50</text><text x="244.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.50</text><line x1="42" y1="100.0" x2="446" y2="100.0" stroke="currentColor" opacity=".1"/><text x="35" y="104.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.75</text><text x="345.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.75</text><line x1="42" y1="42.0" x2="446" y2="42.0" stroke="currentColor" opacity=".1"/><text x="35" y="46.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">1.00</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">1.00</text><rect x="275.4" y="134.8" width="36.4" height="139.2" fill="var(--acc)" opacity=".22"/><circle cx="293.6" cy="134.8" r="3.5" fill="var(--acc)"><title>conf 0.623 / acc 0.600 / n=40</title></circle><rect x="317.1" y="94.2" width="36.4" height="179.8" fill="var(--acc)" opacity=".22"/><circle cx="335.2" cy="94.2" r="3.5" fill="var(--acc)"><title>conf 0.726 / acc 0.775 / n=40</title></circle><rect x="338.6" y="71.0" width="36.4" height="203.0" fill="var(--acc)" opacity=".22"/><circle cx="356.8" cy="71.0" r="3.5" fill="var(--acc)"><title>conf 0.779 / acc 0.875 / n=40</title></circle><rect x="354.8" y="59.4" width="36.4" height="214.6" fill="var(--bad)" opacity=".22"/><circle cx="373.0" cy="59.4" r="3.5" fill="var(--bad)"><title>conf 0.819 / acc 0.925 / n=40</title></circle><rect x="368.9" y="76.8" width="36.4" height="197.2" fill="var(--acc)" opacity=".22"/><circle cx="387.1" cy="76.8" r="3.5" fill="var(--acc)"><title>conf 0.854 / acc 0.850 / n=40</title></circle><rect x="377.9" y="47.8" width="36.4" height="226.2" fill="var(--acc)" opacity=".22"/><circle cx="396.0" cy="47.8" r="3.5" fill="var(--acc)"><title>conf 0.876 / acc 0.975 / n=40</title></circle><rect x="388.5" y="65.2" width="36.4" height="208.8" fill="var(--acc)" opacity=".22"/><circle cx="406.6" cy="65.2" r="3.5" fill="var(--acc)"><title>conf 0.903 / acc 0.900 / n=40</title></circle><rect x="398.2" y="53.6" width="36.4" height="220.4" fill="var(--acc)" opacity=".22"/><circle cx="416.4" cy="53.6" r="3.5" fill="var(--acc)"><title>conf 0.927 / acc 0.950 / n=40</title></circle><rect x="408.2" y="65.2" width="36.4" height="208.8" fill="var(--acc)" opacity=".22"/><circle cx="426.4" cy="65.2" r="3.5" fill="var(--acc)"><title>conf 0.951 / acc 0.900 / n=40</title></circle><rect x="418.3" y="42.0" width="36.4" height="232.0" fill="var(--acc)" opacity=".22"/><circle cx="436.5" cy="42.0" r="3.5" fill="var(--acc)"><title>conf 0.977 / acc 1.000 / n=40</title></circle><text x="244.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">stated confidence</text><text x="13" y="158.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 158.0)">observed accuracy</text></svg>
+  <figcaption>Equal-mass bins. Bar width is bin population — a dot far off the
+  diagonal on a narrow bar is a handful of files, not a finding. Points on the
+  dashed line are perfectly calibrated.</figcaption></figure>
+  <div class="kpi" style="font-size:.9rem">
+    <div><b style="font-size:1rem">0.0477 [0.0090, 0.0569]</b><span>ECE, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.8750 [0.8425, 0.9050]</b><span>accuracy, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.106</b><span>max bin gap</span></div>
+  </div>
+</div>
+<div class="card">
+  <h3>Where to set the threshold</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risk-coverage curve"><line x1="46" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="39" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.0%</text><text x="46.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0%</text><line x1="46" y1="217.0" x2="446" y2="217.0" stroke="currentColor" opacity=".1"/><text x="39" y="221.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">3.1%</text><text x="146.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">25%</text><line x1="46" y1="160.0" x2="446" y2="160.0" stroke="currentColor" opacity=".1"/><text x="39" y="164.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">6.2%</text><text x="246.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">50%</text><line x1="46" y1="103.0" x2="446" y2="103.0" stroke="currentColor" opacity=".1"/><text x="39" y="107.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">9.4%</text><text x="346.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">75%</text><line x1="46" y1="46.0" x2="446" y2="46.0" stroke="currentColor" opacity=".1"/><text x="39" y="50.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">12.5%</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">100%</text><path d="M62.0,274.0 L73.0,274.0 L93.0,274.0 L110.0,245.5 L123.0,202.9 L138.0,194.7 L159.0,177.2 L178.0,177.3 L191.0,185.9 L201.0,156.3 L217.0,156.7 L240.0,170.6 L258.0,162.2 L271.0,152.4 L287.0,145.3 L294.0,149.0 L304.0,153.8 L314.0,144.7 L324.0,142.8 L337.0,136.1 L346.0,134.2 L353.0,125.5 L366.0,131.5 L371.0,122.5 L375.0,113.2 L382.0,100.3 L391.0,104.8 L397.0,107.7 L403.0,100.3 L406.0,101.7 L410.0,103.6 L414.0,100.5 L418.0,97.5 L419.0,98.0 L420.0,93.6 L427.0,87.3 L430.0,79.2 L432.0,70.8 L432.0,70.8 L438.0,69.3 L442.0,62.1 L442.0,62.1 L443.0,58.1 L443.0,58.1 L443.0,58.1 L443.0,58.1 L443.0,58.1 L444.0,54.0 L445.0,50.0 L445.0,50.0 L445.0,50.0 L445.0,50.0 L445.0,50.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0" fill="none" stroke="var(--acc)" stroke-width="2"/><circle cx="93.0" cy="274.0" r="5" fill="var(--bad)"><title>chosen threshold</title></circle><text x="93.0" y="263.0" font-size="10" text-anchor="middle" fill="var(--bad)">t=0.96</text><text x="246.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">coverage (share auto-accepted)</text><text x="13" y="160.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 160.0)">error rate on accepted</text></svg>
+  <figcaption>Each point is one threshold: how much gets auto-accepted, and how
+  often that is wrong. The marked point minimises expected cost under the model
+  below.</figcaption></figure>
+  <p style="font-size:.9rem">At <code>t=0.96</code> the model handles
+  <b>12%</b> of files automatically with
+  <b>0.0%</b> errors among those, deferring
+  353 for review. That is
+  <b>12%</b> cheaper than reviewing everything, and
+  cheaper than
+  automating everything.<br>
+  To hold errors under 2% you can automate 16% of files at t=0.95.</p>
+  <p class="sub" style="margin:8px 0 0">The threshold is fitted on this sample.
+  Hold out a split before shipping it, or expect it to underperform in
+  production.</p>
+</div>
+<div class="card scroll">
+  <h3>Bins</h3>
+  <table><thead><tr><th class="num">range</th><th class="num">n</th>
+  <th class="num">mean conf</th><th class="num">accuracy</th>
+  <th class="num">gap</th></tr></thead><tbody><tr><td class='num'>0.00–0.69</td><td class='num'>40</td><td class='num'>0.623</td><td class='num'>0.600</td><td class='num'>+0.023</td></tr><tr><td class='num'>0.69–0.76</td><td class='num'>40</td><td class='num'>0.726</td><td class='num'>0.775</td><td class='num'>-0.049</td></tr><tr><td class='num'>0.76–0.80</td><td class='num'>40</td><td class='num'>0.779</td><td class='num'>0.875</td><td class='num'>-0.096</td></tr><tr><td class='num'>0.80–0.84</td><td class='num'>40</td><td class='num'>0.819</td><td class='num'>0.925</td><td class='num'>-0.106</td></tr><tr><td class='num'>0.84–0.87</td><td class='num'>40</td><td class='num'>0.854</td><td class='num'>0.850</td><td class='num'>+0.004</td></tr><tr><td class='num'>0.87–0.89</td><td class='num'>40</td><td class='num'>0.876</td><td class='num'>0.975</td><td class='num'>-0.099</td></tr><tr><td class='num'>0.89–0.92</td><td class='num'>40</td><td class='num'>0.903</td><td class='num'>0.900</td><td class='num'>+0.003</td></tr><tr><td class='num'>0.92–0.94</td><td class='num'>40</td><td class='num'>0.927</td><td class='num'>0.950</td><td class='num'>-0.023</td></tr><tr><td class='num'>0.94–0.96</td><td class='num'>40</td><td class='num'>0.951</td><td class='num'>0.900</td><td class='num'>+0.051</td></tr><tr><td class='num'>0.96–1.00</td><td class='num'>40</td><td class='num'>0.977</td><td class='num'>1.000</td><td class='num'>-0.023</td></tr></tbody></table>
+</div>
+<h2>file_type &middot; llm <span style="color:var(--mut);
+font-weight:400">(choice, n=400)</span></h2>
+<div class="kpi">
+  <div><b>69.0%</b><span>accuracy</span></div>
+  <div><b>0.146</b><span>ECE</span></div>
+  <div><b>0.229</b><span>AURC</span></div>
+  <div><b>0.228</b><span>Brier</span></div>
+  <div><b>0.99</b><span>chosen threshold</span></div>
+</div>
+<div class="note bad">Overconfident by 14.6 points: it claims 83.6% and delivers 69.0%. Thresholds set from the stated number will over-automate.</div><div class="note">The reported <code>confidence</code> field sits +0.060 from the margin of the returned distribution. They are not the same signal — pick one and threshold on it consistently.</div>
+<div class="card">
+  <h3>Reliability</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Reliability diagram"><line x1="42" y1="274" x2="446" y2="42" stroke="currentColor" stroke-dasharray="4 4" opacity=".35"/><line x1="42" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="35" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.00</text><text x="42.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.00</text><line x1="42" y1="216.0" x2="446" y2="216.0" stroke="currentColor" opacity=".1"/><text x="35" y="220.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.25</text><text x="143.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.25</text><line x1="42" y1="158.0" x2="446" y2="158.0" stroke="currentColor" opacity=".1"/><text x="35" y="162.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.50</text><text x="244.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.50</text><line x1="42" y1="100.0" x2="446" y2="100.0" stroke="currentColor" opacity=".1"/><text x="35" y="104.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.75</text><text x="345.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.75</text><line x1="42" y1="42.0" x2="446" y2="42.0" stroke="currentColor" opacity=".1"/><text x="35" y="46.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">1.00</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">1.00</text><rect x="271.1" y="146.4" width="36.4" height="127.6" fill="var(--acc)" opacity=".22"/><circle cx="289.3" cy="146.4" r="3.5" fill="var(--acc)"><title>conf 0.612 / acc 0.550 / n=40</title></circle><rect x="309.1" y="129.0" width="36.4" height="145.0" fill="var(--acc)" opacity=".22"/><circle cx="327.2" cy="129.0" r="3.5" fill="var(--acc)"><title>conf 0.706 / acc 0.625 / n=40</title></circle><rect x="333.8" y="129.0" width="36.4" height="145.0" fill="var(--bad)" opacity=".22"/><circle cx="352.0" cy="129.0" r="3.5" fill="var(--bad)"><title>conf 0.767 / acc 0.625 / n=40</title></circle><rect x="352.2" y="134.8" width="36.4" height="139.2" fill="var(--bad)" opacity=".22"/><circle cx="370.3" cy="134.8" r="3.5" fill="var(--bad)"><title>conf 0.813 / acc 0.600 / n=40</title></circle><rect x="364.1" y="134.8" width="36.4" height="139.2" fill="var(--bad)" opacity=".22"/><circle cx="382.3" cy="134.8" r="3.5" fill="var(--bad)"><title>conf 0.842 / acc 0.600 / n=40</title></circle><rect x="374.9" y="100.0" width="36.4" height="174.0" fill="var(--bad)" opacity=".22"/><circle cx="393.1" cy="100.0" r="3.5" fill="var(--bad)"><title>conf 0.869 / acc 0.750 / n=40</title></circle><rect x="387.3" y="117.4" width="36.4" height="156.6" fill="var(--bad)" opacity=".22"/><circle cx="405.5" cy="117.4" r="3.5" fill="var(--bad)"><title>conf 0.900 / acc 0.675 / n=40</title></circle><rect x="397.7" y="94.2" width="36.4" height="179.8" fill="var(--bad)" opacity=".22"/><circle cx="415.9" cy="94.2" r="3.5" fill="var(--bad)"><title>conf 0.926 / acc 0.775 / n=40</title></circle><rect x="408.1" y="71.0" width="36.4" height="203.0" fill="var(--acc)" opacity=".22"/><circle cx="426.2" cy="71.0" r="3.5" fill="var(--acc)"><title>conf 0.951 / acc 0.875 / n=40</title></circle><rect x="418.3" y="82.6" width="36.4" height="191.4" fill="var(--bad)" opacity=".22"/><circle cx="436.5" cy="82.6" r="3.5" fill="var(--bad)"><title>conf 0.977 / acc 0.825 / n=40</title></circle><text x="244.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">stated confidence</text><text x="13" y="158.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 158.0)">observed accuracy</text></svg>
+  <figcaption>Equal-mass bins. Bar width is bin population — a dot far off the
+  diagonal on a narrow bar is a handful of files, not a finding. Points on the
+  dashed line are perfectly calibrated.</figcaption></figure>
+  <div class="kpi" style="font-size:.9rem">
+    <div><b style="font-size:1rem">0.1462 [0.1000, 0.1806]</b><span>ECE, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.6900 [0.6450, 0.7350]</b><span>accuracy, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.242</b><span>max bin gap</span></div>
+  </div>
+</div>
+<div class="card">
+  <h3>Where to set the threshold</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risk-coverage curve"><line x1="46" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="39" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.0%</text><text x="46.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0%</text><line x1="46" y1="217.0" x2="446" y2="217.0" stroke="currentColor" opacity=".1"/><text x="39" y="221.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">7.8%</text><text x="146.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">25%</text><line x1="46" y1="160.0" x2="446" y2="160.0" stroke="currentColor" opacity=".1"/><text x="39" y="164.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">15.5%</text><text x="246.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">50%</text><line x1="46" y1="103.0" x2="446" y2="103.0" stroke="currentColor" opacity=".1"/><text x="39" y="107.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">23.3%</text><text x="346.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">75%</text><line x1="46" y1="46.0" x2="446" y2="46.0" stroke="currentColor" opacity=".1"/><text x="39" y="50.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">31.0%</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">100%</text><path d="M60.0,168.9 L78.0,159.1 L96.0,141.6 L107.0,141.4 L121.0,166.1 L136.0,159.6 L157.0,148.1 L168.0,147.4 L184.0,135.4 L202.0,127.8 L211.0,118.0 L224.0,108.7 L237.0,112.3 L256.0,95.4 L266.0,93.5 L286.0,90.1 L299.0,85.0 L308.0,80.3 L320.0,75.4 L327.0,72.5 L336.0,68.6 L342.0,70.3 L353.0,72.8 L359.0,69.6 L365.0,66.5 L373.0,60.3 L380.0,60.4 L385.0,61.4 L391.0,58.7 L395.0,59.0 L398.0,56.7 L404.0,60.3 L407.0,58.0 L414.0,54.2 L414.0,54.2 L422.0,54.9 L429.0,51.2 L433.0,49.7 L434.0,50.3 L438.0,50.7 L440.0,48.1 L440.0,48.1 L441.0,46.8 L443.0,46.1 L444.0,46.7 L444.0,46.7 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L445.0,47.3 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0 L446.0,46.0" fill="none" stroke="var(--acc)" stroke-width="2"/><text x="246.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">coverage (share auto-accepted)</text><text x="13" y="160.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 160.0)">error rate on accepted</text></svg>
+  <figcaption>Each point is one threshold: how much gets auto-accepted, and how
+  often that is wrong. The marked point minimises expected cost under the model
+  below.</figcaption></figure>
+  <p style="font-size:.9rem">At <code>t=0.99</code> the model handles
+  <b>0%</b> of files automatically with
+  <b>0.0%</b> errors among those, deferring
+  400 for review. That is
+  <b>0%</b> cheaper than reviewing everything, and
+  cheaper than
+  automating everything.<br>
+  To hold errors under 2% you can automate not reachable on this sample.</p>
+  <p class="sub" style="margin:8px 0 0">The threshold is fitted on this sample.
+  Hold out a split before shipping it, or expect it to underperform in
+  production.</p>
+</div>
+<div class="card scroll">
+  <h3>Bins</h3>
+  <table><thead><tr><th class="num">range</th><th class="num">n</th>
+  <th class="num">mean conf</th><th class="num">accuracy</th>
+  <th class="num">gap</th></tr></thead><tbody><tr><td class='num'>0.00–0.67</td><td class='num'>40</td><td class='num'>0.612</td><td class='num'>0.550</td><td class='num'>+0.062</td></tr><tr><td class='num'>0.67–0.74</td><td class='num'>40</td><td class='num'>0.706</td><td class='num'>0.625</td><td class='num'>+0.081</td></tr><tr><td class='num'>0.74–0.79</td><td class='num'>40</td><td class='num'>0.767</td><td class='num'>0.625</td><td class='num'>+0.142</td></tr><tr><td class='num'>0.79–0.83</td><td class='num'>40</td><td class='num'>0.813</td><td class='num'>0.600</td><td class='num'>+0.213</td></tr><tr><td class='num'>0.83–0.85</td><td class='num'>40</td><td class='num'>0.842</td><td class='num'>0.600</td><td class='num'>+0.242</td></tr><tr><td class='num'>0.85–0.89</td><td class='num'>40</td><td class='num'>0.869</td><td class='num'>0.750</td><td class='num'>+0.119</td></tr><tr><td class='num'>0.89–0.91</td><td class='num'>40</td><td class='num'>0.900</td><td class='num'>0.675</td><td class='num'>+0.225</td></tr><tr><td class='num'>0.91–0.94</td><td class='num'>40</td><td class='num'>0.926</td><td class='num'>0.775</td><td class='num'>+0.151</td></tr><tr><td class='num'>0.94–0.97</td><td class='num'>40</td><td class='num'>0.951</td><td class='num'>0.875</td><td class='num'>+0.076</td></tr><tr><td class='num'>0.97–1.00</td><td class='num'>40</td><td class='num'>0.977</td><td class='num'>0.825</td><td class='num'>+0.152</td></tr></tbody></table>
+</div>
+<h2>worth_deep_analysis &middot; jev <span style="color:var(--mut);
+font-weight:400">(noul, n=400)</span></h2>
+<div class="kpi">
+  <div><b>85.0%</b><span>accuracy</span></div>
+  <div><b>0.062</b><span>ECE</span></div>
+  <div><b>0.087</b><span>AURC</span></div>
+  <div><b>0.128</b><span>Brier</span></div>
+  <div><b>0.95</b><span>chosen threshold</span></div>
+</div>
+<div class="note ok">Stated confidence tracks observed accuracy to within 1.9 points. On this task the number means what it says.</div>
+<div class="card">
+  <h3>Reliability</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Reliability diagram"><line x1="42" y1="274" x2="446" y2="42" stroke="currentColor" stroke-dasharray="4 4" opacity=".35"/><line x1="42" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="35" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.00</text><text x="42.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.00</text><line x1="42" y1="216.0" x2="446" y2="216.0" stroke="currentColor" opacity=".1"/><text x="35" y="220.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.25</text><text x="143.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.25</text><line x1="42" y1="158.0" x2="446" y2="158.0" stroke="currentColor" opacity=".1"/><text x="35" y="162.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.50</text><text x="244.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.50</text><line x1="42" y1="100.0" x2="446" y2="100.0" stroke="currentColor" opacity=".1"/><text x="35" y="104.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.75</text><text x="345.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0.75</text><line x1="42" y1="42.0" x2="446" y2="42.0" stroke="currentColor" opacity=".1"/><text x="35" y="46.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">1.00</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">1.00</text><rect x="263.3" y="76.8" width="36.4" height="197.2" fill="var(--bad)" opacity=".22"/><circle cx="281.5" cy="76.8" r="3.5" fill="var(--bad)"><title>conf 0.593 / acc 0.850 / n=40</title></circle><rect x="302.6" y="117.4" width="36.4" height="156.6" fill="var(--acc)" opacity=".22"/><circle cx="320.8" cy="117.4" r="3.5" fill="var(--acc)"><title>conf 0.690 / acc 0.675 / n=40</title></circle><rect x="327.2" y="88.4" width="36.4" height="185.6" fill="var(--acc)" opacity=".22"/><circle cx="345.4" cy="88.4" r="3.5" fill="var(--acc)"><title>conf 0.751 / acc 0.800 / n=40</title></circle><rect x="347.5" y="71.0" width="36.4" height="203.0" fill="var(--acc)" opacity=".22"/><circle cx="365.6" cy="71.0" r="3.5" fill="var(--acc)"><title>conf 0.801 / acc 0.875 / n=40</title></circle><rect x="361.7" y="105.8" width="36.4" height="168.2" fill="var(--bad)" opacity=".22"/><circle cx="379.9" cy="105.8" r="3.5" fill="var(--bad)"><title>conf 0.836 / acc 0.725 / n=40</title></circle><rect x="375.2" y="71.0" width="36.4" height="203.0" fill="var(--acc)" opacity=".22"/><circle cx="393.4" cy="71.0" r="3.5" fill="var(--acc)"><title>conf 0.870 / acc 0.875 / n=40</title></circle><rect x="389.7" y="82.6" width="36.4" height="191.4" fill="var(--acc)" opacity=".22"/><circle cx="407.8" cy="82.6" r="3.5" fill="var(--acc)"><title>conf 0.906 / acc 0.825 / n=40</title></circle><rect x="399.2" y="53.6" width="36.4" height="220.4" fill="var(--acc)" opacity=".22"/><circle cx="417.3" cy="53.6" r="3.5" fill="var(--acc)"><title>conf 0.929 / acc 0.950 / n=40</title></circle><rect x="410.0" y="53.6" width="36.4" height="220.4" fill="var(--acc)" opacity=".22"/><circle cx="428.2" cy="53.6" r="3.5" fill="var(--acc)"><title>conf 0.956 / acc 0.950 / n=40</title></circle><rect x="419.2" y="47.8" width="36.4" height="226.2" fill="var(--acc)" opacity=".22"/><circle cx="437.4" cy="47.8" r="3.5" fill="var(--acc)"><title>conf 0.979 / acc 0.975 / n=40</title></circle><text x="244.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">stated confidence</text><text x="13" y="158.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 158.0)">observed accuracy</text></svg>
+  <figcaption>Equal-mass bins. Bar width is bin population — a dot far off the
+  diagonal on a narrow bar is a handful of files, not a finding. Points on the
+  dashed line are perfectly calibrated.</figcaption></figure>
+  <div class="kpi" style="font-size:.9rem">
+    <div><b style="font-size:1rem">0.0623 [0.0229, 0.0793]</b><span>ECE, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.8500 [0.8150, 0.8875]</b><span>accuracy, 95% CI</span></div>
+    <div><b style="font-size:1rem">0.257</b><span>max bin gap</span></div>
+  </div>
+</div>
+<div class="card">
+  <h3>Where to set the threshold</h3>
+  <figure><svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risk-coverage curve"><line x1="46" y1="274.0" x2="446" y2="274.0" stroke="currentColor" opacity=".1"/><text x="39" y="278.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">0.0%</text><text x="46.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">0%</text><line x1="46" y1="217.0" x2="446" y2="217.0" stroke="currentColor" opacity=".1"/><text x="39" y="221.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">3.8%</text><text x="146.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">25%</text><line x1="46" y1="160.0" x2="446" y2="160.0" stroke="currentColor" opacity=".1"/><text x="39" y="164.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">7.5%</text><text x="246.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">50%</text><line x1="46" y1="103.0" x2="446" y2="103.0" stroke="currentColor" opacity=".1"/><text x="39" y="107.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">11.3%</text><text x="346.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">75%</text><line x1="46" y1="46.0" x2="446" y2="46.0" stroke="currentColor" opacity=".1"/><text x="39" y="50.0" font-size="10" text-anchor="end" fill="currentColor" opacity=".55">15.0%</text><text x="446.0" y="292" font-size="10" text-anchor="middle" fill="currentColor" opacity=".55">100%</text><path d="M59.0,274.0 L64.0,274.0 L73.0,274.0 L81.0,230.7 L93.0,241.7 L101.0,246.4 L109.0,225.9 L116.0,230.7 L118.0,231.9 L122.0,234.1 L135.0,205.9 L146.0,198.2 L153.0,203.2 L162.0,208.7 L173.0,190.5 L183.0,174.4 L188.0,167.3 L194.0,171.6 L201.0,166.4 L206.0,160.3 L210.0,163.1 L217.0,158.8 L219.0,160.1 L224.0,163.3 L231.0,159.3 L236.0,146.4 L243.0,143.2 L245.0,144.5 L253.0,127.5 L259.0,131.7 L271.0,112.3 L276.0,109.2 L280.0,105.6 L287.0,97.9 L292.0,101.5 L298.0,105.6 L304.0,103.6 L309.0,106.9 L312.0,103.0 L314.0,104.3 L320.0,97.0 L324.0,99.5 L329.0,97.2 L330.0,92.5 L336.0,80.6 L342.0,84.5 L345.0,81.4 L348.0,83.3 L348.0,83.3 L352.0,85.8 L356.0,83.3 L361.0,76.7 L365.0,79.2 L368.0,81.0 L369.0,76.9 L373.0,79.3 L373.0,79.3 L377.0,81.7 L383.0,76.1 L385.0,77.3 L389.0,70.7 L392.0,63.7 L396.0,57.5 L402.0,48.3 L405.0,46.0 L407.0,47.3 L408.0,47.9 L408.0,47.9 L410.0,49.1 L411.0,49.7 L414.0,51.6 L415.0,52.2 L417.0,49.3 L422.0,48.2 L425.0,50.0 L425.0,50.0 L425.0,50.0 L425.0,50.0 L425.0,50.0 L425.0,50.0 L428.0,47.8 L428.0,47.8 L428.0,47.8 L428.0,47.8 L429.0,48.4 L430.0,49.0 L431.0,49.6 L439.0,46.4 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6 L446.0,46.6" fill="none" stroke="var(--acc)" stroke-width="2"/><circle cx="73.0" cy="274.0" r="5" fill="var(--bad)"><title>chosen threshold</title></circle><text x="73.0" y="263.0" font-size="10" text-anchor="middle" fill="var(--bad)">t=0.95</text><text x="246.0" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7">coverage (share auto-accepted)</text><text x="13" y="160.0" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".7" transform="rotate(-90 13 160.0)">error rate on accepted</text></svg>
+  <figcaption>Each point is one threshold: how much gets auto-accepted, and how
+  often that is wrong. The marked point minimises expected cost under the model
+  below.</figcaption></figure>
+  <p style="font-size:.9rem">At <code>t=0.95</code> the model handles
+  <b>7%</b> of files automatically with
+  <b>0.0%</b> errors among those, deferring
+  373 for review. That is
+  <b>7%</b> cheaper than reviewing everything, and
+  cheaper than
+  automating everything.<br>
+  To hold errors under 2% you can automate 14% of files at t=0.92.</p>
+  <p class="sub" style="margin:8px 0 0">The threshold is fitted on this sample.
+  Hold out a split before shipping it, or expect it to underperform in
+  production.</p>
+</div>
+<div class="card scroll">
+  <h3>Bins</h3>
+  <table><thead><tr><th class="num">range</th><th class="num">n</th>
+  <th class="num">mean conf</th><th class="num">accuracy</th>
+  <th class="num">gap</th></tr></thead><tbody><tr><td class='num'>0.00–0.66</td><td class='num'>40</td><td class='num'>0.593</td><td class='num'>0.850</td><td class='num'>-0.257</td></tr><tr><td class='num'>0.66–0.72</td><td class='num'>40</td><td class='num'>0.690</td><td class='num'>0.675</td><td class='num'>+0.015</td></tr><tr><td class='num'>0.72–0.78</td><td class='num'>40</td><td class='num'>0.751</td><td class='num'>0.800</td><td class='num'>-0.049</td></tr><tr><td class='num'>0.78–0.82</td><td class='num'>40</td><td class='num'>0.801</td><td class='num'>0.875</td><td class='num'>-0.074</td></tr><tr><td class='num'>0.82–0.85</td><td class='num'>40</td><td class='num'>0.836</td><td class='num'>0.725</td><td class='num'>+0.111</td></tr><tr><td class='num'>0.85–0.89</td><td class='num'>40</td><td class='num'>0.870</td><td class='num'>0.875</td><td class='num'>-0.005</td></tr><tr><td class='num'>0.89–0.92</td><td class='num'>40</td><td class='num'>0.906</td><td class='num'>0.825</td><td class='num'>+0.081</td></tr><tr><td class='num'>0.92–0.94</td><td class='num'>40</td><td class='num'>0.929</td><td class='num'>0.950</td><td class='num'>-0.021</td></tr><tr><td class='num'>0.94–0.97</td><td class='num'>40</td><td class='num'>0.956</td><td class='num'>0.950</td><td class='num'>+0.006</td></tr><tr><td class='num'>0.97–1.00</td><td class='num'>40</td><td class='num'>0.979</td><td class='num'>0.975</td><td class='num'>+0.004</td></tr></tbody></table>
+</div>
+<h2>Head to head</h2>
+<p class="sub">Paired on identical inputs, so McNemar's test applies. Accuracy
+differences on small eval sets are usually noise; the discordant count is the
+number to look at.</p>
+
+<div class="card">
+  <h3>file_type</h3>
+  <div class="scroll"><table>
+    <thead><tr><th></th><th class="num">accuracy</th><th class="num">mean latency</th>
+    <th class="num">p95 latency</th><th class="num">cost / 1k</th>
+    <th class="num">cost / correct</th></tr></thead>
+    <tbody>
+      <tr><td><b>jev</b></td><td class="num">87.5%</td>
+      <td class="num">37 ms</td>
+      <td class="num">52 ms</td>
+      <td class="num">$0.031</td>
+      <td class="num">$0.00004</td></tr>
+      <tr><td><b>llm</b></td><td class="num">69.0%</td>
+      <td class="num">1851 ms</td>
+      <td class="num">2715 ms</td>
+      <td class="num">$2.415</td>
+      <td class="num">$0.00350</td></tr>
+    </tbody></table></div>
+  <div class="note ok">jev beats llm (p=0.000, 140 discordant).
+  Agreed on 260 of 400 items
+  (107 only jev, 33 only llm).</div>
+</div>
+<h2>Cost model</h2>
+<div class="card"><p style="margin:0;font-size:.9rem">One automated error costs
+<b>50</b>; one human review costs <b>1</b>;
+reviewers are assumed <b>100%</b> accurate. Only the
+ratio matters. Every threshold above is a consequence of these three numbers —
+change them and re-run rather than arguing about the default.</p></div>
+<footer>Calibration Lab &middot; part of RepoScope. Thresholds are fitted on the
+evaluation sample and are optimistic by construction. Bootstrap intervals are
+percentile intervals over 1,000 resamples.</footer>
+</div></body></html>

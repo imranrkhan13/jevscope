@@ -1,0 +1,885 @@
+(function () {
+"use strict";
+
+/* ============================================================
+   1. CERTAINTY NORMALIZATION
+   Mirrors reposcope/calibration/certainty.py. Jev's three answer
+   types do not carry certainty the same way — noul has NO
+   `confidence` field (0.5 is the uncertain point, both tails are
+   confident); choice/score carry a scalar `confidence`. Treating
+   a raw noul value as "probability of being correct" inverts
+   every confident negative, which is why prediction and
+   correctnessProbability are computed separately below.
+   ============================================================ */
+
+function margin(probs) {
+  if (probs.length < 2) return 1;
+  const sorted = [...probs].sort((a, b) => b - a);
+  return sorted[0] - sorted[1];
+}
+
+function normalize(answer) {
+  if (answer.type === "noul") {
+    const p = Number(answer.noul);
+    return {
+      type: "noul",
+      prediction: p >= 0.5 ? "true" : "false",
+      certainty: Math.abs(p - 0.5) * 2,
+      reportedConfidence: null,
+      raw: answer,
+    };
+  }
+  if (answer.type === "choice") {
+    const probs = Object.values(answer.probabilities || {}).map(Number);
+    const reported = answer.confidence;
+    const dist = probs.length ? margin(probs) : null;
+    return {
+      type: "choice",
+      prediction: String(answer.choice),
+      certainty: reported != null ? Number(reported) : (dist || 0),
+      reportedConfidence: reported != null ? Number(reported) : null,
+      distributionCertainty: dist,
+      raw: answer,
+    };
+  }
+  if (answer.type === "score") {
+    const probs = Object.values(answer.probabilities || {}).map(Number);
+    const reported = answer.confidence;
+    const dist = probs.length ? margin(probs) : null;
+    const level = String(Math.round(Number(answer.score)));
+    return {
+      type: "score",
+      prediction: level,
+      certainty: reported != null ? Number(reported) : (dist || 0),
+      reportedConfidence: reported != null ? Number(reported) : null,
+      distributionCertainty: dist,
+      raw: answer,
+    };
+  }
+  throw new Error("Unknown Jev answer type: " + answer.type);
+}
+
+// The model's implied probability that ITS OWN prediction is right.
+// Not the same as certainty — see the noul case.
+function correctnessProbability(norm) {
+  if (norm.type === "noul") {
+    const p = Number(norm.raw.noul);
+    return norm.prediction === "true" ? p : 1 - p;
+  }
+  const probs = norm.raw.probabilities || {};
+  if (Object.keys(probs).length) {
+    const v = probs[norm.prediction];
+    return v != null ? Number(v) : norm.certainty;
+  }
+  return norm.certainty;
+}
+
+/* ============================================================
+   2. CALIBRATION METRICS
+   Mirrors metrics.py: equal-mass bins (equal-width leaves most
+   bins empty when confidence clusters near 1.0), and a basic
+   (reverse-percentile) bootstrap rather than a plain percentile
+   one — ECE is a mean of absolute deviations and therefore
+   biased upward under resampling; the percentile interval puts
+   that bias inside the interval and can produce a CI that
+   excludes its own point estimate. Reflecting the resampled
+   distribution back through the point estimate cancels it.
+   ============================================================ */
+
+function equalMassEdges(confidences, nBins) {
+  const sorted = [...confidences].sort((a, b) => a - b);
+  if (!sorted.length) return [0, 1];
+  const edges = [0];
+  for (let i = 1; i < nBins; i++) {
+    const idx = Math.min(sorted.length - 1, Math.floor((i * sorted.length) / nBins));
+    edges.push(sorted[idx]);
+  }
+  edges.push(1 + 1e-9);
+  const deduped = [edges[0]];
+  for (const e of edges.slice(1)) if (e > deduped[deduped.length - 1]) deduped.push(e);
+  return deduped;
+}
+
+function buildBins(confidences, correct, nBins) {
+  const edges = equalMassEdges(confidences, nBins || 10);
+  const bins = [];
+  for (let i = 0; i < edges.length - 1; i++) {
+    const lo = edges[i], hi = edges[i + 1];
+    const members = [];
+    for (let j = 0; j < confidences.length; j++) {
+      if (confidences[j] >= lo && confidences[j] < hi) members.push(j);
+    }
+    if (!members.length) continue;
+    const conf = members.reduce((s, j) => s + confidences[j], 0) / members.length;
+    const acc = members.reduce((s, j) => s + (correct[j] ? 1 : 0), 0) / members.length;
+    bins.push({ lo, hi: Math.min(hi, 1), count: members.length, conf, acc, gap: conf - acc });
+  }
+  return bins;
+}
+
+function ece(confidences, correct, nBins) {
+  const bins = buildBins(confidences, correct, nBins);
+  const n = confidences.length;
+  if (!n) return 0;
+  return bins.reduce((s, b) => s + b.count * Math.abs(b.gap), 0) / n;
+}
+
+function mce(bins) {
+  return bins.reduce((m, b) => Math.max(m, Math.abs(b.gap)), 0);
+}
+
+// Takes (confidences, correct) to match the two-argument shape every stat
+// function passed to bootstrapInterval must have; confidences is unused here
+// but its presence in the signature is what a positional call site relies on.
+function accuracyOf(_confidences, correct) {
+  return correct.length ? correct.filter(Boolean).length / correct.length : 0;
+}
+
+function brier(confidences, correct) {
+  if (!confidences.length) return 0;
+  let s = 0;
+  for (let i = 0; i < confidences.length; i++) {
+    const y = correct[i] ? 1 : 0;
+    s += (confidences[i] - y) ** 2;
+  }
+  return s / confidences.length;
+}
+
+// Deterministic PRNG so a report is reproducible across a reload.
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function bootstrapInterval(confidences, correct, statFn, opts) {
+  const resamples = (opts && opts.resamples) || 500;
+  const alpha = (opts && opts.alpha) || 0.05;
+  const seed = (opts && opts.seed) || 0;
+  const n = confidences.length;
+  const point = statFn(confidences, correct);
+  if (n < 2 || resamples <= 0) return { point, lower: point, upper: point };
+
+  const rng = mulberry32(seed);
+  const draws = new Array(resamples);
+  for (let r = 0; r < resamples; r++) {
+    const sc = new Array(n), sy = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const idx = Math.floor(rng() * n);
+      sc[i] = confidences[idx]; sy[i] = correct[idx];
+    }
+    draws[r] = statFn(sc, sy);
+  }
+  draws.sort((a, b) => a - b);
+  const qLo = draws[Math.floor((alpha / 2) * resamples)];
+  const qHi = draws[Math.min(resamples - 1, Math.floor((1 - alpha / 2) * resamples))];
+  // Basic interval: reflect through the point estimate to cancel bootstrap bias.
+  const lower = Math.max(0, Math.min(2 * point - qHi, point));
+  const upper = Math.min(1, Math.max(2 * point - qLo, point));
+  return { point, lower, upper };
+}
+
+function evaluate(implied, correct, opts) {
+  const nBins = (opts && opts.nBins) || 10;
+  const resamples = (opts && opts.resamples) || 500;
+  const bins = buildBins(implied, correct, nBins);
+  return {
+    n: implied.length,
+    accuracy: bootstrapInterval(implied, correct, accuracyOf, { resamples, seed: 0 }),
+    ece: bootstrapInterval(implied, correct, (c, y) => ece(c, y, nBins), { resamples, seed: 1 }),
+    mce: mce(bins),
+    brier: bootstrapInterval(implied, correct, brier, { resamples, seed: 2 }),
+    meanConfidence: implied.length ? implied.reduce((a, b) => a + b, 0) / implied.length : 0,
+    bins,
+  };
+}
+
+/* ============================================================
+   3. RISK / COVERAGE + THRESHOLD SELECTION
+   Mirrors risk_coverage.py. AURC measures whether the certainty
+   ORDERING separates errors from correct answers — independent
+   of calibration. Threshold choice turns that into a decision
+   via an explicit cost model, and is fitted on the sample shown
+   (flagged in the UI, not hidden).
+   ============================================================ */
+
+function riskCoverageCurve(certainties, correct, steps) {
+  steps = steps || 101;
+  const n = certainties.length;
+  const points = [];
+  for (let i = 0; i < steps; i++) {
+    const t = i / (steps - 1);
+    let nCov = 0, nErr = 0;
+    for (let j = 0; j < n; j++) {
+      if (certainties[j] >= t) { nCov++; if (!correct[j]) nErr++; }
+    }
+    const acc = nCov ? (nCov - nErr) / nCov : 1;
+    points.push({
+      threshold: t, coverage: n ? nCov / n : 0, selectiveAccuracy: acc,
+      selectiveRisk: 1 - acc, nCovered: nCov, nErrorsAuto: nErr, nDeferred: n - nCov,
+    });
+  }
+  return points;
+}
+
+function aurc(points) {
+  const usable = points.filter((p) => p.nCovered > 0).sort((a, b) => a.coverage - b.coverage);
+  if (usable.length < 2) return usable.length ? usable[0].selectiveRisk : 0;
+  let area = 0;
+  for (let i = 0; i < usable.length - 1; i++) {
+    const a = usable[i], b = usable[i + 1];
+    area += (b.coverage - a.coverage) * (a.selectiveRisk + b.selectiveRisk) / 2;
+  }
+  const span = usable[usable.length - 1].coverage - usable[0].coverage;
+  return span > 0 ? area / span : usable[0].selectiveRisk;
+}
+
+function expectedCost(point, n, cost) {
+  if (!n) return 0;
+  const reviewErrors = point.nDeferred * (1 - cost.reviewAccuracy);
+  return ((point.nErrorsAuto + reviewErrors) * cost.costError + point.nDeferred * cost.costReview) / n;
+}
+
+function chooseThreshold(curve, correct, cost) {
+  const n = correct.length;
+  let best = null, bestCost = Infinity;
+  for (const p of curve) {
+    const c = expectedCost(p, n, cost);
+    if (c < bestCost - 1e-12 || (Math.abs(c - bestCost) < 1e-12 && best && p.coverage > best.coverage)) {
+      bestCost = c; best = p;
+    }
+  }
+  const nErrorsTotal = correct.filter((y) => !y).length;
+  const costAuto = n ? (nErrorsTotal * cost.costError) / n : 0;
+  const costManual = n ? (n * cost.costReview + n * (1 - cost.reviewAccuracy) * cost.costError) / n : 0;
+  return { threshold: best.threshold, point: best, expectedCost: bestCost, costAutomateEverything: costAuto, costReviewEverything: costManual };
+}
+
+function coverageAtRisk(points, maxRisk) {
+  const eligible = points.filter((p) => p.nCovered > 0 && p.selectiveRisk <= maxRisk);
+  if (!eligible.length) return null;
+  return eligible.reduce((best, p) => (p.coverage > best.coverage ? p : best), eligible[0]);
+}
+
+/* ============================================================
+   4. PAIRED COMPARISON — McNemar's test
+   Mirrors compare.py. Exact binomial below 25 discordant pairs
+   (chi-square is unreliable there); refuses to call a winner
+   below 10 discordant pairs at all.
+   ============================================================ */
+
+function logChoose(n, k) {
+  // log-gamma via Stirling's series, accurate enough for n up to a few thousand.
+  function lgamma(x) {
+    const g = 7;
+    const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+      771.32342877765313, -176.61502916214059, 12.507343278686905,
+      -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x);
+    x -= 1;
+    let a = c[0];
+    const t = x + g + 0.5;
+    for (let i = 1; i < g + 2; i++) a += c[i] / (x + i);
+    return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+  }
+  return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1);
+}
+
+function binomTwoSidedExact(k, n) {
+  if (n === 0) return 1;
+  k = Math.min(k, n - k);
+  let tail = 0;
+  for (let i = 0; i <= k; i++) tail += Math.exp(logChoose(n, i) - n * Math.log(2));
+  return Math.min(1, 2 * tail);
+}
+
+function erfc(x) {
+  // Abramowitz–Stegun 7.1.26, |error| < 1.5e-7.
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return sign === 1 ? 1 - y : 1 + y;
+}
+
+function mcnemar(pairs) {
+  let aOnly = 0, bOnly = 0, both = 0, neither = 0;
+  for (const p of pairs) {
+    if (p.aCorrect && !p.bCorrect) aOnly++;
+    else if (p.bCorrect && !p.aCorrect) bOnly++;
+    else if (p.aCorrect && p.bCorrect) both++;
+    else neither++;
+  }
+  const n = aOnly + bOnly;
+  if (n < 25) {
+    return { aOnly, bOnly, both, neither, discordant: n, exact: true,
+      pValue: binomTwoSidedExact(Math.min(aOnly, bOnly), n) };
+  }
+  const stat = (Math.abs(aOnly - bOnly) - 1) ** 2 / n;
+  const p = erfc(Math.sqrt(stat / 2));
+  return { aOnly, bOnly, both, neither, discordant: n, exact: false, pValue: p };
+}
+
+function mcnemarVerdict(mc, aName, bName) {
+  if (mc.discordant < 10) {
+    return `Only ${mc.discordant} discordant items — too few to distinguish ${aName} from ${bName}. Label more data before claiming a winner.`;
+  }
+  if (mc.pValue >= 0.05) {
+    return `No significant difference (p=${mc.pValue.toFixed(3)}, ${mc.discordant} discordant).`;
+  }
+  const [winner, loser] = mc.aOnly > mc.bOnly ? [aName, bName] : [bName, aName];
+  return `${winner} beats ${loser} (p=${mc.pValue.toFixed(3)}, ${mc.discordant} discordant).`;
+}
+
+/* ============================================================
+   5. DATA LOADING
+   ============================================================ */
+
+function parseJSONL(text) {
+  const records = [];
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || line.startsWith("//")) continue;
+    let raw;
+    try { raw = JSON.parse(line); }
+    catch (e) { throw new Error(`Line ${i + 1}: ${e.message}`); }
+    if (!raw.key || !raw.question || !raw.provider || raw.gold == null || !raw.answer) {
+      throw new Error(`Line ${i + 1}: missing one of key/question/provider/gold/answer`);
+    }
+    records.push({
+      key: raw.key, question: raw.question, provider: raw.provider,
+      model: raw.model || raw.provider, gold: String(raw.gold), answer: raw.answer,
+      latencyMs: Number(raw.latency_ms || 0), costUsd: Number(raw.cost_usd || 0),
+    }); // field names match the demo-data mapper in the wire-up section
+  }
+  if (!records.length) throw new Error("No valid records found.");
+  return records;
+}
+
+function groupBy(records, keyFn) {
+  const map = new Map();
+  for (const r of records) {
+    const k = keyFn(r);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(r);
+  }
+  return map;
+}
+
+/* ============================================================
+   6. STUDY ASSEMBLY
+   ============================================================ */
+
+const DEFAULT_COST = { costError: 50, costReview: 1, reviewAccuracy: 1.0 };
+
+function studyGroup(records, cost, resamples) {
+  const normalized = records.map((r) => normalize(r.answer));
+  const correct = normalized.map((n, i) => n.prediction === records[i].gold);
+  const implied = normalized.map(correctnessProbability);
+  const certainties = normalized.map((n) => n.certainty);
+  const gaps = normalized
+    .filter((n) => n.reportedConfidence != null && n.distributionCertainty != null)
+    .map((n) => n.reportedConfidence - n.distributionCertainty);
+
+  const calibration = evaluate(implied, correct, { resamples });
+  const curve = riskCoverageCurve(certainties, correct);
+  const choice = chooseThreshold(curve, correct, cost);
+
+  return {
+    question: records[0].question, provider: records[0].provider,
+    model: records[0].model, answerType: normalized[0].type, n: records.length,
+    calibration, curve, aurc: aurc(curve), choice,
+    coverageAt2pct: coverageAtRisk(curve, 0.02),
+    meanConfidenceGap: gaps.length ? gaps.reduce((a, b) => a + b, 0) / gaps.length : null,
+  };
+}
+
+function pairProviders(records, aProvider, bProvider, question) {
+  const index = new Map();
+  for (const r of records) {
+    if (r.question === question) index.set(r.provider + "\u0000" + r.key, r);
+  }
+  const aKeys = new Set(), bKeys = new Set();
+  for (const [k] of index) {
+    const [p, key] = k.split("\u0000");
+    if (p === aProvider) aKeys.add(key);
+    if (p === bProvider) bKeys.add(key);
+  }
+  const shared = [...aKeys].filter((k) => bKeys.has(k)).sort();
+  return shared.map((key) => {
+    const a = index.get(aProvider + "\u0000" + key), b = index.get(bProvider + "\u0000" + key);
+    const na = normalize(a.answer), nb = normalize(b.answer);
+    return {
+      key, gold: a.gold, aPred: na.prediction, bPred: nb.prediction,
+      aCorrect: na.prediction === a.gold, bCorrect: nb.prediction === b.gold,
+      aLatencyMs: a.latencyMs, bLatencyMs: b.latencyMs,
+      aCostUsd: a.costUsd, bCostUsd: b.costUsd,
+    };
+  });
+}
+
+function percentile(values, q) {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
+}
+
+function providerStats(pairs, which, name) {
+  const n = pairs.length;
+  const correct = pairs.filter((p) => (which === "a" ? p.aCorrect : p.bCorrect)).length;
+  const lat = pairs.map((p) => (which === "a" ? p.aLatencyMs : p.bLatencyMs));
+  const cost = pairs.reduce((s, p) => s + (which === "a" ? p.aCostUsd : p.bCostUsd), 0);
+  return {
+    name, n, accuracy: n ? correct / n : 0,
+    meanLatencyMs: n ? lat.reduce((a, b) => a + b, 0) / n : 0,
+    p95LatencyMs: percentile(lat, 0.95),
+    totalCostUsd: cost, costPer1k: n ? (cost / n) * 1000 : 0,
+    costPerCorrect: correct ? cost / correct : Infinity,
+  };
+}
+
+function runStudy(records, cost, resamples) {
+  const warnings = [];
+  const grouped = groupBy(records, (r) => r.question + "\u0000" + r.provider);
+  const perGroup = [];
+  for (const [, group] of [...grouped].sort(([a], [b]) => a.localeCompare(b))) {
+    if (group.length < 30) {
+      warnings.push(`${group[0].question}/${group[0].provider}: only ${group.length} labelled items — calibration estimates below ~100 items are dominated by sampling noise.`);
+    }
+    perGroup.push(studyGroup(group, cost, resamples));
+  }
+
+  const providers = [...new Set(records.map((r) => r.provider))];
+  const questions = [...new Set(records.map((r) => r.question))];
+  const comparisons = [];
+  if (providers.length >= 2) {
+    for (const q of questions) {
+      const pairs = pairProviders(records, providers[0], providers[1], q);
+      if (!pairs.length) continue;
+      comparisons.push({
+        question: q, pairs, mc: mcnemar(pairs),
+        a: providerStats(pairs, "a", providers[0]), b: providerStats(pairs, "b", providers[1]),
+      });
+    }
+  }
+  return { perGroup, comparisons, warnings, n: records.length, providers, questions };
+}
+
+/* ============================================================
+   7. SVG RENDERING
+   ============================================================ */
+
+const svgNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, children) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  (children || []).forEach((c) => e.appendChild(c));
+  return e;
+}
+function txt(s) { const n = document.createElementNS(svgNS, "text"); n.textContent = s; return n; }
+
+function reliabilitySvg(group, w, h) {
+  w = w || 440; h = h || 280;
+  const pad = 40, pw = w - pad - 12, ph = h - pad - 24;
+  const px = (v) => pad + v * pw, py = (v) => pad + (1 - v) * ph;
+  const svg = el("svg", { viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": "Reliability diagram" });
+  const diag = el("line", { x1: px(0), y1: py(0), x2: px(1), y2: py(1), stroke: "currentColor", "stroke-dasharray": "3 4", opacity: ".35" });
+  svg.appendChild(diag);
+  [0, 0.25, 0.5, 0.75, 1].forEach((g) => {
+    svg.appendChild(el("line", { x1: px(0), y1: py(g), x2: px(1), y2: py(g), stroke: "currentColor", opacity: ".08" }));
+    const lab1 = txt(g.toFixed(2)); lab1.setAttribute("x", pad - 6); lab1.setAttribute("y", py(g) + 3);
+    lab1.setAttribute("font-size", "9.5"); lab1.setAttribute("text-anchor", "end"); lab1.setAttribute("fill", "currentColor"); lab1.setAttribute("opacity", ".55");
+    svg.appendChild(lab1);
+    const lab2 = txt(g.toFixed(2)); lab2.setAttribute("x", px(g)); lab2.setAttribute("y", h - 6);
+    lab2.setAttribute("font-size", "9.5"); lab2.setAttribute("text-anchor", "middle"); lab2.setAttribute("fill", "currentColor"); lab2.setAttribute("opacity", ".55");
+    svg.appendChild(lab2);
+  });
+  const total = group.calibration.bins.reduce((s, b) => s + b.count, 0) || 1;
+  group.calibration.bins.forEach((b) => {
+    const bw = Math.max(4, (b.count / total) * pw * 0.9);
+    const x = px(b.conf) - bw / 2, y = py(b.acc);
+    const colour = Math.abs(b.gap) > 0.1 ? "var(--clay)" : "var(--teal)";
+    svg.appendChild(el("rect", { x, y, width: bw, height: py(0) - y, fill: colour, opacity: ".2" }));
+    const dot = el("circle", { cx: px(b.conf), cy: y, r: 3.4, fill: colour });
+    const title = document.createElementNS(svgNS, "title");
+    title.textContent = `conf ${b.conf.toFixed(3)} · acc ${b.acc.toFixed(3)} · n=${b.count}`;
+    dot.appendChild(title);
+    svg.appendChild(dot);
+  });
+  const xl = txt("stated confidence"); xl.setAttribute("x", pad + pw / 2); xl.setAttribute("y", h - 20);
+  xl.setAttribute("font-size", "10"); xl.setAttribute("text-anchor", "middle"); xl.setAttribute("fill", "currentColor"); xl.setAttribute("opacity", ".7");
+  svg.appendChild(xl);
+  const yl = txt("observed accuracy"); yl.setAttribute("x", 12); yl.setAttribute("y", pad + ph / 2);
+  yl.setAttribute("font-size", "10"); yl.setAttribute("text-anchor", "middle"); yl.setAttribute("fill", "currentColor");
+  yl.setAttribute("opacity", ".7"); yl.setAttribute("transform", `rotate(-90 12 ${pad + ph / 2})`);
+  svg.appendChild(yl);
+  return svg;
+}
+
+// Returns {svg, updateMarker(threshold)} so a slider can move the marker
+// without rebuilding the whole curve.
+function riskCoverageSvg(group, w, h) {
+  w = w || 440; h = h || 280;
+  const pad = 44, pw = w - pad - 12, ph = h - pad - 24;
+  const pts = group.curve.filter((p) => p.nCovered > 0);
+  const maxRisk = Math.max(0.05, ...pts.map((p) => p.selectiveRisk));
+  const px = (v) => pad + v * pw, py = (v) => pad + (1 - v / maxRisk) * ph;
+
+  const svg = el("svg", { viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": "Risk-coverage curve" });
+  [0, 0.25, 0.5, 0.75, 1].forEach((g) => {
+    svg.appendChild(el("line", { x1: px(0), y1: pad + (1 - g) * ph, x2: px(1), y2: pad + (1 - g) * ph, stroke: "currentColor", opacity: ".08" }));
+    const lab1 = txt((g * maxRisk * 100).toFixed(1) + "%"); lab1.setAttribute("x", pad - 6); lab1.setAttribute("y", pad + (1 - g) * ph + 3);
+    lab1.setAttribute("font-size", "9.5"); lab1.setAttribute("text-anchor", "end"); lab1.setAttribute("fill", "currentColor"); lab1.setAttribute("opacity", ".55");
+    svg.appendChild(lab1);
+    const lab2 = txt((g * 100).toFixed(0) + "%"); lab2.setAttribute("x", px(g)); lab2.setAttribute("y", h - 6);
+    lab2.setAttribute("font-size", "9.5"); lab2.setAttribute("text-anchor", "middle"); lab2.setAttribute("fill", "currentColor"); lab2.setAttribute("opacity", ".55");
+    svg.appendChild(lab2);
+  });
+  const sorted = [...pts].sort((a, b) => a.coverage - b.coverage);
+  const d = sorted.map((p, i) => `${i === 0 ? "M" : "L"}${px(p.coverage).toFixed(1)},${py(p.selectiveRisk).toFixed(1)}`).join(" ");
+  svg.appendChild(el("path", { d, fill: "none", stroke: "var(--teal)", "stroke-width": "2" }));
+
+  const marker = el("circle", { r: 5, fill: "var(--clay)" });
+  const markerLabel = txt(""); markerLabel.setAttribute("font-size", "10"); markerLabel.setAttribute("text-anchor", "middle"); markerLabel.setAttribute("fill", "var(--clay)");
+  svg.appendChild(marker); svg.appendChild(markerLabel);
+
+  const xl = txt("coverage (share auto-accepted)"); xl.setAttribute("x", pad + pw / 2); xl.setAttribute("y", h - 20);
+  xl.setAttribute("font-size", "10"); xl.setAttribute("text-anchor", "middle"); xl.setAttribute("fill", "currentColor"); xl.setAttribute("opacity", ".7");
+  svg.appendChild(xl);
+  const yl = txt("error rate on accepted"); yl.setAttribute("x", 12); yl.setAttribute("y", pad + ph / 2);
+  yl.setAttribute("font-size", "10"); yl.setAttribute("text-anchor", "middle"); yl.setAttribute("fill", "currentColor");
+  yl.setAttribute("opacity", ".7"); yl.setAttribute("transform", `rotate(-90 12 ${pad + ph / 2})`);
+  svg.appendChild(yl);
+
+  function updateMarker(threshold) {
+    let closest = pts[0];
+    for (const p of pts) if (Math.abs(p.threshold - threshold) < Math.abs(closest.threshold - threshold)) closest = p;
+    marker.setAttribute("cx", px(closest.coverage)); marker.setAttribute("cy", py(closest.selectiveRisk));
+    markerLabel.setAttribute("x", px(closest.coverage)); markerLabel.setAttribute("y", py(closest.selectiveRisk) - 11);
+    markerLabel.textContent = "t=" + closest.threshold.toFixed(2);
+    return closest;
+  }
+  updateMarker(group.choice.threshold);
+  return { svg, updateMarker };
+}
+
+/* ============================================================
+   8. DOM ASSEMBLY
+   ============================================================ */
+
+function h(tag, attrs, children) {
+  const e = document.createElement(tag);
+  for (const k in (attrs || {})) {
+    if (k === "class") e.className = attrs[k];
+    else if (k === "html") e.innerHTML = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  (children || []).forEach((c) => { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+  return e;
+}
+
+function pct(x) { return (x * 100).toFixed(1) + "%"; }
+function fixed(x, n) { return x.toFixed(n == null ? 3 : n); }
+function ci(interval, n) { return `${interval.point.toFixed(n || 4)} [${interval.lower.toFixed(n || 4)}, ${interval.upper.toFixed(n || 4)}]`; }
+
+let currentCost = { ...DEFAULT_COST };
+
+function groupSection(group) {
+  const cal = group.calibration;
+  const over = cal.meanConfidence - cal.accuracy.point;
+
+  let verdict;
+  if (Math.abs(over) < 0.02) {
+    verdict = h("div", { class: "note ok" }, [
+      `Stated confidence tracks observed accuracy to within ${(Math.abs(over) * 100).toFixed(1)} points. On this task the number means what it says.`,
+    ]);
+  } else if (over > 0) {
+    verdict = h("div", { class: "note bad" }, [
+      `Overconfident by ${(over * 100).toFixed(1)} points: it claims ${pct(cal.meanConfidence)} and delivers ${pct(cal.accuracy.point)}. Thresholds set from the stated number will over-automate.`,
+    ]);
+  } else {
+    verdict = h("div", { class: "note warn" }, [
+      `Underconfident by ${(Math.abs(over) * 100).toFixed(1)} points. Safe, but you are deferring work a threshold on true accuracy would automate.`,
+    ]);
+  }
+
+  let gapNote = null;
+  if (group.meanConfidenceGap != null && Math.abs(group.meanConfidenceGap) > 0.03) {
+    gapNote = h("div", { class: "note" }, [
+      `The reported confidence field sits ${group.meanConfidenceGap >= 0 ? "+" : ""}${group.meanConfidenceGap.toFixed(3)} from the margin of the returned distribution — they are not the same signal. Pick one and threshold on it consistently.`,
+    ]);
+  }
+
+  const kpis = h("div", { class: "kpis" }, [
+    h("div", { class: "kpi" }, [h("span", { class: "v" }, [pct(cal.accuracy.point)]), h("span", { class: "l" }, ["accuracy"])]),
+    h("div", { class: "kpi" }, [h("span", { class: "v" }, [fixed(cal.ece.point)]), h("span", { class: "l" }, ["ECE"])]),
+    h("div", { class: "kpi" }, [h("span", { class: "v" }, [fixed(group.aurc)]), h("span", { class: "l" }, ["AURC"])]),
+    h("div", { class: "kpi" }, [h("span", { class: "v" }, [fixed(cal.brier.point)]), h("span", { class: "l" }, ["Brier"])]),
+    h("div", { class: "kpi" }, [h("span", { class: "v" }, [group.choice.threshold.toFixed(2)]), h("span", { class: "l" }, ["threshold"])]),
+  ]);
+
+  const relFig = h("figure", {}, [
+    h("figcaption", {}, ["Equal-mass bins. Bar width is bin population — a dot far off the diagonal on a narrow bar is a handful of files, not a finding."]),
+  ]);
+  relFig.prepend(reliabilitySvg(group));
+
+  const rc = riskCoverageSvg(group);
+  const at2 = group.coverageAt2pct;
+  const at2Text = at2 ? `${pct(at2.coverage)} of files at t=${at2.threshold.toFixed(2)}` : "not reachable on this sample";
+
+  const summaryP = h("p", { style: "font-size:.86rem;margin:0 0 6px" }, []);
+  const rcFig = h("figure", {}, [
+    h("figcaption", {}, ["Drag the slider to explore any threshold; the marked point below minimises expected cost under the cost model at the bottom of the page."]),
+  ]);
+  rcFig.prepend(rc.svg);
+
+  const slider = h("input", { type: "range", min: "0", max: "1", step: "0.01", value: String(group.choice.threshold) });
+  const sliderVal = h("span", { class: "val" }, [group.choice.threshold.toFixed(2)]);
+
+  function renderAt(threshold) {
+    const p = rc.updateMarker(threshold);
+    sliderVal.textContent = p.threshold.toFixed(2);
+    summaryP.textContent =
+      `At t=${p.threshold.toFixed(2)} the model handles ${pct(p.coverage)} of files automatically ` +
+      `with ${pct(p.selectiveRisk)} errors among those, deferring ${p.nDeferred} for review.`;
+  }
+  renderAt(group.choice.threshold);
+  slider.addEventListener("input", () => renderAt(Number(slider.value)));
+
+  const sliderRow = h("div", { class: "slider-row" }, [slider, sliderVal]);
+
+  const bins = h("tbody", {}, cal.bins.map((b) =>
+    h("tr", {}, [
+      h("td", { class: "num" }, [`${b.lo.toFixed(2)}–${b.hi.toFixed(2)}`]),
+      h("td", { class: "num" }, [String(b.count)]),
+      h("td", { class: "num" }, [fixed(b.conf)]),
+      h("td", { class: "num" }, [fixed(b.acc)]),
+      h("td", { class: "num" }, [(b.gap >= 0 ? "+" : "") + fixed(b.gap)]),
+    ])
+  ));
+
+  const section = h("div", {}, [
+    h("div", { class: "section-head" }, [
+      h("h2", {}, [`${group.question} · ${group.provider}`]),
+      h("span", { class: "meta" }, [`${group.answerType}, n=${group.n}`]),
+    ]),
+    kpis, verdict,
+  ]);
+  if (gapNote) section.appendChild(gapNote);
+
+  section.appendChild(h("div", { class: "panel" }, [
+    h("h3", {}, ["reliability"]),
+    h("div", { class: "plots" }, [
+      relFig,
+      h("div", {}, [rcFig, sliderRow, summaryP]),
+    ]),
+    h("p", { style: "font-size:.8rem;color:var(--mut);margin:12px 0 0" }, [
+      `That is ${pct(group.choice.savingsVsManual != null ? group.choice.savingsVsManual : 0)} — `,
+    ]),
+  ]));
+
+  // savings line, computed properly
+  const savings = 1 - group.choice.expectedCost / (group.choice.costReviewEverything || 1);
+  const savingsP = section.querySelector(".panel p:last-child");
+  savingsP.textContent =
+    `That threshold is ${pct(Math.max(0, savings))} cheaper than reviewing every file by hand, and ` +
+    `${group.choice.expectedCost < group.choice.costAutomateEverything ? "cheaper" : "more expensive"} than automating everything with no review. ` +
+    `To hold errors under 2% you can automate ${at2Text}. ` +
+    `The threshold is fitted on this sample — hold out a split before shipping it.`;
+
+  section.appendChild(h("div", { class: "panel scroll" }, [
+    h("h3", {}, ["bins"]),
+    h("table", {}, [
+      h("thead", {}, [h("tr", {}, [
+        h("th", { class: "num" }, ["range"]), h("th", { class: "num" }, ["n"]),
+        h("th", { class: "num" }, ["mean conf"]), h("th", { class: "num" }, ["accuracy"]),
+        h("th", { class: "num" }, ["gap"]),
+      ])]),
+      bins,
+    ]),
+  ]));
+
+  section.appendChild(h("div", { class: "panel", style: "font-size:.8rem;color:var(--mut)" }, [
+    h("b", { style: "color:var(--ink)" }, ["95% bootstrap intervals (basic, 500 resamples): "]),
+    `accuracy ${ci(cal.accuracy, 3)} · ECE ${ci(cal.ece, 3)} · Brier ${ci(cal.brier, 3)} · max bin gap ${fixed(cal.mce)}`,
+  ]));
+
+  return section;
+}
+
+function comparisonSection(cmp) {
+  const verdict = mcnemarVerdict(cmp.mc, cmp.a.name, cmp.b.name);
+  return h("div", { class: "panel" }, [
+    h("h3", {}, [cmp.question]),
+    h("div", { class: "scroll" }, [
+      h("table", {}, [
+        h("thead", {}, [h("tr", {}, [
+          h("th", {}, [""]), h("th", { class: "num" }, ["accuracy"]),
+          h("th", { class: "num" }, ["mean latency"]), h("th", { class: "num" }, ["p95 latency"]),
+          h("th", { class: "num" }, ["cost / 1k"]), h("th", { class: "num" }, ["cost / correct"]),
+        ])]),
+        h("tbody", {}, [cmp.a, cmp.b].map((s) =>
+          h("tr", {}, [
+            h("td", {}, [h("b", {}, [s.name])]),
+            h("td", { class: "num" }, [pct(s.accuracy)]),
+            h("td", { class: "num" }, [s.meanLatencyMs.toFixed(0) + " ms"]),
+            h("td", { class: "num" }, [s.p95LatencyMs.toFixed(0) + " ms"]),
+            h("td", { class: "num" }, ["$" + s.costPer1k.toFixed(3)]),
+            h("td", { class: "num" }, [isFinite(s.costPerCorrect) ? "$" + s.costPerCorrect.toFixed(5) : "—"]),
+          ])
+        )),
+      ]),
+    ]),
+    h("div", { class: "note" + (cmp.mc.discordant >= 10 && cmp.mc.pValue < 0.05 ? " ok" : "") }, [
+      `${verdict} Agreed on ${cmp.mc.both + cmp.mc.neither} of ${cmp.pairs.length} items (${cmp.mc.aOnly} only ${cmp.a.name}, ${cmp.mc.bOnly} only ${cmp.b.name}).`,
+    ]),
+  ]);
+}
+
+function costPanel(onChange) {
+  const fields = [
+    { key: "costError", label: "cost of an automated error", min: 1, max: 500, step: 1, fmt: (v) => v.toFixed(0) },
+    { key: "costReview", label: "cost of a human review", min: 0, max: 20, step: 0.5, fmt: (v) => v.toFixed(1) },
+    { key: "reviewAccuracy", label: "reviewer accuracy", min: 0.5, max: 1, step: 0.01, fmt: (v) => pct(v) },
+  ];
+  const grid = h("div", { class: "cost-grid" });
+  fields.forEach((f) => {
+    const val = h("span", { class: "val" }, [f.fmt(currentCost[f.key])]);
+    const range = h("input", { type: "range", min: f.min, max: f.max, step: f.step, value: currentCost[f.key] });
+    range.addEventListener("input", () => {
+      currentCost[f.key] = Number(range.value);
+      val.textContent = f.fmt(currentCost[f.key]);
+      onChange();
+    });
+    grid.appendChild(h("div", { class: "field" }, [
+      h("label", {}, [f.label]),
+      h("div", { class: "row" }, [range, val]),
+    ]));
+  });
+  return h("div", { class: "panel" }, [
+    h("h3", {}, ["cost model"]),
+    h("p", { style: "font-size:.82rem;color:var(--mut);margin:0 0 16px" }, [
+      "Only the ratio between these matters. Every threshold above is a consequence of these three numbers — move them and the recommended threshold moves with them.",
+    ]),
+    grid,
+  ]);
+}
+
+/* ============================================================
+   9. TOP-LEVEL RENDER
+   ============================================================ */
+
+const state = { records: null, source: null };
+
+function render() {
+  const content = document.getElementById("content");
+  const ticker = document.getElementById("ticker");
+  const footer = document.getElementById("footer");
+  content.innerHTML = ""; ticker.innerHTML = ""; footer.innerHTML = "";
+
+  if (!state.records) {
+    content.appendChild(h("div", { class: "empty" }, [
+      "Load a decisions.jsonl file, or use the demo dataset, to run the study.",
+    ]));
+    return;
+  }
+
+  const study = runStudy(state.records, currentCost, 500);
+
+  const tickerBits = [
+    h("span", {}, [h("b", {}, [String(study.n)]), " decisions"]),
+    h("span", {}, [h("b", {}, [String(study.perGroup.length)]), " question/provider groups"]),
+    h("span", {}, [h("b", {}, [study.providers.join(" vs ")]), " provider" + (study.providers.length > 1 ? "s" : "")]),
+  ];
+  if (state.source === "demo") {
+    tickerBits.push(h("span", { class: "flag" }, ["SIMULATED demo data — not a real measurement"]));
+  }
+  tickerBits.forEach((b) => ticker.appendChild(b));
+
+  study.warnings.forEach((w) => content.appendChild(h("div", { class: "note warn" }, [w])));
+
+  content.appendChild(h("div", { class: "panel" }, [
+    h("h3", {}, ["how to read this"]),
+    h("p", { style: "font-size:.86rem;margin:0" }, [
+      "Two independent properties are measured. Calibration (ECE, reliability diagram) asks whether a stated 0.9 really means 90%. Discrimination (AURC, risk-coverage) asks whether the confidence ordering separates right answers from wrong ones. A model can have either without the other — routing needs both.",
+    ]),
+  ]));
+
+  const groupNodes = [];
+  study.perGroup.forEach((g) => { const node = groupSection(g); groupNodes.push({ g, node }); content.appendChild(node); });
+
+  if (study.comparisons.length) {
+    content.appendChild(h("div", { class: "section-head" }, [h("h2", {}, ["head to head"])]));
+    content.appendChild(h("p", { style: "font-size:.85rem;color:var(--mut);margin:0 0 14px" }, [
+      "Paired on identical inputs, so McNemar's test applies. Accuracy differences on small eval sets are usually noise — the discordant count is the number to look at.",
+    ]));
+    study.comparisons.forEach((cmp) => content.appendChild(comparisonSection(cmp)));
+  }
+
+  content.appendChild(h("div", { class: "section-head" }, [h("h2", {}, ["cost model"])]));
+  content.appendChild(costPanel(() => render()));
+
+  footer.appendChild(h("div", {}, [
+    "Calibration Lab — part of ",
+    h("b", {}, ["RepoScope"]),
+    ", an evidence-backed repository analyser that uses Jev to classify every file it processes. " +
+    "Thresholds above are fitted on the evaluation sample shown and are optimistic by construction. " +
+    "Bootstrap intervals are basic (reverse-percentile) intervals over 500 resamples, chosen because ECE is biased upward under resampling.",
+  ]));
+}
+
+function loadRecords(records, source) {
+  try {
+    state.records = records;
+    state.source = source;
+    render();
+  } catch (e) {
+    document.getElementById("content").innerHTML = "";
+    document.getElementById("content").appendChild(h("div", { class: "note bad" }, ["Could not run the study: " + e.message]));
+  }
+}
+
+function handleFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const records = parseJSONL(String(reader.result));
+      loadRecords(records, "upload:" + file.name);
+    } catch (e) {
+      document.getElementById("content").innerHTML = "";
+      document.getElementById("content").appendChild(h("div", { class: "note bad" }, ["Could not parse " + file.name + ": " + e.message]));
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ============================================================
+   10. WIRE UP
+   ============================================================ */
+
+document.getElementById("file-input").addEventListener("change", (e) => {
+  if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+document.getElementById("demo-btn").addEventListener("click", () => {
+  const raw = document.getElementById("demo-data").textContent;
+  const demo = JSON.parse(raw).map((r) => ({
+    key: r.key, question: r.question, provider: r.provider, model: r.model,
+    gold: String(r.gold), answer: r.answer, latencyMs: r.latency_ms || 0, costUsd: r.cost_usd || 0,
+  }));
+  loadRecords(demo, "demo");
+});
+
+["dragover", "dragleave", "drop"].forEach((evt) => {
+  document.body.addEventListener(evt, (e) => { e.preventDefault(); });
+});
+document.body.addEventListener("drop", (e) => {
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+render();
+})();
