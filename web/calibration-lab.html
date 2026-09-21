@@ -815,18 +815,21 @@ function groupSection(group) {
       h("div", {}, [rcFig, sliderRow, summaryP]),
     ]),
     h("p", { style: "font-size:.8rem;color:var(--mut);margin:12px 0 0" }, [
-      `That is ${pct(group.choice.savingsVsManual != null ? group.choice.savingsVsManual : 0)} — `,
+      (() => {
+        const savings = 1 - group.choice.expectedCost / (group.choice.costReviewEverything || 1);
+        const vsManual = savings >= 0
+          ? `${pct(savings)} cheaper than reviewing every file by hand`
+          : `${pct(-savings)} more expensive than reviewing every file by hand`;
+        const vsAuto = group.choice.expectedCost < group.choice.costAutomateEverything
+          ? "cheaper than automating everything with no review"
+          : "more expensive than automating everything with no review";
+        const at2Sentence = at2
+          ? `To hold errors under 2% you can automate ${at2Text}.`
+          : "Holding errors under 2% is not reachable on this sample.";
+        return `That threshold is ${vsManual}, and ${vsAuto}. ${at2Sentence} The threshold is fitted on this sample — hold out a split before shipping it.`;
+      })(),
     ]),
   ]));
-
-  // savings line, computed properly
-  const savings = 1 - group.choice.expectedCost / (group.choice.costReviewEverything || 1);
-  const savingsP = section.querySelector(".panel p:last-child");
-  savingsP.textContent =
-    `That threshold is ${pct(Math.max(0, savings))} cheaper than reviewing every file by hand, and ` +
-    `${group.choice.expectedCost < group.choice.costAutomateEverything ? "cheaper" : "more expensive"} than automating everything with no review. ` +
-    `To hold errors under 2% you can automate ${at2Text}. ` +
-    `The threshold is fitted on this sample — hold out a split before shipping it.`;
 
   section.appendChild(h("div", { class: "panel scroll" }, [
     h("h3", {}, ["bins"]),
@@ -1060,4 +1063,4 @@ render();
 })();
 </script>
 </body>
-        </html>
+</html>
