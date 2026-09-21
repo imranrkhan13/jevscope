@@ -8,9 +8,19 @@ thresholding on, and tells you where to set the threshold.
 
 ```bash
 pip install -e ".[dev]"
-python -m reposcope.calibration.demo_data datasets/demo.jsonl
-python -m reposcope.calibration.cli datasets/demo.jsonl -o reports/report.html
-pytest -q                 # 72 tests
+python -m reposcope.calibration.cli datasets/real.jsonl -o reports/report.html \
+    --a nb --b logreg --title 'Calibration Lab — real public-repo study'
+pytest -q                 # 75 tests
+```
+
+The hosted lab at [jevscope.vercel.app](https://jevscope.vercel.app) runs the
+same study in the browser: click **Use the real dataset**.
+
+To rebuild the real dataset from scratch, clone the eight public repos listed
+in `datasets/LABELING.md` into one directory and run:
+
+```bash
+python -m reposcope.calibration.collect_real --corpus /path/to/checkouts
 ```
 
 ## Why this exists
@@ -75,6 +85,24 @@ for identical items, so differences aren't confounded. Below 25 discordant
 pairs it uses the exact binomial rather than the chi-square approximation, and
 below 10 it refuses to name a winner at all. "Jev 84%, LLM 87%" on 200 items
 is usually a coin flip, and the report says so.
+
+## On the real dataset
+
+`datasets/real.jsonl` is measured, not simulated: all 181 Python files in
+three public repos (requests, httpx, starlette), labelled by hand, classified
+by two scikit-learn models trained only on five *other* public repos (flask,
+jinja, black, pytest, fastapi). Both models land at 69-70% accuracy and
+McNemar's test cannot separate them (p=0.815) - but their confidence means
+opposite things: the Naive Bayes says 0.98 on average and is right 69% of the
+time (ECE 0.299), while the logistic regression says 0.76 and is right 70% of
+the time (ECE 0.103). A threshold on the first number over-automates; a
+threshold on the second works. That gap, invisible in accuracy, is the whole
+point of the harness. Repos, commits, licences, the labelling rubric and the
+method live in `datasets/LABELING.md`; the collector is
+`reposcope/calibration/collect_real.py`.
+
+No API model was queried for this dataset, so it says nothing about Jev or
+any LLM - the providers are named as exactly what ran.
 
 ## On the demo dataset
 
