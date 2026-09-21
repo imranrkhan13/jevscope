@@ -187,10 +187,11 @@ def _question_section(s: QuestionStudy) -> str:
 
     c = s.choice
     at2 = s.coverage_at_2pct
-    at2_text = (
-        f"{at2.coverage * 100:.0f}% of files at t={at2.threshold:.2f}"
+    at2_sentence = (
+        f"To hold errors under 2% you can automate {at2.coverage * 100:.0f}% of files "
+        f"at t={at2.threshold:.2f}."
         if at2
-        else "not reachable on this sample"
+        else "Holding errors under 2% is not reachable on this sample."
     )
 
     rows = "".join(
@@ -236,7 +237,7 @@ font-weight:400">({_e(s.answer_type)}, n={s.n})</span></h2>
   <b>{c.savings_vs_manual * 100:.0f}%</b> cheaper than reviewing everything, and
   {"cheaper" if c.beats_full_automation else "<b>more expensive</b>"} than
   automating everything.<br>
-  To hold errors under 2% you can automate {at2_text}.</p>
+  {at2_sentence}</p>
   <p class="sub" style="margin:8px 0 0">The threshold is fitted on this sample.
   Hold out a split before shipping it, or expect it to underperform in
   production.</p>
