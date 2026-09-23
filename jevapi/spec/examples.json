@@ -1,0 +1,2666 @@
+{
+ "synthetic": true,
+ "note": "SYNTHETIC test data, not real extractions",
+ "examples": [
+  {
+   "field": "invoice_number",
+   "confidence": 0.716,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.753,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.79,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.827,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.827,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.827,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.901,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.938,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.938,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.975,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.975,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.765,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.802,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.802,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.839,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.839,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.839,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.839,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.839,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.876,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.876,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.913,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.913,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.95,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.987,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.987,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.74,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.74,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.814,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.814,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.851,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.851,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.851,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.851,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.888,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.888,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.925,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.925,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.925,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.962,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.826,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.863,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.9,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.937,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.937,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.974,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.727,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.764,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.838,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.875,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.875,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.875,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.875,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.912,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.912,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.949,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.949,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.986,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.986,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.986,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.665,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.665,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.702,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.739,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.776,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.85,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.85,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.924,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.961,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.961,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.751,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.751,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.788,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.825,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.825,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.862,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.862,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.862,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.862,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.862,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.899,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.899,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.899,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.973,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.973,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.763,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.763,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.763,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.763,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.837,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.837,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.874,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.911,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.911,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.911,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.948,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.948,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.985,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.985,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.664,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.664,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.775,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.775,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.812,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.812,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.849,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.849,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.849,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.849,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.849,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.849,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.886,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.886,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.96,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.96,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.676,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.713,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.713,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.861,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.935,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.725,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.762,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.762,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.799,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.799,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.799,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.799,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.836,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.836,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.91,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.947,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.947,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.947,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.984,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.663,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.737,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.737,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.737,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.774,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.774,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.811,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.848,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.848,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.885,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.959,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.712,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.749,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.749,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.823,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.86,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.897,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.934,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.934,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.934,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.971,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.971,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.971,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.724,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.724,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.724,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.761,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.761,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.798,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.798,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.872,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.872,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.872,
+   "correct": false
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.872,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.909,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.909,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.909,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.946,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.946,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.946,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.946,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.946,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.983,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.773,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.81,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.847,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.921,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.921,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.921,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.921,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.958,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.958,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.637,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.711,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.748,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.748,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.785,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.896,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.896,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.896,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.723,
+   "correct": false
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.723,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.76,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.797,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.797,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.797,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.797,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.834,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.871,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.908,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.908,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.908,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.945,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.945,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.982,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.982,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.982,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.982,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.982,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.982,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.661,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.735,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.735,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.809,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.809,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.846,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.846,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.846,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.846,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.883,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.883,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.957,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.957,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.957,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.957,
+   "correct": false
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.957,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.71,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.747,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.784,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.821,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.821,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.821,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.821,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.858,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.858,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.932,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.932,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.932,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.932,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.932,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.969,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.969,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.648,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.685,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.722,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.722,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.759,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.759,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.833,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.87,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.87,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.907,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.907,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.907,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.944,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.944,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.944,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.944,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.944,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.981,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.981,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.981,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.981,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.66,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.771,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.771,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.808,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.808,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.808,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.845,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.845,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.882,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.882,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.882,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.919,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.919,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.956,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.956,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.635,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.635,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.746,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.82,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.857,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.894,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.931,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.931,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.931,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.968,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.647,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.684,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.758,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.795,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.795,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.832,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.869,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.906,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.943,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.943,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.98,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.98,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.98,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.98,
+   "correct": false
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.98,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.696,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.733,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.77,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.807,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.807,
+   "correct": true
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.807,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.881,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.881,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.918,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.955,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.955,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.782,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.819,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.819,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.819,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.856,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.893,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.893,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.893,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.893,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.93,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.93,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.93,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.93,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.967,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.967,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.967,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.967,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.967,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.72,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.794,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.794,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.831,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.831,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.831,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.868,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.868,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.868,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.905,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.905,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.942,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.942,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.942,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.942,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.942,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.942,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.979,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.658,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.695,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.732,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.769,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.806,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.88,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.88,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.917,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.917,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.954,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.954,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.954,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.633,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.67,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.744,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.781,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.781,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.781,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.781,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.781,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.781,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.818,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.855,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.855,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.855,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.855,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.892,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.892,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.892,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.929,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.929,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.966,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.966,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.966,
+   "correct": false
+  },
+  {
+   "field": "vendor_name",
+   "confidence": 0.966,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.645,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.682,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.719,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.719,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.793,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.793,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.83,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.83,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.867,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.867,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.867,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.904,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.941,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.941,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.62,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.978,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.978,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.768,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.768,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.805,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.842,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.842,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.879,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.916,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.953,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.953,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.953,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.632,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.99,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.99,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.706,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.817,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.817,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.817,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.854,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.854,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.854,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.854,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.891,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.891,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.891,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.928,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.928,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.928,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.965,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.755,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.755,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.829,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.866,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.903,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.903,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.94,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.94,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.94,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.94,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.977,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.656,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.767,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.767,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.767,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.804,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.841,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.878,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.878,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.878,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.915,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.989,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.742,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.779,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.779,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.779,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.779,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.779,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.816,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.816,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.853,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.853,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.853,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.853,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.853,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.89,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.89,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.89,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.89,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.927,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.927,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.927,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.927,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.643,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.717,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.754,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.791,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.791,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.791,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.865,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.865,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.939,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.939,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.939,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.976,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.976,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.692,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.692,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.766,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.766,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.803,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.84,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.84,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.877,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.877,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.877,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.877,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.914,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.914,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.914,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.951,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.951,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.951,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.951,
+   "correct": false
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.951,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.951,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.63,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.988,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.988,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.667,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.704,
+   "correct": false
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.704,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.741,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.741,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.741,
+   "correct": false
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.778,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.852,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.852,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.889,
+   "correct": true
+  },
+  {
+   "field": "invoice_number",
+   "confidence": 0.926,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.926,
+   "correct": true
+  },
+  {
+   "field": "total_amount",
+   "confidence": 0.963,
+   "correct": true
+  },
+  {
+   "field": "due_date",
+   "confidence": 0.963,
+   "correct": false
+  }
+ ]
+}

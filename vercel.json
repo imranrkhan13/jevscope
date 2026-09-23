@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/web/calibration-lab.html" }
+    { "source": "/", "destination": "/web/calibration-lab.html" },
+    { "source": "/jevapi", "destination": "/web/jevapi/index.html" },
+    { "source": "/jevapi/docs", "destination": "/web/jevapi/docs.html" }
   ]
 }

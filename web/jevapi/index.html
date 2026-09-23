@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JevAPI demo - fill it, or check it?</title>
+<meta name="description" content="Upload a document. JevAPI fills the fields it can trust and flags the rest for a person.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#eef0e8;--ink:#161a15;--mut:#5b6156;--line:#c7cbbe;--panel:#f6f7f1;--teal:#2f6f62;--ochre:#a9741b;--clay:#a13f2f;--tealT:rgba(47,111,98,.10);--ochreT:rgba(169,116,27,.13)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:13.5px/1.55 "IBM Plex Mono",ui-monospace,Menlo,monospace;-webkit-font-smoothing:antialiased}
+.serif{font-family:"Newsreader",Georgia,serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font-size:34px;line-height:1.1;margin:0;font-weight:600}
+.sub{color:var(--mut);margin:6px 0 0;max-width:620px}
+nav a{color:var(--ink);margin-left:14px}
+.flag{display:inline-block;border:1px solid var(--ochre);color:var(--ochre);background:var(--ochreT);padding:2px 8px;font-size:12px;margin-top:10px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;margin-top:20px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}h1{font-size:28px}}
+.card{background:var(--panel);border:1px solid var(--line);padding:16px}
+.card h2{font-size:19px;margin:0 0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,.btn{font:inherit;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:6px 10px;cursor:pointer}
+button.on{background:var(--ink);color:var(--paper)}
+button.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+input,select,textarea{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);padding:7px 8px;width:100%}
+textarea{min-height:170px;resize:vertical;white-space:pre}
+label.small{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+.drop{border:1px dashed var(--mut);padding:14px;text-align:center;color:var(--mut);margin-top:10px}
+.field{border:1px solid var(--line);background:#fff;padding:10px 12px;margin-bottom:10px;border-left:5px solid var(--line)}
+.field.fill{border-left-color:var(--teal);background:linear-gradient(90deg,var(--tealT),#fff 60%)}
+.field.review{border-left-color:var(--ochre);background:linear-gradient(90deg,var(--ochreT),#fff 60%)}
+.field .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.field .name{font-weight:500}
+.badge{font-size:11.5px;padding:1px 7px;border:1px solid}
+.fill .badge{color:var(--teal);border-color:var(--teal)}
+.review .badge{color:var(--ochre);border-color:var(--ochre)}
+.field input{margin-top:6px}
+.field .why{color:var(--mut);font-size:12px;margin-top:6px}
+.nums{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px;flex-wrap:wrap}
+.nums b{color:var(--ink);font-weight:500}
+.summary{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.pill{padding:4px 10px;border:1px solid var(--line);background:#fff}
+.slider{margin-top:14px}
+input[type=range]{padding:0;width:100%}
+.err{color:var(--clay);margin-top:8px;white-space:pre-wrap}
+details{margin-top:12px}
+summary{cursor:pointer}
+code{background:#fff;border:1px solid var(--line);padding:0 4px}
+pre{background:#fff;border:1px solid var(--line);padding:10px;overflow:auto;font-size:12px}
+footer{margin-top:26px;color:var(--mut);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1 class="serif">Fill it, or check it?</h1>
+    <p class="sub">Upload a document. JevAPI fills the fields it can trust and flags the rest for a person, with the reason for each.</p>
+    <span class="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span>
+  </div>
+  <nav><a href="/jevapi/docs">API docs</a><a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a><a href="/">Calibration Lab</a></nav>
+</header>
+
+<div class="grid">
+  <section class="card" aria-label="Document">
+    <h2 class="serif">1. The document</h2>
+    <div class="row" id="samples" role="group" aria-label="Sample documents"></div>
+    <label class="small" for="doc">Document text</label>
+    <textarea id="doc" spellcheck="false"></textarea>
+    <div class="drop" id="drop">
+      <label for="file" style="cursor:pointer"><u>Upload your own PDF</u> (read in your browser, never uploaded)</label>
+      <input id="file" type="file" accept="application/pdf,.pdf,.txt" style="display:none">
+    </div>
+    <details id="keybox">
+      <summary>Use your own AI key for your own PDFs</summary>
+      <p class="sub">Your key goes with each request to the AI company you pick, through JevAPI's free endpoint. JevAPI's code does not save or log it, and this page forgets it when you close the tab. For full control, run the open-source package yourself.</p>
+      <div class="row">
+        <select id="provider" style="width:auto"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="gemini">Google Gemini</option></select>
+        <input id="model" placeholder="model id, e.g. from your provider's docs" style="flex:1;min-width:180px">
+      </div>
+      <label class="small" for="key">API key</label>
+      <input id="key" type="password" autocomplete="off" placeholder="sk-...">
+      <div class="row" style="margin-top:10px"><button class="primary" id="run">Extract with my key</button></div>
+    </details>
+    <div class="err" id="err" role="alert"></div>
+  </section>
+
+  <section class="card" aria-label="Form">
+    <h2 class="serif">2. The form</h2>
+    <div class="summary" id="summary"></div>
+    <form id="form" onsubmit="return false"></form>
+    <div class="slider">
+      <label class="small" for="cost">A wrong auto-fill costs as much as <b id="costv">20</b> human checks</label>
+      <input id="cost" type="range" min="2" max="100" value="20">
+      <div class="nums"><span>Bar to auto-fill: <b id="bar">95%</b></span><span>Calibrated on <b id="ncal">0</b> labelled examples (synthetic)</span></div>
+    </div>
+    <details>
+      <summary>See the API call</summary>
+      <pre id="curl"></pre>
+    </details>
+  </section>
+</div>
+
+<footer>
+  JevAPI is free and open source (MIT). Run it yourself with <code>npm i jevapi</code> or <code>pip install jevapi</code> once published, or call the free hosted API. Part of <a href="https://github.com/imranrkhan13/jevscope">JevScope</a>.
+</footer>
+</div>
+
+<script type="module">
+import { calibrate, decideAll, costThreshold } from "/jevapi/js/src/index.js";
+import { SAMPLES, DEFAULT_FIELDS } from "/web/jevapi/samples.js";
+
+const $ = (id) => document.getElementById(id);
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20 };
+
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x) => (x == null ? "-" : Math.round(x * 100) + "%");
+
+async function loadProfile() {
+  const r = await fetch("/jevapi/spec/examples.json");
+  const { examples } = await r.json();
+  state.examples = examples;
+  $("ncal").textContent = examples.length;
+  refit();
+}
+function refit() {
+  state.profile = calibrate(state.examples, { costError: state.cost });
+  render();
+}
+
+function render() {
+  const { decisions, fill, review } = decideAll(state.profile, state.extracted);
+  $("summary").innerHTML = `<span class="pill"><b style="color:var(--teal)">${fill}</b> filled automatically</span><span class="pill"><b style="color:var(--ochre)">${review}</b> need a person</span>`;
+  const labels = Object.fromEntries(DEFAULT_FIELDS.map((f) => [f.name, f.label]));
+  $("form").innerHTML = decisions
+    .map((d, i) => {
+      const ex = state.extracted[i];
+      const val = d.action === "fill" ? ex.value ?? "" : "";
+      const hint = d.action === "review" && ex.value != null ? `Suggested: ${esc(ex.value)}` : "";
+      return `<div class="field ${d.action}">
+        <div class="top"><label class="name" for="f${i}">${esc(labels[d.field] || d.field)}</label><span class="badge">${d.action === "fill" ? "Filled" : "Check this"}</span></div>
+        <input id="f${i}" value="${esc(val)}" placeholder="${hint}">
+        <div class="nums"><span>Model said <b>${pct(ex.confidence)}</b></span><span>Measured <b>${pct(d.confidence)}</b></span><span>Bar <b>${pct(d.threshold)}</b></span></div>
+        <div class="why">${esc(d.reason)}</div>
+      </div>`;
+    })
+    .join("");
+  $("bar").textContent = pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
+  $("curl").textContent = `curl -X POST https://jevscope.vercel.app/api/v1/decide \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ items: state.extracted.slice(0, 2), options: { costError: state.cost } })}'\n\n# add "profile": <from /api/v1/calibrate> to use your own calibration`;
+}
+
+function pickSample(s) {
+  state.sample = s;
+  state.extracted = s.extracted;
+  $("doc").value = s.text;
+  $("err").textContent = "";
+  document.querySelectorAll("#samples button").forEach((b) => b.classList.toggle("on", b.dataset.id === s.id));
+  render();
+}
+
+$("samples").innerHTML = SAMPLES.map((s) => `<button type="button" data-id="${s.id}">${esc(s.label)}</button>`).join("");
+$("samples").addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (b) pickSample(SAMPLES.find((s) => s.id === b.dataset.id));
+});
+$("cost").addEventListener("input", (e) => {
+  state.cost = Number(e.target.value);
+  $("costv").textContent = state.cost;
+  refit();
+});
+
+async function readPdf(file) {
+  if (/\.txt$/i.test(file.name)) return file.text();
+  const pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const pages = [];
+  for (let p = 1; p <= Math.min(doc.numPages, 20); p++) {
+    const c = await (await doc.getPage(p)).getTextContent();
+    pages.push(c.items.map((it) => it.str + (it.hasEOL ? "\n" : " ")).join(""));
+  }
+  return pages.join("\n\n");
+}
+$("file").addEventListener("change", async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  $("err").textContent = "Reading " + f.name + "...";
+  try {
+    const text = await readPdf(f);
+    $("doc").value = text.slice(0, 60000);
+    document.querySelectorAll("#samples button").forEach((b) => b.classList.remove("on"));
+    state.extracted = DEFAULT_FIELDS.map((f) => ({ field: f.name, value: null, confidence: null }));
+    render();
+    $("keybox").open = true;
+    $("err").textContent = text.trim() ? "Read. Add your AI key below to pull the fields out." : "No text found. This may be a scanned image; JevAPI needs text (OCR is not built in yet).";
+  } catch (x) {
+    $("err").textContent = "Could not read that file: " + x.message;
+  }
+});
+
+$("run").addEventListener("click", async () => {
+  $("err").textContent = "Asking your AI provider...";
+  try {
+    const r = await fetch("/api/v1/extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Provider-Key": $("key").value },
+      body: JSON.stringify({ provider: $("provider").value, model: $("model").value.trim(), text: $("doc").value, fields: DEFAULT_FIELDS.map(({ name, description, type }) => ({ name, description, type })) }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error?.message || "Request failed");
+    state.extracted = j.fields;
+    render();
+    $("err").textContent = "";
+  } catch (x) {
+    $("err").textContent = x.message;
+  }
+});
+
+pickSample(SAMPLES[0]);
+loadProfile();
+</script>
+</body>
+</html>

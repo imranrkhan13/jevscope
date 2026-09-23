@@ -1,0 +1,15 @@
+{
+  "name": "jevapi",
+  "version": "0.1.0",
+  "description": "Decide, field by field, whether an extracted value is safe to auto-fill or needs a human. Calibrated on your own examples. Zero dependencies.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": { ".": { "types": "./src/index.d.ts", "default": "./src/index.js" } },
+  "files": ["src", "README.md", "LICENSE"],
+  "scripts": { "test": "node --test test/*.test.js" },
+  "keywords": ["calibration", "confidence", "document extraction", "form filling", "human in the loop", "llm"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/imranrkhan13/jevscope" },
+  "engines": { "node": ">=18" }
+}

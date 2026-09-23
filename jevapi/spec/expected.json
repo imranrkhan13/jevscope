@@ -1,0 +1,980 @@
+{
+ "options": {
+  "costError": 20,
+  "costReview": 1,
+  "fields": {
+   "total_amount": {
+    "costError": 50
+   },
+   "due_date": {
+    "maxRisk": 0.1
+   }
+  }
+ },
+ "profile": {
+  "version": 1,
+  "n": 532,
+  "defaults": {
+   "costError": 20,
+   "costReview": 1
+  },
+  "pooled": [
+   {
+    "lo": 0.62,
+    "hi": 0.635,
+    "k": 3,
+    "n": 6,
+    "p": 0.5,
+    "lower": 0.268205
+   },
+   {
+    "lo": 0.637,
+    "hi": 0.727,
+    "k": 26,
+    "n": 47,
+    "p": 0.55102,
+    "lower": 0.46002
+   },
+   {
+    "lo": 0.732,
+    "hi": 0.825,
+    "k": 103,
+    "n": 131,
+    "p": 0.781955,
+    "lower": 0.736959
+   },
+   {
+    "lo": 0.826,
+    "hi": 0.948,
+    "k": 219,
+    "n": 258,
+    "p": 0.846154,
+    "lower": 0.818055
+   },
+   {
+    "lo": 0.949,
+    "hi": 0.971,
+    "k": 43,
+    "n": 50,
+    "p": 0.846154,
+    "lower": 0.818055
+   },
+   {
+    "lo": 0.973,
+    "hi": 0.982,
+    "k": 24,
+    "n": 26,
+    "p": 0.892857,
+    "lower": 0.828288
+   },
+   {
+    "lo": 0.983,
+    "hi": 0.99,
+    "k": 14,
+    "n": 14,
+    "p": 0.9375,
+    "lower": 0.894998
+   }
+  ],
+  "fields": {
+   "due_date": {
+    "n": 120,
+    "accuracy": 0.658333,
+    "own": true,
+    "blocks": [
+     {
+      "lo": 0.648,
+      "hi": 0.648,
+      "k": 0,
+      "n": 1,
+      "p": 0.333333,
+      "lower": 0
+     },
+     {
+      "lo": 0.664,
+      "hi": 0.706,
+      "k": 2,
+      "n": 8,
+      "p": 0.333333,
+      "lower": 0.108867
+     },
+     {
+      "lo": 0.71,
+      "hi": 0.762,
+      "k": 5,
+      "n": 12,
+      "p": 0.428571,
+      "lower": 0.255342
+     },
+     {
+      "lo": 0.763,
+      "hi": 0.781,
+      "k": 3,
+      "n": 5,
+      "p": 0.571429,
+      "lower": 0.330413
+     },
+     {
+      "lo": 0.784,
+      "hi": 0.948,
+      "k": 54,
+      "n": 75,
+      "p": 0.714286,
+      "lower": 0.649386
+     },
+     {
+      "lo": 0.953,
+      "hi": 0.966,
+      "k": 6,
+      "n": 8,
+      "p": 0.714286,
+      "lower": 0.649386
+     },
+     {
+      "lo": 0.967,
+      "hi": 0.982,
+      "k": 7,
+      "n": 9,
+      "p": 0.727273,
+      "lower": 0.649386
+     },
+     {
+      "lo": 0.986,
+      "hi": 0.99,
+      "k": 2,
+      "n": 2,
+      "p": 0.75,
+      "lower": 0.649386
+     }
+    ],
+    "options": {
+     "maxRisk": 0.1
+    }
+   },
+   "invoice_number": {
+    "n": 200,
+    "accuracy": 0.93,
+    "own": true,
+    "blocks": [
+     {
+      "lo": 0.62,
+      "hi": 0.633,
+      "k": 2,
+      "n": 3,
+      "p": 0.6,
+      "lower": 0.321172
+     },
+     {
+      "lo": 0.635,
+      "hi": 0.737,
+      "k": 12,
+      "n": 16,
+      "p": 0.722222,
+      "lower": 0.592569
+     },
+     {
+      "lo": 0.739,
+      "hi": 0.751,
+      "k": 8,
+      "n": 9,
+      "p": 0.818182,
+      "lower": 0.691593
+     },
+     {
+      "lo": 0.753,
+      "hi": 0.797,
+      "k": 19,
+      "n": 21,
+      "p": 0.869565,
+      "lower": 0.791063
+     },
+     {
+      "lo": 0.799,
+      "hi": 0.812,
+      "k": 10,
+      "n": 11,
+      "p": 0.869565,
+      "lower": 0.791063
+     },
+     {
+      "lo": 0.819,
+      "hi": 0.917,
+      "k": 75,
+      "n": 79,
+      "p": 0.938272,
+      "lower": 0.907614
+     },
+     {
+      "lo": 0.921,
+      "hi": 0.947,
+      "k": 25,
+      "n": 26,
+      "p": 0.938272,
+      "lower": 0.907614
+     },
+     {
+      "lo": 0.948,
+      "hi": 0.988,
+      "k": 35,
+      "n": 35,
+      "p": 0.972973,
+      "lower": 0.955175
+     }
+    ],
+    "options": {}
+   },
+   "total_amount": {
+    "n": 200,
+    "accuracy": 0.775,
+    "own": true,
+    "blocks": [
+     {
+      "lo": 0.632,
+      "hi": 0.635,
+      "k": 0,
+      "n": 2,
+      "p": 0.25,
+      "lower": 0
+     },
+     {
+      "lo": 0.637,
+      "hi": 0.645,
+      "k": 1,
+      "n": 2,
+      "p": 0.5,
+      "lower": 0.164245
+     },
+     {
+      "lo": 0.656,
+      "hi": 0.724,
+      "k": 8,
+      "n": 14,
+      "p": 0.5625,
+      "lower": 0.403395
+     },
+     {
+      "lo": 0.732,
+      "hi": 0.825,
+      "k": 43,
+      "n": 56,
+      "p": 0.758621,
+      "lower": 0.688548
+     },
+     {
+      "lo": 0.826,
+      "hi": 0.971,
+      "k": 86,
+      "n": 109,
+      "p": 0.783784,
+      "lower": 0.734802
+     },
+     {
+      "lo": 0.973,
+      "hi": 0.99,
+      "k": 17,
+      "n": 17,
+      "p": 0.947368,
+      "lower": 0.911895
+     }
+    ],
+    "options": {
+     "costError": 50
+    }
+   },
+   "vendor_name": {
+    "n": 12,
+    "accuracy": 1,
+    "own": false,
+    "blocks": [],
+    "options": {}
+   }
+  }
+ },
+ "probes": [
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.5
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.61
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.8
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.9
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.95
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 0.99
+  },
+  {
+   "field": "invoice_number",
+   "value": "v",
+   "confidence": 1
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.5
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.61
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.8
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.9
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.95
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 0.99
+  },
+  {
+   "field": "total_amount",
+   "value": "v",
+   "confidence": 1
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.5
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.61
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.8
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.9
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.95
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 0.99
+  },
+  {
+   "field": "due_date",
+   "value": "v",
+   "confidence": 1
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.5
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.61
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.8
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.9
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.95
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 0.99
+  },
+  {
+   "field": "vendor_name",
+   "value": "v",
+   "confidence": 1
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.5
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.61
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.8
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.9
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.95
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 0.99
+  },
+  {
+   "field": "unknown_field",
+   "value": "v",
+   "confidence": 1
+  },
+  {
+   "field": "total_amount",
+   "value": "",
+   "confidence": 0.99
+  },
+  {
+   "field": "total_amount",
+   "value": "10",
+   "confidence": null
+  }
+ ],
+ "decisions": [
+  {
+   "field": "invoice_number",
+   "action": "review",
+   "confidence": 0.6,
+   "lower": 0.321172,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 0%; measured on this field's 200 examples, values like this are right about 60% of the time (at least 32%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "invoice_number",
+   "action": "review",
+   "confidence": 0.6,
+   "lower": 0.321172,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 50%; measured on this field's 200 examples, values like this are right about 60% of the time (at least 32%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "invoice_number",
+   "action": "review",
+   "confidence": 0.6,
+   "lower": 0.321172,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 61%; measured on this field's 200 examples, values like this are right about 60% of the time (at least 32%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "invoice_number",
+   "action": "review",
+   "confidence": 0.869565,
+   "lower": 0.791063,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 80%; measured on this field's 200 examples, values like this are right about 87% of the time (at least 79%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "invoice_number",
+   "action": "review",
+   "confidence": 0.938272,
+   "lower": 0.907614,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 90%; measured on this field's 200 examples, values like this are right about 94% of the time (at least 91%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "invoice_number",
+   "action": "fill",
+   "confidence": 0.972973,
+   "lower": 0.955175,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 95%; measured on this field's 200 examples, values like this are right about 97% of the time (at least 96%). Clears the 95% bar."
+  },
+  {
+   "field": "invoice_number",
+   "action": "fill",
+   "confidence": 0.972973,
+   "lower": 0.955175,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 99%; measured on this field's 200 examples, values like this are right about 97% of the time (at least 96%). Clears the 95% bar."
+  },
+  {
+   "field": "invoice_number",
+   "action": "fill",
+   "confidence": 0.972973,
+   "lower": 0.955175,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 100%; measured on this field's 200 examples, values like this are right about 97% of the time (at least 96%). Clears the 95% bar."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.25,
+   "lower": 0,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 0%; measured on this field's 200 examples, values like this are right about 25% of the time (at least 0%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.25,
+   "lower": 0,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 50%; measured on this field's 200 examples, values like this are right about 25% of the time (at least 0%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.25,
+   "lower": 0,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 61%; measured on this field's 200 examples, values like this are right about 25% of the time (at least 0%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.758621,
+   "lower": 0.688548,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 80%; measured on this field's 200 examples, values like this are right about 76% of the time (at least 69%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.783784,
+   "lower": 0.734802,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 90%; measured on this field's 200 examples, values like this are right about 78% of the time (at least 73%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.783784,
+   "lower": 0.734802,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 95%; measured on this field's 200 examples, values like this are right about 78% of the time (at least 73%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.947368,
+   "lower": 0.911895,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 99%; measured on this field's 200 examples, values like this are right about 95% of the time (at least 91%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "action": "review",
+   "confidence": 0.947368,
+   "lower": 0.911895,
+   "threshold": 0.98,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 100%; measured on this field's 200 examples, values like this are right about 95% of the time (at least 91%). Below the 98% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.333333,
+   "lower": 0,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 0%; measured on this field's 120 examples, values like this are right about 33% of the time (at least 0%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.333333,
+   "lower": 0,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 50%; measured on this field's 120 examples, values like this are right about 33% of the time (at least 0%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.333333,
+   "lower": 0,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 61%; measured on this field's 120 examples, values like this are right about 33% of the time (at least 0%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.714286,
+   "lower": 0.649386,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 80%; measured on this field's 120 examples, values like this are right about 71% of the time (at least 65%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.714286,
+   "lower": 0.649386,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 90%; measured on this field's 120 examples, values like this are right about 71% of the time (at least 65%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.714286,
+   "lower": 0.649386,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 95%; measured on this field's 120 examples, values like this are right about 71% of the time (at least 65%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.75,
+   "lower": 0.649386,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 99%; measured on this field's 120 examples, values like this are right about 75% of the time (at least 65%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "due_date",
+   "action": "review",
+   "confidence": 0.75,
+   "lower": 0.649386,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "field",
+   "reason": "Stated 100%; measured on this field's 120 examples, values like this are right about 75% of the time (at least 65%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 0%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 50%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 61%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.781955,
+   "lower": 0.736959,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 80%; measured on all 532 examples (this field has too few of its own), values like this are right about 78% of the time (at least 74%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.846154,
+   "lower": 0.818055,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 90%; measured on all 532 examples (this field has too few of its own), values like this are right about 85% of the time (at least 82%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.846154,
+   "lower": 0.818055,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 95%; measured on all 532 examples (this field has too few of its own), values like this are right about 85% of the time (at least 82%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.9375,
+   "lower": 0.894998,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 99%; measured on all 532 examples (this field has too few of its own), values like this are right about 94% of the time (at least 89%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "vendor_name",
+   "action": "review",
+   "confidence": 0.9375,
+   "lower": 0.894998,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 100%; measured on all 532 examples (this field has too few of its own), values like this are right about 94% of the time (at least 89%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 0%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 50%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.5,
+   "lower": 0.268205,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 61%; measured on all 532 examples (this field has too few of its own), values like this are right about 50% of the time (at least 27%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.781955,
+   "lower": 0.736959,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 80%; measured on all 532 examples (this field has too few of its own), values like this are right about 78% of the time (at least 74%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.846154,
+   "lower": 0.818055,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 90%; measured on all 532 examples (this field has too few of its own), values like this are right about 85% of the time (at least 82%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.846154,
+   "lower": 0.818055,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 95%; measured on all 532 examples (this field has too few of its own), values like this are right about 85% of the time (at least 82%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.9375,
+   "lower": 0.894998,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 99%; measured on all 532 examples (this field has too few of its own), values like this are right about 94% of the time (at least 89%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "unknown_field",
+   "action": "review",
+   "confidence": 0.9375,
+   "lower": 0.894998,
+   "threshold": 0.95,
+   "calibrated": true,
+   "source": "pooled",
+   "reason": "Stated 100%; measured on all 532 examples (this field has too few of its own), values like this are right about 94% of the time (at least 89%). Below the 95% bar, so a person should check it."
+  },
+  {
+   "field": "total_amount",
+   "threshold": 0.98,
+   "calibrated": false,
+   "confidence": null,
+   "lower": null,
+   "action": "review",
+   "reason": "No value was extracted."
+  },
+  {
+   "field": "total_amount",
+   "threshold": 0.98,
+   "calibrated": false,
+   "confidence": null,
+   "lower": null,
+   "action": "review",
+   "reason": "The extractor gave no usable confidence."
+  }
+ ],
+ "evaluation": {
+  "k": 5,
+  "overall": {
+   "n": 532,
+   "accuracy": 0.81203,
+   "coverage": 0.033835,
+   "autoErrorRate": 0.055556,
+   "autoErrors": 1,
+   "eceRaw": 0.078273,
+   "eceCalibrated": 0.0405,
+   "savingsVsManual": -0.003759
+  },
+  "fields": {
+   "due_date": {
+    "n": 120,
+    "accuracy": 0.658333,
+    "coverage": 0,
+    "autoErrorRate": 0,
+    "autoErrors": 0,
+    "eceRaw": 0.194008,
+    "eceCalibrated": 0.166763,
+    "savingsVsManual": 0
+   },
+   "invoice_number": {
+    "n": 200,
+    "accuracy": 0.93,
+    "coverage": 0.09,
+    "autoErrorRate": 0.055556,
+    "autoErrors": 1,
+    "eceRaw": 0.07137,
+    "eceCalibrated": 0.077611,
+    "savingsVsManual": -0.01
+   },
+   "total_amount": {
+    "n": 200,
+    "accuracy": 0.775,
+    "coverage": 0,
+    "autoErrorRate": 0,
+    "autoErrors": 0,
+    "eceRaw": 0.11312,
+    "eceCalibrated": 0.06439,
+    "savingsVsManual": 0
+   },
+   "vendor_name": {
+    "n": 12,
+    "accuracy": 1,
+    "coverage": 0,
+    "autoErrorRate": 0,
+    "autoErrors": 0,
+    "eceRaw": 0.117,
+    "eceCalibrated": 0.191914,
+    "savingsVsManual": 0
+   }
+  }
+ }
+}
