@@ -54,3 +54,21 @@ export function applyIsotonic(blocks: Block[], x: number, key?: "p" | "lower"): 
 export function ece(confidences: number[], correct: boolean[], nBins?: number): number;
 export function costThreshold(o: { costError: number; costReview: number; reviewAccuracy: number }): number;
 export function wilsonLower(k: number, n: number, z?: number): number;
+
+// ---------- Jev (TypeSafe's decision model) ----------
+export type JevProvider = "typesafe" | "venice" | "openrouter";
+export const JEV_PROVIDERS: Record<JevProvider, { url: string; model: string }>;
+export const NOT_STATED: "not_stated";
+export const MAX_OPTIONS: number;
+export const MAX_DISCOVERED: number;
+export interface JevAnswer { type: "noul" | "choice" | "score"; noul?: number; choice?: string; score?: number; confidence?: number; probabilities?: Record<string, number>; legend?: Record<string, string> }
+export interface Normalized { answerType: "noul" | "choice" | "score"; prediction: string; certainty: number; reportedConfidence: number | null; distributionCertainty: number | null; raw: JevAnswer }
+export function normalize(answer: JevAnswer): Normalized;
+export function correctnessProbability(norm: Normalized): number;
+export interface JevField { name: string; label?: string; description?: string; value?: string | number | boolean | null; options?: string[] }
+export function discoverFields(text: string, limit?: number): { name: string; label: string; value: string }[];
+export function buildQuestions(fields: JevField[]): Record<string, object>;
+export function answersToItems(fields: JevField[], answers: Record<string, JevAnswer>): (Item & { label?: string; jev: object | null })[];
+export class JevError extends Error { status?: number }
+export function askJev(o: { state: unknown; questions: Record<string, object>; key: string; provider?: JevProvider; model?: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<{ answers?: Record<string, JevAnswer>; usage?: object; model?: string }>;
+export function checkFields(o: { document: string; fields?: JevField[] | null; key: string; provider?: JevProvider; model?: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<{ items: (Item & { label?: string; jev: object | null })[]; usage: object | null; model: string | null }>;

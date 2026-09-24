@@ -87,6 +87,12 @@ footer{margin-top:26px;color:var(--mut);font-size:12px;border-top:1px solid var(
       <input id="key" type="password" autocomplete="off" placeholder="sk-...">
       <div class="row" style="margin-top:10px"><button class="primary" id="run">Extract with my key</button></div>
     </details>
+    <details id="jevbox">
+      <summary>Check every field with Jev (your TypeSafe key)</summary>
+      <p class="small">Jev is TypeSafe's decision model. It reads the document and answers, per field, "does the document really say this?" with a probability. Its answer replaces the extractor's own confidence. Your key goes to this site's API for one request and our code never stores it. Get a key at <a href="https://docs.typesafe.ai/introduction/quickstart">TypeSafe</a>.</p>
+      <input id="jevkey" type="password" autocomplete="off" placeholder="TypeSafe API key">
+      <div class="row" style="margin-top:10px"><button class="primary" id="jevrun">Check these fields with Jev</button><button id="jevall" type="button">Find every field, then check with Jev</button></div>
+    </details>
     <div class="err" id="err" role="alert"></div>
   </section>
 
@@ -116,7 +122,7 @@ import { calibrate, decideAll, costThreshold } from "/jevapi/js/src/index.js";
 import { SAMPLES, DEFAULT_FIELDS } from "/web/jevapi/samples.js";
 
 const $ = (id) => document.getElementById(id);
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20 };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null };
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const pct = (x) => (x == null ? "-" : Math.round(x * 100) + "%");
@@ -134,7 +140,9 @@ function refit() {
 }
 
 function render() {
-  const { decisions, fill, review } = decideAll(state.profile, state.extracted);
+  // The sample profile was measured on a simulated extractor, not on Jev, so Jev's numbers are shown raw.
+  const byJev = state.judge === "jev";
+  const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
   $("summary").innerHTML = `<span class="pill"><b style="color:var(--teal)">${fill}</b> filled automatically</span><span class="pill"><b style="color:var(--ochre)">${review}</b> need a person</span>`;
   const labels = Object.fromEntries(DEFAULT_FIELDS.map((f) => [f.name, f.label]));
   $("form").innerHTML = decisions
@@ -143,9 +151,9 @@ function render() {
       const val = d.action === "fill" ? ex.value ?? "" : "";
       const hint = d.action === "review" && ex.value != null ? `Suggested: ${esc(ex.value)}` : "";
       return `<div class="field ${d.action}">
-        <div class="top"><label class="name" for="f${i}">${esc(labels[d.field] || d.field)}</label><span class="badge">${d.action === "fill" ? "Filled" : "Check this"}</span></div>
+        <div class="top"><label class="name" for="f${i}">${esc(labels[d.field] || ex.label || d.field)}</label><span class="badge">${d.action === "fill" ? "Filled" : "Check this"}</span></div>
         <input id="f${i}" value="${esc(val)}" placeholder="${hint}">
-        <div class="nums"><span>Model said <b>${pct(ex.confidence)}</b></span><span>Measured <b>${pct(d.confidence)}</b></span><span>Bar <b>${pct(d.threshold)}</b></span></div>
+        <div class="nums">${byJev ? `<span>Jev said <b>${pct(ex.confidence)}</b></span>${ex.aiConfidence != null ? `<span>Extractor said <b>${pct(ex.aiConfidence)}</b></span>` : ""}` : `<span>Model said <b>${pct(ex.confidence)}</b></span><span>Measured <b>${pct(d.confidence)}</b></span>`}<span>Bar <b>${pct(d.threshold)}</b></span></div>
         <div class="why">${esc(d.reason)}</div>
       </div>`;
     })
@@ -157,6 +165,7 @@ function render() {
 function pickSample(s) {
   state.sample = s;
   state.extracted = s.extracted;
+  state.judge = null;
   $("doc").value = s.text;
   $("err").textContent = "";
   document.querySelectorAll("#samples button").forEach((b) => b.classList.toggle("on", b.dataset.id === s.id));
@@ -214,12 +223,35 @@ $("run").addEventListener("click", async () => {
     const j = await r.json();
     if (!r.ok) throw new Error(j.error?.message || "Request failed");
     state.extracted = j.fields;
+    state.judge = null;
     render();
     $("err").textContent = "";
   } catch (x) {
     $("err").textContent = x.message;
   }
 });
+
+async function askJev(discover) {
+  $("err").textContent = discover ? "Finding every field, then asking Jev..." : "Asking Jev...";
+  try {
+    const fields = discover ? undefined : state.extracted.map((x) => ({ name: x.field, value: x.value, description: (DEFAULT_FIELDS.find((f) => f.name === x.field) || {}).description }));
+    const r = await fetch("/api/v1/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Jev-Key": $("jevkey").value },
+      body: JSON.stringify({ text: $("doc").value, fields, options: { costError: state.cost } }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error?.message || "Request failed");
+    state.extracted = discover ? j.fields : j.fields.map((x, i) => ({ ...x, aiConfidence: state.extracted[i].aiConfidence ?? state.extracted[i].confidence }));
+    state.judge = "jev";
+    render();
+    $("err").textContent = `Checked by ${j.jevModel || "Jev"}${discover ? `, ${j.fields.length} fields found` : ""}. These are Jev's raw probabilities; calibrate them on your own labelled documents before trusting the bar.`;
+  } catch (x) {
+    $("err").textContent = x.message;
+  }
+}
+$("jevrun").addEventListener("click", () => askJev(false));
+$("jevall").addEventListener("click", () => askJev(true));
 
 pickSample(SAMPLES[0]);
 loadProfile();

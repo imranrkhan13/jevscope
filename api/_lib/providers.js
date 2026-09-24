@@ -3,6 +3,18 @@
 export const PROVIDERS = ["openai", "anthropic", "gemini"];
 
 export function buildPrompt(text, fields) {
+  if (!fields) {
+    return [
+      "Extract every field in the document below: every labelled value, name, id, date, amount, address and party.",
+      "Use short snake_case names (like invoice_number, total_amount, vendor_name). Do not invent fields that are not in the document.",
+      "",
+      'Reply with JSON only, shaped like {"fields": {"<name>": {"value": <value>, "confidence": <number 0-1>}}}.',
+      "confidence is your probability that the value is exactly right.",
+      "",
+      "DOCUMENT:",
+      text,
+    ].join("\n");
+  }
   const list = fields
     .map((f) => `- ${f.name}${f.type ? ` (${f.type})` : ""}${f.description ? `: ${f.description}` : ""}`)
     .join("\n");
@@ -101,6 +113,10 @@ export function parseExtraction(reply, fields) {
     }
   }
   const got = (obj && typeof obj.fields === "object" && obj.fields) || obj || {};
+  if (!fields) {
+    // Discovery: keep whatever the model found, with safe names, at most 50.
+    fields = Object.keys(got).filter((k) => /^[\w.\- ]{1,60}$/.test(k)).slice(0, 50).map((name) => ({ name }));
+  }
   return fields.map((f) => {
     const v = got[f.name];
     if (v && typeof v === "object" && !Array.isArray(v) && ("value" in v || "confidence" in v)) {

@@ -42,7 +42,7 @@ export function send(res, status, body, extraHeaders = {}) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Provider-Key");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Provider-Key, X-Jev-Key");
   res.setHeader("Cache-Control", "no-store");
   for (const [k, v] of Object.entries(extraHeaders)) res.setHeader(k, String(v));
   res.end(JSON.stringify(body));

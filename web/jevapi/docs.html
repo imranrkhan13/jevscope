@@ -53,6 +53,15 @@ a{color:#2f6f62}
        "fields":[{"name":"invoice_number"},{"name":"total_amount","type":"number"}]}'</pre>
 <p class="mut">Providers: <code>openai</code>, <code>anthropic</code>, <code>gemini</code>. The model id is always yours to choose. JevAPI never pays for AI calls. Your key passes through this server for one request; JevAPI's code never saves or logs it.</p>
 
+<h2>4. Check with Jev (your TypeSafe key)</h2>
+<p>Jev is <a href="https://docs.typesafe.ai">TypeSafe's</a> decision model. It doesn't write text, it judges. For each field you send a candidate value (from any extractor) or a list of options, and Jev returns the probability that the document really says it. That probability becomes the field's confidence. Put your key in <code>X-Jev-Key</code>. One request per document.</p>
+<pre>curl -X POST https://jevscope.vercel.app/api/v1/verify \
+  -H 'Content-Type: application/json' -H 'X-Jev-Key: YOUR_TYPESAFE_KEY' \
+  -d '{"text":"INVOICE INV-2231 ...",
+       "fields":[{"name":"invoice_number","value":"INV-2231"},
+                 {"name":"currency","options":["INR","USD"]}]}'</pre>
+<p class="mut">No field list? Leave out <code>fields</code>. <code>/verify</code> then finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each. <code>/extract</code> without <code>fields</code> asks your AI for every field it can find. Add <code>"judge":"jev"</code> (plus <code>X-Jev-Key</code>) to an extract call so Jev checks what your AI read. Jev's numbers are raw until you calibrate them on your own labelled documents with <code>/api/v1/calibrate</code>.</p>
+
 <h2>Options</h2>
 <table>
 <tr><th>Option</th><th>Default</th><th>Meaning</th></tr>
@@ -68,7 +77,7 @@ a{color:#2f6f62}
 <h2>Limits (free)</h2>
 <table>
 <tr><td>calibrate + decide</td><td>60 requests / minute per IP</td></tr>
-<tr><td>extract</td><td>10 requests / minute per IP</td></tr>
+<tr><td>extract, verify</td><td>10 requests / minute per IP</td></tr>
 <tr><td>Body</td><td>1 MB; 5,000 examples; 200 items; 50 fields; 60,000 characters of text</td></tr>
 </table>
 <p class="mut">Limits are per server and best effort. The whole service runs on a free hosting plan with monthly caps, so it can pause if it gets very busy. For anything serious, run the package yourself. Errors come back as <code>{"error":{"code","message"}}</code> with a normal HTTP status (400, 405, 413, 429 with Retry-After, 502 for provider errors, 504 for timeouts).</p>

@@ -10,6 +10,8 @@ in Python and decide in the browser (or the other way round). Option keys use th
 same camelCase names in both languages for that reason.
 """
 
+from .certainty import correctness_probability, normalize
+from .jev import JEV_PROVIDERS, JevError, answers_to_items, ask_jev, build_questions, check_fields, discover_fields
 from .core import (
     PROFILE_VERSION,
     apply_isotonic,
@@ -25,6 +27,15 @@ from .core import (
 )
 
 __all__ = [
+    "JEV_PROVIDERS",
+    "JevError",
+    "answers_to_items",
+    "ask_jev",
+    "build_questions",
+    "check_fields",
+    "correctness_probability",
+    "discover_fields",
+    "normalize",
     "PROFILE_VERSION",
     "apply_isotonic",
     "calibrate",

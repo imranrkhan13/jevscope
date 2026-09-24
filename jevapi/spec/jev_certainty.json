@@ -1,0 +1,226 @@
+{
+ "source": "reposcope/calibration/certainty.py",
+ "cases": [
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 0.99
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "true",
+    "certainty": 0.98,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.9192068641040888,
+    "correctness": 0.99
+   }
+  },
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 0.93
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "true",
+    "certainty": 0.8600000000000001,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.634076349099777,
+    "correctness": 0.93
+   }
+  },
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 0.5
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "true",
+    "certainty": 0.0,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.0,
+    "correctness": 0.5
+   }
+  },
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "false",
+    "certainty": 0.9,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.7136030428840439,
+    "correctness": 0.95
+   }
+  },
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 0.0
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "false",
+    "certainty": 1.0,
+    "reportedConfidence": null,
+    "distributionCertainty": 1.0,
+    "correctness": 1.0
+   }
+  },
+  {
+   "answer": {
+    "type": "noul",
+    "noul": 1.0
+   },
+   "expected": {
+    "answerType": "noul",
+    "prediction": "true",
+    "certainty": 1.0,
+    "reportedConfidence": null,
+    "distributionCertainty": 1.0,
+    "correctness": 1.0
+   }
+  },
+  {
+   "answer": {
+    "type": "choice",
+    "choice": "returns",
+    "confidence": 1.0,
+    "probabilities": {
+     "shipping": 0.0,
+     "returns": 1.0,
+     "billing": 0.0
+    }
+   },
+   "expected": {
+    "answerType": "choice",
+    "prediction": "returns",
+    "certainty": 1.0,
+    "reportedConfidence": 1.0,
+    "distributionCertainty": 1.0,
+    "correctness": 1.0
+   }
+  },
+  {
+   "answer": {
+    "type": "choice",
+    "choice": "returns",
+    "confidence": 0.42,
+    "probabilities": {
+     "returns": 0.55,
+     "shipping": 0.3,
+     "billing": 0.15
+    }
+   },
+   "expected": {
+    "answerType": "choice",
+    "prediction": "returns",
+    "certainty": 0.42,
+    "reportedConfidence": 0.42,
+    "distributionCertainty": 0.25000000000000006,
+    "correctness": 0.55
+   }
+  },
+  {
+   "answer": {
+    "type": "choice",
+    "choice": "a",
+    "probabilities": {
+     "a": 0.6,
+     "b": 0.4
+    }
+   },
+   "expected": {
+    "answerType": "choice",
+    "prediction": "a",
+    "certainty": 0.19999999999999996,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.19999999999999996,
+    "correctness": 0.6
+   }
+  },
+  {
+   "answer": {
+    "type": "choice",
+    "choice": "a"
+   },
+   "expected": {
+    "answerType": "choice",
+    "prediction": "a",
+    "certainty": 0.0,
+    "reportedConfidence": null,
+    "distributionCertainty": null,
+    "correctness": 0.0
+   }
+  },
+  {
+   "answer": {
+    "type": "score",
+    "score": 1.43,
+    "confidence": 0.35,
+    "legend": {
+     "0": "x",
+     "1": "y",
+     "2": "z"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.57,
+     "2": 0.43
+    }
+   },
+   "expected": {
+    "answerType": "score",
+    "prediction": "1",
+    "certainty": 0.35,
+    "reportedConfidence": 0.35,
+    "distributionCertainty": 0.13999999999999996,
+    "correctness": 0.57
+   }
+  },
+  {
+   "answer": {
+    "type": "score",
+    "score": 2.5,
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.0,
+     "2": 0.5,
+     "3": 0.5
+    }
+   },
+   "expected": {
+    "answerType": "score",
+    "prediction": "2",
+    "certainty": 0.0,
+    "reportedConfidence": null,
+    "distributionCertainty": 0.0,
+    "correctness": 0.5
+   }
+  },
+  {
+   "answer": {
+    "type": "score",
+    "score": 1.86,
+    "confidence": 0.89,
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.14,
+     "2": 0.86
+    }
+   },
+   "expected": {
+    "answerType": "score",
+    "prediction": "2",
+    "certainty": 0.89,
+    "reportedConfidence": 0.89,
+    "distributionCertainty": 0.72,
+    "correctness": 0.86
+   }
+  }
+ ]
+}

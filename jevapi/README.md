@@ -79,3 +79,34 @@ something for documents like the ones you labelled.
 - Not published to npm or PyPI yet.
 
 MIT licensed. Part of [JevScope](https://github.com/imranrkhan13/jevscope).
+
+## Running on Jev
+
+Jev is TypeSafe's decision model (https://docs.typesafe.ai). It never writes text; it answers typed questions with probabilities. JevAPI uses it as the judge: for each field, Jev is asked "does the document give X as the invoice number?" (a Noul), or picks from a fixed list (a Choice, with a "not_stated" option). Jev's probability becomes the field's confidence, and JevAPI decides fill or review.
+
+```js
+import { checkFields, decideAll } from "jevapi";
+const { items } = await checkFields({ document: text, key: process.env.TYPESAFE_API_KEY,
+  fields: [{ name: "invoice_number", value: "INV-2231" }, { name: "currency", options: ["INR", "USD"] }] });
+const { decisions } = decideAll(profile, items); // profile: calibrate() on your own labelled Jev answers
+```
+
+```python
+from jevapi import check_fields, decide_all
+items = check_fields(text, [{"name": "invoice_number", "value": "INV-2231"}], key=os.environ["TYPESAFE_API_KEY"])
+```
+
+No field list? Pass no fields (`fields: null` / `None`). JevAPI finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each one. That finder is simple pattern matching; for free-form documents use the hosted `/api/v1/extract` without `fields`, which asks your AI for every field, with `"judge": "jev"`.
+
+Hosted: `POST /api/v1/verify` with header `X-Jev-Key`, or `POST /api/v1/extract` with `"judge": "jev"`.
+
+What is Jev and what is not:
+
+| Part | Where it comes from |
+| --- | --- |
+| The per-field probability | Jev itself, called with your own TypeSafe key |
+| Turning Jev's noul/choice/score answers into one certainty | `jevapi/python/jevapi/certainty.py` is jevscope's own `reposcope/calibration/certainty.py`, unchanged (a test fails if they differ). `jevapi/js/src/certainty.js` is a line-for-line port, checked against the Python original's outputs |
+| Calibration and the cost bar | JevAPI's own code, written for this package, using the same methods as the Calibration Lab |
+| Field finding, question wording, HTTP client, API routes, demo | New glue code |
+
+Jev's probabilities are raw until you calibrate them on your own labelled documents. The sample data in this repo is synthetic.
