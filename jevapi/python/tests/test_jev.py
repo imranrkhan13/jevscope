@@ -90,7 +90,7 @@ def test_real_invoices_always_get_vendor_and_currency():
 def test_resume_mode_matches_hand_labels():
     from pathlib import Path
     from jevapi import is_resume, join_wrapped
-    fx = json.loads((Path(__file__).resolve().parents[2] / "spec" / "resumes.json").read_text())
+    fx = json.loads((Path(__file__).resolve().parents[2] / "spec" / "resumes.json").read_text(encoding="utf-8"))
     for r in fx["resumes"]:
         assert is_resume(r["text"])
         assert {f["name"]: f["value"] for f in discover_fields(r["text"])} == r["gold"], r["id"]
@@ -99,6 +99,19 @@ def test_resume_mode_matches_hand_labels():
     assert join_wrapped("GitHub Actions, NGINX,", "Azure, GCP") == "GitHub Actions, NGINX, Azure, GCP"
     assert not is_resume("ACME LTD\nInvoice No: 1\nTotal: 5")
 
+
+def test_resume_layouts():
+    from jevapi import resume_fields
+    get = lambda t: {f["name"]: f["value"] for f in resume_fields(t)}
+    a = get("A B\na@b.co\n\nExperience\nAcme Corp                              Pune, India\nBackend Engineer                       Jan 2020 – Mar 2021\n• Built X.\n• Built Y.\n  and Z\nA B · Résumé    2\n\nEducation\nBSc in Physics    2019\nUniversity of Pune")
+    assert (a["job_1_company"], a["job_1_title"], a["job_1_location"], a["job_1_dates"]) == ("Acme Corp", "Backend Engineer", "Pune, India", "Jan 2020 – Mar 2021")
+    assert (a["job_1_highlight_1"], a["job_1_highlight_2"], a["education_1_school"]) == ("Built X.", "Built Y. and Z", "University of Pune")
+    assert not any("Résumé" in v for v in a.values())
+    b = get("A B\na@b.co\n\nExperience\nNexus AI, Co-Founder & CTO                      San Francisco, CA\n • Built it                                  June 2023 – present\n                                                  2 years 10 months\n\nSkills\nGo")
+    assert (b["job_1_company"], b["job_1_title"], b["job_1_dates"], b["job_1_highlight_1"]) == ("Nexus AI", "Co-Founder & CTO", "June 2023 – present", "Built it")
+    assert not any("months" in v for v in b.values())
+    f = next(f for f in resume_fields("A B\na@b.co\n\nExperience\nEngineer    2020\nAcme, Pune\n\nSkills\nGo") if f["name"] == "job_1_company")
+    assert '"Engineer" job' in f["description"]
 
 def test_jev_reason_wording():
     r = decide_all(None, [{"field": "a", "value": "x", "confidence": 0.99, "jev": {"type": "noul", "noul": 0.99}},

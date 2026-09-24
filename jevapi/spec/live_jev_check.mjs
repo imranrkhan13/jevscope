@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 
 // Real public invoices (FCC public files, via RealKIE-FCC-Verified, CC BY-NC 4.0; see real_invoices.json).
 const REAL = JSON.parse(readFileSync(new URL("./real_invoices.json", import.meta.url), "utf8"));
-// SYNTHETIC resumes with hand labels (resumes.json).
+// Hand-labelled resumes (resumes.json): A and B are synthetic, the rest are the RenderCV example CV.
 const RESUMES = JSON.parse(readFileSync(new URL("./resumes.json", import.meta.url), "utf8"));
 // The real-invoice run costs about 11k tokens, so it is off the per-ship gate: run it on demand with JEV_REAL_INVOICES=1.
 const RUN_REAL = process.env.JEV_REAL_INVOICES === "1";

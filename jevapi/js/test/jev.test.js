@@ -100,7 +100,7 @@ test("on 5 real public invoices, vendor and currency are always asked and the re
   }
 });
 
-test("resume mode reads every detail of two synthetic resumes, matching the hand labels exactly", () => {
+test("resume mode reads every detail of 5 hand-labelled resumes (2 synthetic, 3 RenderCV layouts) exactly", () => {
   const fx = JSON.parse(readFileSync(new URL("../../spec/resumes.json", import.meta.url), "utf8"));
   for (const r of fx.resumes) {
     assert.equal(isResume(r.text), true);
@@ -110,6 +110,27 @@ test("resume mode reads every detail of two synthetic resumes, matching the hand
   assert.equal(resumeFields(fx.resumes[0].text).find((f) => f.name === "job_1_company").label, "Job 1 company");
   // Nothing is computed that the resume does not say.
   assert.ok(!discoverFields(fx.resumes[0].text).some((f) => /years|experience_total/.test(f.name)));
+});
+
+test("resume layouts: one field per bullet, right-hand and own-line dates, Company-then-Title, footers and durations skipped", () => {
+  const get = (t) => Object.fromEntries(resumeFields(t).map((f) => [f.name, f.value]));
+  const a = get("A B\na@b.co\n\nExperience\nAcme Corp                              Pune, India\nBackend Engineer                       Jan 2020 – Mar 2021\n• Built X.\n• Built Y.\n  and Z\nA B · Résumé    2\n\nEducation\nBSc in Physics    2019\nUniversity of Pune");
+  assert.equal(a.job_1_company, "Acme Corp");
+  assert.equal(a.job_1_title, "Backend Engineer");
+  assert.equal(a.job_1_location, "Pune, India");
+  assert.equal(a.job_1_dates, "Jan 2020 – Mar 2021");
+  assert.equal(a.job_1_highlight_1, "Built X.");
+  assert.equal(a.job_1_highlight_2, "Built Y. and Z");
+  assert.equal(a.education_1_school, "University of Pune");
+  assert.ok(!Object.values(a).some((v) => /Résumé/.test(v)));
+  const b = get("A B\na@b.co\n\nExperience\nNexus AI, Co-Founder & CTO                      San Francisco, CA\n • Built it                                  June 2023 – present\n                                                  2 years 10 months\n\nSkills\nGo");
+  assert.equal(b.job_1_company, "Nexus AI");
+  assert.equal(b.job_1_title, "Co-Founder & CTO");
+  assert.equal(b.job_1_dates, "June 2023 – present");
+  assert.equal(b.job_1_highlight_1, "Built it");
+  assert.ok(!Object.values(b).some((v) => /months/.test(v)));
+  // Each company question names its job, so Jev knows which one is meant.
+  assert.match(resumeFields("A B\na@b.co\n\nExperience\nEngineer    2020\nAcme, Pune\n\nSkills\nGo").find((f) => f.name === "job_1_company").description, /"Engineer" job/);
 });
 
 test("a Jev-judged value says it is Jev's raw number, not the extractor's", () => {
