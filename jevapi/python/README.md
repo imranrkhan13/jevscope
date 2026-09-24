@@ -76,6 +76,6 @@ something for documents like the ones you labelled.
 - The sample data in `spec/examples.json` is **synthetic**. It exists to test
   the maths. It says nothing about any real model.
 - Calibration fitted on one kind of document does not transfer to another.
-- Not published to npm or PyPI yet.
+- Not on PyPI yet. Install from GitHub: `pip install "git+https://github.com/imranrkhan13/jevscope.git#subdirectory=jevapi/python"`. The JavaScript version is on npm: `npm i jevapi`.
 
 MIT licensed. Part of [JevScope](https://github.com/imranrkhan13/jevscope).

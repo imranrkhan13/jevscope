@@ -167,10 +167,10 @@ for d in res.json()["decisions"]:
 <div class="box"><h3>Hosted API</h3><p>Call <code>https://jevscope.vercel.app/api/v1</code> from any language. Nothing to install. Good for trying it and for small volumes. It has <a href="#limits">free limits</a>.</p></div>
 <div class="box"><h3>Package</h3><p>Run the same code inside your own app, in JavaScript or Python, with zero dependencies. The maths runs locally. Only the Jev call goes out, straight from your server to TypeSafe.</p></div>
 </div>
-<p><b>Install from GitHub.</b> The packages are not on npm or PyPI yet.</p>
+<p><b>JavaScript</b> is on npm:</p>
+<pre>npm i jevapi</pre>
+<p><b>Python</b> is not on PyPI yet. Install it from GitHub for now:</p>
 <pre>pip install "git+https://github.com/imranrkhan13/jevscope.git#subdirectory=jevapi/python"</pre>
-<pre>git clone https://github.com/imranrkhan13/jevscope.git
-npm install ./jevscope/jevapi/js</pre>
 <div class="tabs" data-tabs>
 <div class="tabbar"><button class="on">JavaScript</button><button>Python</button></div>
 <pre class="tab">import { checkFields, decideAll } from "jevapi";
