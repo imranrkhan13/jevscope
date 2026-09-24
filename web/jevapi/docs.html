@@ -3,92 +3,360 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JevAPI docs</title>
+<title>JevAPI docs - fill it, or check it?</title>
+<meta name="description" content="Use JevAPI in your own app: quickstart, curl, JavaScript and Python examples, every endpoint, recipes for resumes and invoices, errors, keys and limits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#f7f5f0;color:#1d1c1a;font:15px/1.65 Inter,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{max-width:820px;margin:0 auto;padding:48px 24px 96px}
-h1,h2{font-weight:600;letter-spacing:-.02em}
-h1{font-size:38px;line-height:1.1;margin:0 0 10px}
-h2{font-size:21px;margin:40px 0 10px}
-pre{font-family:ui-monospace,Menlo,monospace;background:#fff;border:1px solid #e9e5dd;border-radius:12px;padding:14px;overflow:auto;font-size:12.5px}
-code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:#fff;border:1px solid #e9e5dd;border-radius:6px;padding:1px 5px}
-.mut{color:#6d6961}
-table{border-collapse:separate;border-spacing:0;width:100%;background:#fff;border:1px solid #e9e5dd;border-radius:12px;overflow:hidden;font-size:14px}
-td,th{border-bottom:1px solid #f1eee8;padding:9px 12px;text-align:left;vertical-align:top}
+:root{--bg:#f7f5f0;--card:#fff;--ink:#1d1c1a;--mut:#6d6961;--line:#e9e5dd;--soft:#faf9f6;--green:#2e7a5e;--greenT:#e9f4ee;--amber:#a86a12;--amberT:#fcf3e3;--red:#b3412f}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Inter,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--green);text-underline-offset:3px}
+.top{position:sticky;top:0;z-index:10;background:rgba(247,245,240,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
+.logo{font-weight:600;color:var(--ink);text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:14px 0 0 var(--amber);margin-right:14px}
+.top nav{margin-left:auto;display:flex;gap:4px}
+.top nav a{color:var(--mut);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;transition:background .15s,color .15s}
+.top nav a:hover,.top nav a.cur{background:var(--card);color:var(--ink)}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.layout{max-width:1120px;margin:0 auto;padding:40px 24px 96px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}
+.side{position:sticky;top:76px;align-self:start;display:flex;flex-direction:column;gap:2px;font-size:14px;max-height:calc(100vh - 96px);overflow:auto}
+.side a{color:var(--mut);text-decoration:none;padding:5px 10px;border-radius:8px;transition:background .15s,color .15s}
+.side a:hover{background:var(--card);color:var(--ink)}
+.side a.on{background:var(--card);color:var(--ink);font-weight:500}
+.side p{margin:14px 10px 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#9a958c}
+.doc{min-width:0;max-width:760px}
+h1{font-size:40px;line-height:1.1;letter-spacing:-.025em;margin:0 0 14px;font-weight:600}
+h2{font-size:22px;letter-spacing:-.015em;margin:56px 0 12px;font-weight:600;scroll-margin-top:80px}
+h3{font-size:16px;margin:0 0 6px;font-weight:600}
+.lead{font-size:17px;color:#3b3934}
+.mut{color:var(--mut)}
+code{font-size:.86em;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+pre{position:relative;background:#1f1e1b;color:#ece8df;border-radius:14px;padding:16px 18px;overflow:auto;font-size:12.8px;line-height:1.6;margin:12px 0}
+pre .copy{position:absolute;top:8px;right:8px;font:500 12px Inter,Helvetica,Arial,sans-serif;color:#cfc9bd;background:rgba(255,255,255,.08);border:0;border-radius:999px;padding:4px 10px;cursor:pointer;opacity:0;transition:opacity .15s,background .15s}
+pre:hover .copy,pre .copy:focus{opacity:1}
+pre .copy:hover{background:rgba(255,255,255,.16)}
+.tabs{margin:14px 0}
+.tabbar{display:inline-flex;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabbar button{font:500 13px Inter,Helvetica,Arial,sans-serif;border:0;background:transparent;color:var(--mut);padding:5px 12px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
+.tabbar button.on{background:var(--ink);color:#fff}
+.tabs pre{margin-top:8px}
+table{border-collapse:separate;border-spacing:0;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px;margin:12px 0}
+td,th{border-bottom:1px solid #f1eee8;padding:10px 14px;text-align:left;vertical-align:top}
 tr:last-child td{border-bottom:0}
-th{font-weight:600;background:#faf9f6}
-a{color:#2e7a5e;text-underline-offset:3px}
-@media(max-width:560px){.wrap{padding:32px 16px 72px}h1{font-size:30px}}
+th{font-weight:600;background:var(--soft)}
+td code{white-space:nowrap}
+.steps{padding-left:22px}.steps li{margin:8px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:transform .2s,box-shadow .2s}
+.box:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(30,25,15,.07)}
+.box p{margin:0;color:var(--mut);font-size:14px}
+.foot{margin-top:56px;color:var(--mut);font-size:13px}
+@media(max-width:600px){.top nav a.hide{display:none}.top .in{padding:12px 16px}}
+@media(max-width:860px){.layout{grid-template-columns:minmax(0,1fr);padding:28px 16px 72px;gap:0}.side{display:none}h1{font-size:32px}.two{grid-template-columns:1fr}td code{white-space:normal}table{display:block;overflow-x:auto}}
 </style>
 </head>
-<body><div class="wrap">
-<h1>JevAPI</h1>
-<p class="mut">Should this extracted field be filled automatically, or checked by a person? Free, open source, no sign-up. <a href="/jevapi">Try the demo</a> · <a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></p>
+<body>
+<header class="top"><div class="in"><a class="logo" href="/jevapi"><i></i>JevAPI</a><nav><a href="/jevapi">Home</a><a href="/jevapi/demo">Demo</a><a class="cur" href="/jevapi/docs">Docs</a><a class="hide" href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav></div></header>
+<div class="layout">
+<aside class="side" aria-label="On this page">
+  <a href="#start">Quickstart</a>
+  <a href="#install">Use it in your app</a>
+  <a href="#how">How it works</a>
+  <p>Endpoints</p>
+  <a href="#verify">POST /verify</a>
+  <a href="#extract">POST /extract</a>
+  <a href="#decide">POST /decide</a>
+  <a href="#calibrate">POST /calibrate</a>
+  <a href="#info">GET /api/v1</a>
+  <p>Guides</p>
+  <a href="#resume">Resume recipe</a>
+  <a href="#invoice">Invoice recipe</a>
+  <a href="#fields">Reading the response</a>
+  <a href="#options">Options</a>
+  <a href="#errors">Errors</a>
+  <a href="#privacy">Keys and privacy</a>
+  <a href="#limits">Limits</a>
+  <a href="#honest">Honest limits</a>
+</aside>
 
-<h2>Two ways to use it</h2>
-<p><b>Package</b> (runs on your machine, no limits): <code>jevapi</code> for JavaScript and Python. Not on npm/PyPI yet; install from GitHub for now.</p>
-<p><b>Hosted API</b> (this site): three stateless endpoints. Base URL <code>https://jevscope.vercel.app/api/v1</code>.</p>
+<main class="doc">
+<h1>JevAPI docs</h1>
+<p class="lead">JevAPI tells your app, field by field, whether a value pulled from a document is safe to fill in automatically or needs a person to check it. Jev, TypeSafe's decision model, reads the document and scores each value. JevAPI turns that score into <b>fill</b> or <b>review</b>, with a reason.</p>
+<p class="mut">Free and open source (MIT). No sign-up with us. You bring your own keys, so JevAPI costs you nothing to run. <a href="/jevapi/demo">Try the demo</a> first if you want to see it work.</p>
 
-<h2>1. Calibrate on your examples</h2>
-<p>Send fields you checked by hand. You get back a profile (plain JSON). Keep it and send it with every decide call.</p>
-<pre>curl -X POST https://jevscope.vercel.app/api/v1/calibrate \
+<h2 id="start">Quickstart: first call in 60 seconds</h2>
+<ol class="steps">
+<li><b>Get a TypeSafe key.</b> Sign up at <a href="https://docs.typesafe.ai/introduction/quickstart">TypeSafe</a> and copy your API key. Jev runs on your key.</li>
+<li><b>Send the document text and the values you want checked.</b> Put the key in the <code>X-Jev-Key</code> header.</li>
+<li><b>Read <code>decisions</code>.</b> Fill the fields marked <code>fill</code>. Show the rest to a person.</li>
+</ol>
+<div class="tabs" data-tabs>
+<div class="tabbar"><button class="on">curl</button><button>JavaScript</button><button>Python</button></div>
+<pre class="tab">curl -X POST https://jevscope.vercel.app/api/v1/verify \
   -H 'Content-Type: application/json' \
-  -d '{"examples":[{"field":"total_amount","confidence":0.97,"correct":false}, ...],
-       "options":{"costError":20,"fields":{"total_amount":{"costError":100}}},
-       "evaluate":true}'</pre>
-<p class="mut"><code>evaluate: true</code> adds a held-out (5-fold) estimate: how much gets auto-filled, how often those fills are wrong, and calibration error before and after.</p>
+  -H "X-Jev-Key: $TYPESAFE_API_KEY" \
+  -d '{
+    "text": "ACME SUPPLIES PVT LTD\nInvoice No: INV-2231\nDue Date: 12 Oct 2026\nTotal: Rs 48,200.00",
+    "fields": [
+      {"name": "invoice_number", "value": "INV-2231"},
+      {"name": "due_date", "value": "12 Sep 2026"},
+      {"name": "currency", "options": ["INR", "USD", "EUR"]}
+    ]
+  }'</pre>
+<pre class="tab" hidden>const res = await fetch("https://jevscope.vercel.app/api/v1/verify", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Jev-Key": process.env.TYPESAFE_API_KEY,
+  },
+  body: JSON.stringify({
+    text: documentText,
+    fields: [
+      { name: "invoice_number", value: "INV-2231" },
+      { name: "due_date", value: "12 Sep 2026" },
+      { name: "currency", options: ["INR", "USD", "EUR"] },
+    ],
+  }),
+});
+const { fields, decisions } = await res.json();
+decisions.forEach((d, i) =&gt; {
+  if (d.action === "fill") form[d.field] = fields[i].value;
+  else needsReview.push({ ...d, value: fields[i].value }); // show d.reason to the person
+});</pre>
+<pre class="tab" hidden>import os, requests
 
-<h2>2. Decide</h2>
+res = requests.post(
+    "https://jevscope.vercel.app/api/v1/verify",
+    headers={"X-Jev-Key": os.environ["TYPESAFE_API_KEY"]},
+    json={
+        "text": document_text,
+        "fields": [
+            {"name": "invoice_number", "value": "INV-2231"},
+            {"name": "due_date", "value": "12 Sep 2026"},
+            {"name": "currency", "options": ["INR", "USD", "EUR"]},
+        ],
+    },
+    timeout=60,
+)
+res.raise_for_status()
+for d in res.json()["decisions"]:
+    print(d["field"], d["action"], d["confidence"], d["reason"])</pre>
+</div>
+<p>What came back on a real run (the due date was sent wrong on purpose):</p>
+<pre>{
+  "judge": "jev", "jevModel": "jev-1.13.0",
+  "decisions": [
+    {"field": "invoice_number", "action": "fill",   "confidence": 0.99, "threshold": 0.95, ...},
+    {"field": "due_date",       "action": "review", "confidence": 0.02, "threshold": 0.95,
+     "reason": "Not calibrated: using Jev's raw 2%, not yet measured on your documents. Below the 95% bar, so a person should check it."},
+    {"field": "currency",       "action": "review", "confidence": 0.85, ...}
+  ],
+  "fill": 1, "review": 2, "calibrated": false
+}</pre>
+<p class="mut">The document said 12 Oct, not 12 Sep, so Jev gave it 2% and it went to review. The currency was never written as "INR", so Jev picked it from "Rs" with 85% and asked for a check.</p>
+
+<h2 id="install">Use it in your app</h2>
+<p>There are two ways. Both give the same answers.</p>
+<div class="two">
+<div class="box"><h3>Hosted API</h3><p>Call <code>https://jevscope.vercel.app/api/v1</code> from any language. Nothing to install. Good for trying it and for small volumes. It has <a href="#limits">free limits</a>.</p></div>
+<div class="box"><h3>Package</h3><p>Run the same code inside your own app, in JavaScript or Python, with zero dependencies. The maths runs locally. Only the Jev call goes out, straight from your server to TypeSafe.</p></div>
+</div>
+<p><b>Install from GitHub.</b> The packages are not on npm or PyPI yet.</p>
+<pre>pip install "git+https://github.com/imranrkhan13/jevscope.git#subdirectory=jevapi/python"</pre>
+<pre>git clone https://github.com/imranrkhan13/jevscope.git
+npm install ./jevscope/jevapi/js</pre>
+<div class="tabs" data-tabs>
+<div class="tabbar"><button class="on">JavaScript</button><button>Python</button></div>
+<pre class="tab">import { checkFields, decideAll } from "jevapi";
+
+// One request to Jev for the whole document, using your key.
+const { items } = await checkFields({
+  document: documentText,
+  fields: [{ name: "invoice_number", value: "INV-2231" }], // or null to find every field
+  key: process.env.TYPESAFE_API_KEY,
+});
+
+const { decisions, fill, review } = decideAll(null, items); // pass a profile once you calibrate</pre>
+<pre class="tab" hidden>import os
+from jevapi import check_fields, decide_all
+
+items = check_fields(
+    document_text,
+    [{"name": "invoice_number", "value": "INV-2231"}],  # or None to find every field
+    key=os.environ["TYPESAFE_API_KEY"],
+)
+result = decide_all(None, items)  # pass a profile once you calibrate
+print(result["fill"], result["review"])</pre>
+</div>
+
+<h2 id="how">How it works</h2>
+<ol class="steps">
+<li><b>Get values.</b> From your own extractor, from your AI through <a href="#extract">/extract</a>, or let JevAPI find them (resumes and labelled lines like "Invoice No: ...").</li>
+<li><b>Jev checks each one.</b> For every field it answers "does the document really say this?" as a probability, or picks from your list of options. One request per document.</li>
+<li><b>JevAPI decides.</b> Fill when the score clears the bar (95% by default, set by your costs). Everything else goes to review, with a reason a person can read.</li>
+<li><b>Calibrate later.</b> Label a few hundred of your own fields as right or wrong, send them to <a href="#calibrate">/calibrate</a>, and the scores are measured against your real documents.</li>
+</ol>
+
+<h2 id="verify">POST /api/v1/verify</h2>
+<p>Jev checks values against the document text. Header: <code>X-Jev-Key</code>.</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Meaning</th></tr>
+<tr><td><code>text</code></td><td>string, required</td><td>The document's text. Read PDFs in your app first. Up to 60,000 characters.</td></tr>
+<tr><td><code>fields</code></td><td>array, optional</td><td>Each is <code>{name, value}</code> to check a value, or <code>{name, options:[...]}</code> to let Jev pick (up to 254 options). Add <code>description</code> to say what the field means. Leave out <code>fields</code> and JevAPI finds every field first.</td></tr>
+<tr><td><code>profile</code></td><td>object, optional</td><td>A profile from <a href="#calibrate">/calibrate</a>. Without it, scores are Jev's raw numbers.</td></tr>
+<tr><td><code>options</code></td><td>object, optional</td><td>Costs and limits. See <a href="#options">Options</a>.</td></tr>
+<tr><td><code>jevProvider</code>, <code>jevModel</code></td><td>string, optional</td><td>Where Jev runs: <code>typesafe</code> (default), <code>venice</code> or <code>openrouter</code>. Model defaults to <code>jev-latest</code>.</td></tr>
+</table>
+<p>Response: <code>judge</code>, <code>discovered</code>, <code>jevModel</code>, <code>usage</code> (tokens), <code>fields</code> (each value with Jev's answer), <code>decisions</code>, <code>fill</code>, <code>review</code>, <code>calibrated</code> and a plain <code>note</code>. See <a href="#fields">Reading the response</a>.</p>
+
+<h2 id="extract">POST /api/v1/extract</h2>
+<p>Your own AI reads the document, then JevAPI decides. Header: <code>X-Provider-Key</code> (your OpenAI, Anthropic or Gemini key). Add <code>"judge": "jev"</code> and <code>X-Jev-Key</code> so Jev checks what your AI read. That is the setup we suggest, because AI models often say they are sure when they are not.</p>
+<pre>curl -X POST https://jevscope.vercel.app/api/v1/extract \
+  -H 'Content-Type: application/json' \
+  -H "X-Provider-Key: $OPENAI_API_KEY" \
+  -H "X-Jev-Key: $TYPESAFE_API_KEY" \
+  -d '{
+    "provider": "openai",
+    "model": "YOUR_MODEL_ID",
+    "judge": "jev",
+    "text": "INVOICE INV-2231 ...",
+    "fields": [{"name": "invoice_number"}, {"name": "total_amount", "type": "number"}]
+  }'</pre>
+<table>
+<tr><th>Field</th><th>Type</th><th>Meaning</th></tr>
+<tr><td><code>provider</code></td><td>string, required</td><td><code>openai</code>, <code>anthropic</code> or <code>gemini</code>.</td></tr>
+<tr><td><code>model</code></td><td>string, required</td><td>Your provider's model id. Always your choice.</td></tr>
+<tr><td><code>text</code></td><td>string, required</td><td>The document's text.</td></tr>
+<tr><td><code>fields</code></td><td>array, optional</td><td><code>{name, description?, type?}</code>. Leave out to ask for every field.</td></tr>
+<tr><td><code>judge</code></td><td><code>"jev"</code>, optional</td><td>Jev's score replaces the AI's own confidence. The AI's number stays in <code>aiConfidence</code>.</td></tr>
+<tr><td><code>profile</code>, <code>options</code></td><td>optional</td><td>Same as <a href="#verify">/verify</a>.</td></tr>
+</table>
+
+<h2 id="decide">POST /api/v1/decide</h2>
+<p>No keys, no AI. You already have values and confidences. JevAPI applies the rule and your profile.</p>
 <pre>curl -X POST https://jevscope.vercel.app/api/v1/decide \
   -H 'Content-Type: application/json' \
-  -d '{"profile": {...}, "items":[{"field":"invoice_number","value":"INV-2231","confidence":0.99}]}'</pre>
-<pre>{"decisions":[{"field":"invoice_number","action":"fill","confidence":0.97,"lower":0.96,
-  "threshold":0.95,"calibrated":true,"source":"field",
-  "reason":"Stated 99%; measured on this field's 200 examples, ..."}],"fill":1,"review":0}</pre>
-<p class="mut">No profile? It still works, using the raw confidence, and says so (<code>calibrated: false</code>).</p>
+  -d '{"items": [
+        {"field": "invoice_number", "value": "INV-2231", "confidence": 0.99},
+        {"field": "total_amount",   "value": "48200",    "confidence": 0.81}
+      ]}'</pre>
+<pre>{"decisions": [
+   {"field": "invoice_number", "action": "fill",   "confidence": 0.99, "lower": 0.99, "threshold": 0.95,
+    "calibrated": false, "source": "raw", "reason": "Not calibrated: using the extractor's own 99%, ... Clears the 95% bar."},
+   {"field": "total_amount",   "action": "review", "confidence": 0.81, "lower": 0.81, "threshold": 0.95,
+    "calibrated": false, "source": "raw", "reason": "... Below the 95% bar, so a person should check it."}],
+ "fill": 1, "review": 1,
+ "note": "No profile sent, so decisions use the raw confidence (not calibrated)."}</pre>
 
-<h2>3. Extract with your own AI key (optional)</h2>
-<p>Send the document's text (read PDFs in your app first) and the fields you want. Put your key in <code>X-Provider-Key</code>. JevAPI asks your provider, then decides each field.</p>
-<pre>curl -X POST https://jevscope.vercel.app/api/v1/extract \
-  -H 'Content-Type: application/json' -H 'X-Provider-Key: YOUR_KEY' \
-  -d '{"provider":"openai","model":"YOUR_MODEL_ID","text":"INVOICE INV-2231 ...",
-       "fields":[{"name":"invoice_number"},{"name":"total_amount","type":"number"}]}'</pre>
-<p class="mut">Providers: <code>openai</code>, <code>anthropic</code>, <code>gemini</code>. The model id is always yours to choose. JevAPI never pays for AI calls. Your key passes through this server for one request; JevAPI's code never saves or logs it.</p>
+<h2 id="calibrate">POST /api/v1/calibrate</h2>
+<p>Send fields you checked by hand. You get back a profile (plain JSON). Store it and send it with every call. JevAPI keeps nothing.</p>
+<pre>curl -X POST https://jevscope.vercel.app/api/v1/calibrate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "examples": [
+      {"field": "total_amount", "confidence": 0.97, "correct": false},
+      {"field": "total_amount", "confidence": 0.99, "correct": true}
+    ],
+    "options": {"costError": 20, "fields": {"total_amount": {"costError": 100}}},
+    "evaluate": true
+  }'</pre>
+<p>Response: <code>{profile, evaluation?}</code>. With <code>evaluate: true</code> you also get a held-out (5-fold) check: how much would be filled, how often those fills were wrong, and calibration error before and after. A few hundred examples per important field is a good start. Up to 5,000 per call.</p>
 
-<h2>4. Check with Jev (your TypeSafe key)</h2>
-<p>Jev is <a href="https://docs.typesafe.ai">TypeSafe's</a> decision model. It doesn't write text, it judges. For each field you send a candidate value (from any extractor) or a list of options, and Jev returns the probability that the document really says it. That probability becomes the field's confidence. Put your key in <code>X-Jev-Key</code>. One request per document.</p>
+<h2 id="info">GET /api/v1</h2>
+<p>Returns the endpoint list, limits and privacy notes as JSON. Handy for a health check.</p>
+
+<h2 id="resume">Recipe: resumes</h2>
+<p>Send a resume's text to <code>/verify</code> with no <code>fields</code>. JevAPI reads it section by section with no AI key: contact details, links, summary, every job, project and degree, one field per bullet, and skills. Field names look like <code>job_1_title</code>, <code>job_2_company</code>, <code>project_1_name</code>, <code>education_1_degree</code>. Each Jev question names the job or project it is about, so two jobs don't get mixed up.</p>
 <pre>curl -X POST https://jevscope.vercel.app/api/v1/verify \
-  -H 'Content-Type: application/json' -H 'X-Jev-Key: YOUR_TYPESAFE_KEY' \
-  -d '{"text":"INVOICE INV-2231 ...",
-       "fields":[{"name":"invoice_number","value":"INV-2231"},
-                 {"name":"currency","options":["INR","USD"]}]}'</pre>
-<p class="mut">No field list? Leave out <code>fields</code>. A resume is read section by section with no AI key (contact details, links, summary, every job, project and degree with its own dates, one field per bullet, every skills line and any other section, wrapped lines joined). It handles the common layouts: dates on the right or on their own line, "Title, Company" or "Company, Title", title and company on separate lines. Jev checks every value, and each question says which job or project it is about (for example "company of job 2, the Associate Software Engineer job"), so Jev can tell two jobs apart. For other text, <code>/verify</code> finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each. On invoices it always asks about the vendor and the currency too, even when they are unlabelled (Jev picks from the letterhead and "payable to" names, and from a currency list). <code>/extract</code> without <code>fields</code> asks your AI for every field it can find. Add <code>"judge":"jev"</code> (plus <code>X-Jev-Key</code>) to an extract call so Jev checks what your AI read. Jev's numbers are raw until you calibrate them on your own labelled documents with <code>/api/v1/calibrate</code>.</p>
+  -H 'Content-Type: application/json' -H "X-Jev-Key: $TYPESAFE_API_KEY" \
+  -d "$(jq -n --rawfile t resume.txt '{text: $t}')"</pre>
+<p class="mut">Group by the prefix (<code>job_1_</code>, <code>project_2_</code>) to show one card per job, like the <a href="/jevapi/demo">demo</a> does.</p>
 
-<h2>Options</h2>
+<h2 id="invoice">Recipe: invoices</h2>
+<p>With no <code>fields</code>, <code>/verify</code> finds every labelled line ("Invoice No: ...", "Total: ...") and always asks about the vendor and the currency too, even when they are not labelled. Jev picks the vendor from the letterhead and "payable to" names, and the currency from a list.</p>
+<pre>{"discovered": true, "fields": [
+   {"field": "vendor",   "label": "Vendor",   "value": "ACME SUPPLIES PVT LTD", "confidence": 1},
+   {"field": "currency", "label": "Currency", "value": "INR",                   "confidence": 1},
+   {"field": "invoice_no", "label": "Invoice No", "value": "INV-2231",         "confidence": 0.99},
+   {"field": "total",    "label": "Total",    "value": "Rs 48,200.00",          "confidence": 0.99}, ...],
+ "fill": 7, "review": 0}</pre>
+<p class="mut">If you know your form's fields, send them with names that match your database. That is more stable than found labels.</p>
+
+<h2 id="fields">Reading the response</h2>
+<table>
+<tr><th>Key</th><th>Meaning</th></tr>
+<tr><td><code>action</code></td><td><code>fill</code> or <code>review</code>. The only thing your app has to act on.</td></tr>
+<tr><td><code>confidence</code></td><td>The score used for the decision, from 0 to 1. Jev's number, or your calibrated number if you sent a profile.</td></tr>
+<tr><td><code>lower</code></td><td>A careful lower bound (90%) when calibrated, so a few lucky examples can't unlock auto-fill.</td></tr>
+<tr><td><code>threshold</code></td><td>The bar for this field, set by your costs.</td></tr>
+<tr><td><code>reason</code></td><td>One plain sentence you can show to the person checking.</td></tr>
+<tr><td><code>calibrated</code>, <code>source</code></td><td>Whether a profile was used, and whether it came from this field's own examples (<code>field</code>), all fields pooled (<code>pooled</code>) or none (<code>raw</code>).</td></tr>
+<tr><td><code>fields[].jev</code></td><td>Jev's own answer: <code>noul</code> (yes/no probability) or <code>choice</code> (picked option), plus <code>certainty</code>.</td></tr>
+</table>
+
+<h2 id="options">Options</h2>
 <table>
 <tr><th>Option</th><th>Default</th><th>Meaning</th></tr>
-<tr><td>costError</td><td>20</td><td>One wrong auto-fill costs as much as this many human checks.</td></tr>
-<tr><td>costReview</td><td>1</td><td>Cost of one human check.</td></tr>
-<tr><td>reviewAccuracy</td><td>1</td><td>Share of checks that catch the mistake.</td></tr>
-<tr><td>maxRisk</td><td>none</td><td>Never auto-fill if the chance of being wrong is above this.</td></tr>
-<tr><td>minExamples</td><td>30</td><td>Fewer examples than this and a field uses the pooled calibration.</td></tr>
-<tr><td>conservative</td><td>true</td><td>Decide on the 90% lower bound, so a few lucky examples can't unlock auto-fill.</td></tr>
+<tr><td><code>costError</code></td><td>20</td><td>One wrong auto-fill costs as much as this many human checks. Higher means a stricter bar.</td></tr>
+<tr><td><code>costReview</code></td><td>1</td><td>Cost of one human check.</td></tr>
+<tr><td><code>reviewAccuracy</code></td><td>1</td><td>Share of checks that catch the mistake.</td></tr>
+<tr><td><code>maxRisk</code></td><td>none</td><td>Never auto-fill if the chance of being wrong is above this.</td></tr>
+<tr><td><code>minExamples</code></td><td>30</td><td>With fewer examples than this, a field uses the pooled calibration.</td></tr>
+<tr><td><code>conservative</code></td><td>true</td><td>Decide on the 90% lower bound instead of the middle estimate.</td></tr>
+<tr><td><code>fields</code></td><td>none</td><td>Per-field overrides, for example <code>{"total_amount": {"costError": 100}}</code>.</td></tr>
 </table>
-<p class="mut">Rule: fill when the lower bound of the measured confidence is at least <code>reviewAccuracy - costReview / costError</code> (and <code>1 - maxRisk</code> if set). Empty values and missing confidences always go to review.</p>
+<p class="mut">Rule: fill when the score (or its lower bound) is at least <code>reviewAccuracy - costReview / costError</code>, and at least <code>1 - maxRisk</code> if set. With the defaults that is 95%. Empty values and missing scores always go to review.</p>
 
-<h2>Limits (free)</h2>
+<h2 id="errors">Errors</h2>
+<p>Errors come back as <code>{"error": {"code", "message"}}</code> with a normal HTTP status. The message says what to fix.</p>
 <table>
-<tr><td>calibrate + decide</td><td>60 requests / minute per IP</td></tr>
-<tr><td>extract, verify</td><td>10 requests / minute per IP</td></tr>
-<tr><td>Body</td><td>1 MB; 5,000 examples; 200 items; 50 fields; 60,000 characters of text</td></tr>
+<tr><th>Status</th><th>Code</th><th>When</th></tr>
+<tr><td>400</td><td><code>bad_request</code>, <code>missing_key</code>, <code>missing_jev_key</code>, <code>bad_profile</code></td><td>Something in the request is missing or the wrong shape.</td></tr>
+<tr><td>405</td><td><code>method_not_allowed</code></td><td>Use POST (or GET for <code>/api/v1</code>).</td></tr>
+<tr><td>413</td><td><code>too_large</code></td><td>Body over 1 MB.</td></tr>
+<tr><td>429</td><td><code>rate_limited</code></td><td>Too many requests. Wait for <code>Retry-After</code> seconds.</td></tr>
+<tr><td>502</td><td><code>jev_auth</code>, <code>jev_rate_limited</code>, <code>jev_error</code>, provider errors</td><td>TypeSafe or your AI provider said no. Check the key and your quota with them.</td></tr>
+<tr><td>504</td><td><code>jev_timeout</code></td><td>The model took too long. Retry, or send a shorter text.</td></tr>
 </table>
-<p class="mut">Limits are per server and best effort. The whole service runs on a free hosting plan with monthly caps, so it can pause if it gets very busy. For anything serious, run the package yourself. Errors come back as <code>{"error":{"code","message"}}</code> with a normal HTTP status (400, 405, 413, 429 with Retry-After, 502 for provider errors, 504 for timeouts).</p>
 
-<h2>Honest limits</h2>
+<h2 id="privacy">Keys and privacy</h2>
 <ul>
+<li><b>Bring your own key.</b> Jev runs on your TypeSafe key, and <code>/extract</code> on your AI key. You pay them directly. JevAPI never pays for or marks up model calls.</li>
+<li><b>Stateless.</b> The hosted API keeps nothing you send. Keys pass through the server (hosted on Vercel) for one request, and our code never saves or logs them.</li>
+<li><b>Keep keys on your server.</b> Call JevAPI from your backend, not from a browser, so your key is never shown to users.</li>
+<li><b>Want full control?</b> Use the package. Then nothing goes through JevAPI's server at all.</li>
+</ul>
+
+<h2 id="limits">Limits (free hosted API)</h2>
+<table>
+<tr><td>calibrate, decide</td><td>60 requests a minute per IP</td></tr>
+<tr><td>verify, extract</td><td>10 requests a minute per IP</td></tr>
+<tr><td>Body</td><td>1 MB, 5,000 examples, 200 items, 50 fields, 60,000 characters of text</td></tr>
+</table>
+<p class="mut">Limits are per server and best effort. The service runs on a free hosting plan with monthly caps, so it can pause if it gets very busy. For production traffic, use the package. Every response carries <code>X-RateLimit-Remaining</code>.</p>
+
+<h2 id="honest">Honest limits</h2>
+<ul>
+<li>Until you calibrate, scores are Jev's raw numbers. They have not been measured on your documents.</li>
 <li>A profile only means something for documents like the ones you labelled.</li>
 <li>The demo's calibration uses synthetic examples.</li>
-<li>No OCR: scanned images need text first.</li>
+<li>JevAPI reads text. Scanned images need OCR first.</li>
 </ul>
-</div></body></html>
+<p class="foot">MIT licensed. Source on <a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a>.</p>
+</main>
+</div>
+
+<script>
+document.querySelectorAll("[data-tabs]").forEach(t=>{const bs=[...t.querySelectorAll(".tabbar button")],ps=[...t.querySelectorAll("pre.tab")];bs.forEach((b,i)=>b.onclick=()=>{bs.forEach((x,j)=>x.classList.toggle("on",i===j));ps.forEach((p,j)=>p.hidden=i!==j);});});
+document.querySelectorAll("pre").forEach(p=>{const b=document.createElement("button");b.className="copy";b.type="button";b.textContent="Copy";b.onclick=async()=>{const txt=[...p.childNodes].filter(n=>n!==b).map(n=>n.textContent).join("");try{await navigator.clipboard.writeText(txt);b.textContent="Copied";}catch(e){b.textContent="Select to copy";}setTimeout(()=>b.textContent="Copy",1400);};p.appendChild(b);});
+const links=[...document.querySelectorAll(".side a")],secs=links.map(a=>document.querySelector(a.getAttribute("href"))).filter(Boolean);
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id));}});},{rootMargin:"-10% 0px -80% 0px"});secs.forEach(s=>io.observe(s));}
+</script>
+</body>
+</html>

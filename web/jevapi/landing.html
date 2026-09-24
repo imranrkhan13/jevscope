@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JevAPI - fill it, or check it?</title>
+<meta name="description" content="JevAPI asks Jev whether a document really says each extracted value, then tells your app which fields to fill and which to check. Free, open source, bring your own key.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f5f0;--card:#fff;--ink:#1d1c1a;--mut:#6d6961;--line:#e9e5dd;--soft:#faf9f6;--green:#2e7a5e;--greenT:#e9f4ee;--amber:#a86a12;--amberT:#fcf3e3;--red:#b3412f}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Inter,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--green);text-underline-offset:3px}
+.top{position:sticky;top:0;z-index:10;background:rgba(247,245,240,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
+.logo{font-weight:600;color:var(--ink);text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:14px 0 0 var(--amber);margin-right:14px}
+.top nav{margin-left:auto;display:flex;gap:4px}
+.top nav a{color:var(--mut);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;transition:background .15s,color .15s}
+.top nav a:hover,.top nav a.cur{background:var(--card);color:var(--ink)}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.hero{max-width:1120px;margin:0 auto;padding:72px 24px 40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:56px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.eyebrow b{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,122,94,.35)}50%{box-shadow:0 0 0 6px rgba(46,122,94,0)}}
+h1{font-size:60px;line-height:1.02;letter-spacing:-.035em;margin:18px 0 18px;font-weight:600}
+h1 span{color:var(--mut)}
+.lead{font-size:18px;color:#46433d;max-width:520px;margin:0 0 28px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;text-decoration:none;padding:12px 20px;border-radius:999px;border:1px solid var(--line);color:var(--ink);background:var(--card);transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(30,25,15,.08);border-color:#d6d0c5}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.dark:hover{background:#000}
+.btn .ar{transition:transform .2s}
+.btn:hover .ar{transform:translateX(3px)}
+.small{font-size:13px;color:var(--mut);margin-top:16px}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 2px rgba(30,25,15,.04),0 24px 60px rgba(30,25,15,.08);overflow:hidden;animation:float 7s ease-in-out infinite;position:relative}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.demo .bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mut)}
+.demo .bar i{width:9px;height:9px;border-radius:50%;background:#e6e1d7}
+.demo .bar span{margin-left:6px}
+.demo .bar em{margin-left:auto;font-style:normal;font-size:12px}
+.doc{position:relative;padding:16px 18px;font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#57534b;background:var(--soft);border-bottom:1px solid var(--line);white-space:pre;overflow:hidden}
+.scan{position:absolute;left:0;right:0;height:26px;top:0;background:linear-gradient(180deg,rgba(46,122,94,0),rgba(46,122,94,.12),rgba(46,122,94,0));pointer-events:none;opacity:0}
+.running .scan{opacity:1;animation:scan 2.2s ease-in-out infinite}
+@keyframes scan{0%{top:-26px}100%{top:100%}}
+.rows{padding:6px 0}
+.r{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 18px;font-size:14px;transition:background .4s}
+.r .k{color:var(--mut);font-size:13px}
+.r .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{font-size:12.5px;font-weight:500;padding:3px 10px;border-radius:999px;min-width:94px;text-align:center;transition:background .35s,color .35s,transform .35s}
+.r.wait .chip{color:#9a958c;background:#f1eee8;background-image:linear-gradient(90deg,#f1eee8 0,#faf8f4 50%,#f1eee8 100%);background-size:200% 100%;animation:shim 1.2s linear infinite}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.r.fill .chip{color:var(--green);background:var(--greenT);transform:scale(1.04)}
+.r.review{background:var(--amberT)}
+.r.review .chip{color:var(--amber);background:#f6e6c8;transform:scale(1.04)}
+.r .why{grid-column:2/4;font-size:12.5px;color:var(--amber);margin-top:-4px;display:none}
+.r.review .why{display:block;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.demo .cap{font-size:12px;color:var(--mut);padding:10px 18px 14px;border-top:1px solid var(--line)}
+section.s{max-width:1120px;margin:0 auto;padding:72px 24px}
+h2{font-size:36px;letter-spacing:-.025em;line-height:1.1;margin:0 0 12px;font-weight:600}
+.sub{color:var(--mut);font-size:17px;max-width:600px;margin:0 0 32px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(30,25,15,.08);border-color:#ddd7cc}
+.card .n{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-weight:600;font-size:14px;background:var(--soft);border:1px solid var(--line);margin-bottom:16px;transition:background .25s,color .25s}
+.card:hover .n{background:var(--ink);color:#fff}
+.card h3{margin:0 0 6px;font-size:17px;font-weight:600}
+.card p{margin:0;color:var(--mut);font-size:14.5px}
+.code{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:center}
+pre{background:#1f1e1b;color:#ece8df;border-radius:18px;padding:20px 22px;overflow:auto;font-size:13px;line-height:1.65;margin:0;box-shadow:0 20px 50px rgba(30,25,15,.12)}
+pre .c{color:#8f8a80}pre .s2{color:#b9d7a8}pre .g{color:#8fd1b3}pre .a{color:#f0c36d}
+ul.ticks{list-style:none;padding:0;margin:0 0 24px}
+ul.ticks li{padding:8px 0 8px 28px;position:relative;color:#3b3934}
+ul.ticks li::before{content:"";position:absolute;left:4px;top:15px;width:10px;height:6px;border-left:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(-45deg)}
+.band{max-width:1072px;margin:24px auto 0;background:var(--ink);color:#fff;border-radius:28px;padding:56px 40px;text-align:center;position:relative;overflow:hidden}
+.band h2{color:#fff}
+.band p{color:#bdb7ab;margin:0 auto 26px;max-width:520px}
+.band .btn{background:#fff;color:var(--ink);border-color:#fff}
+.band .btn.ghost{background:transparent;color:#fff;border-color:#4a4843}
+.band::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(46,122,94,.35),transparent 65%);top:-200px;left:-120px;animation:drift 12s ease-in-out infinite alternate}
+.band::after{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(168,106,18,.28),transparent 65%);bottom:-200px;right:-100px;animation:drift 14s ease-in-out infinite alternate-reverse}
+.band>*{position:relative}
+@keyframes drift{to{transform:translate(60px,30px)}}
+footer{max-width:1120px;margin:0 auto;padding:40px 24px 56px;color:var(--mut);font-size:13px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+footer a{color:var(--mut)}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+@media(max-width:900px){.hero{grid-template-columns:minmax(0,1fr);padding:40px 16px 24px;gap:36px}h1{font-size:44px}.cards{grid-template-columns:minmax(0,1fr)}.code{grid-template-columns:minmax(0,1fr);gap:24px}section.s{padding:52px 16px}h2{font-size:30px}.band{margin:0 16px;padding:44px 22px;border-radius:22px}.top nav a.hide{display:none}}
+@media(max-width:420px){h1{font-size:38px}.r{grid-template-columns:104px minmax(0,1fr) auto;padding:9px 14px;gap:8px}.r .k{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.chip{min-width:84px}.doc{font-size:11.5px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a class="logo" href="/jevapi"><i></i>JevAPI</a><nav><a class="hide" href="#how">How it works</a><a href="/jevapi/demo">Demo</a><a href="/jevapi/docs">Docs</a><a class="hide" href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav></div></header>
+
+<div class="hero">
+  <div>
+    <span class="eyebrow"><b></b>Free, open source, runs on Jev</span>
+    <h1>Fill it, <span>or check it?</span></h1>
+    <p class="lead">Your app pulls fields out of invoices, resumes and forms. JevAPI asks Jev, TypeSafe's decision model, whether the document really says each value. Then it tells you which fields to fill and which ones a person should check, with a reason for each.</p>
+    <div class="ctas">
+      <a class="btn dark" href="/jevapi/demo">Try the demo <span class="ar">&rarr;</span></a>
+      <a class="btn" href="/jevapi/docs">Read the docs <span class="ar">&rarr;</span></a>
+    </div>
+    <p class="small">Bring your own TypeSafe key. No sign-up with us.</p>
+  </div>
+
+  <div class="demo" id="demo" aria-label="Animated example: fields being checked">
+    <div class="bar"><i></i><i></i><i></i><span>invoice_2231.txt</span><em id="status">Checking with Jev</em></div>
+    <div class="doc" aria-hidden="true"><div class="scan"></div>ACME SUPPLIES PVT LTD
+Tax Invoice
+Invoice No:  INV-2231
+Due Date:    12 Oct 2026
+Total:       Rs 48,200.00</div>
+    <div class="rows" id="rows"></div>
+    <div class="cap">Sample invoice. Scores are from real Jev runs on this sample. The due date was sent wrong on purpose.</div>
+  </div>
+</div>
+
+<section class="s rv" id="how">
+  <h2>How it works</h2>
+  <p class="sub">Three steps. One request to Jev per document.</p>
+  <div class="cards">
+    <div class="card"><div class="n">1</div><h3>Send the text and values</h3><p>Values from your own extractor or your AI. Or send only the text, and JevAPI finds the fields for resumes and labelled lines.</p></div>
+    <div class="card"><div class="n">2</div><h3>Jev checks each field</h3><p>For every field Jev answers "does the document really say this?" as a probability, or picks the right option from your list.</p></div>
+    <div class="card"><div class="n">3</div><h3>Fill or review</h3><p>Fields that clear your bar are filled. The rest go to a person with a plain reason. Calibrate on your own labelled documents when you are ready.</p></div>
+  </div>
+</section>
+
+<section class="s rv">
+  <div class="code">
+    <div>
+      <h2>A few lines in your app</h2>
+      <p class="sub">Call the free hosted API from any language, or run the open-source package inside your own server.</p>
+      <ul class="ticks">
+        <li>curl, JavaScript and Python examples</li>
+        <li>Recipes for resumes and invoices</li>
+        <li>Your keys, your costs. JevAPI never pays for or marks up model calls</li>
+        <li>Stateless. Nothing you send is kept</li>
+      </ul>
+      <a class="btn dark" href="/jevapi/docs#start">Quickstart <span class="ar">&rarr;</span></a>
+    </div>
+<pre><span class="c"># Check values against the document</span>
+curl -X POST https://jevscope.vercel.app/api/v1/verify \
+  -H <span class="s2">"X-Jev-Key: $TYPESAFE_API_KEY"</span> \
+  -H <span class="s2">'Content-Type: application/json'</span> \
+  -d <span class="s2">'{"text": "...",
+       "fields": [{"name": "due_date",
+                   "value": "12 Sep 2026"}]}'</span>
+
+<span class="c"># Back comes a decision per field</span>
+{<span class="s2">"field"</span>: <span class="s2">"due_date"</span>,
+ <span class="s2">"action"</span>: <span class="a">"review"</span>,
+ <span class="s2">"confidence"</span>: <span class="g">0.02</span>,
+ <span class="s2">"reason"</span>: <span class="s2">"... Below the 95% bar,
+            so a person should check it."</span>}</pre>
+  </div>
+</section>
+
+<section class="s rv">
+  <h2>Honest by default</h2>
+  <p class="sub">Until you calibrate, JevAPI says the scores are raw. Every answer carries its own reason, so nobody has to trust a number blindly.</p>
+  <div class="cards">
+    <div class="card"><div class="n">&#8377;0</div><h3>Costs you nothing</h3><p>Jev runs on your own TypeSafe key. The hosted API is free, with fair limits.</p></div>
+    <div class="card"><div class="n">{ }</div><h3>Open source</h3><p>MIT licensed, in JavaScript and Python, with zero dependencies. Read every line on GitHub.</p></div>
+    <div class="card"><div class="n">%</div><h3>Your own numbers</h3><p>Label a few hundred of your fields and JevAPI measures the scores on your documents, not ours.</p></div>
+  </div>
+</section>
+
+<div class="band rv">
+  <h2>See it on a real document</h2>
+  <p>Load a sample invoice or resume, add your TypeSafe key, and watch each field get filled or flagged.</p>
+  <div class="ctas" style="justify-content:center">
+    <a class="btn" href="/jevapi/demo">Try the demo <span class="ar">&rarr;</span></a>
+    <a class="btn ghost" href="/jevapi/docs">Read the docs <span class="ar">&rarr;</span></a>
+  </div>
+</div>
+
+<footer><span>JevAPI is free and open source (MIT). Part of <a href="https://github.com/imranrkhan13/jevscope">JevScope</a>.</span><span><a href="/jevapi/demo">Demo</a> &middot; <a href="/jevapi/docs">Docs</a> &middot; <a href="/">Calibration Lab</a></span></footer>
+
+<script>
+const ROWS=[
+  {k:"vendor",v:"ACME SUPPLIES PVT LTD",p:100,a:"fill"},
+  {k:"invoice_number",v:"INV-2231",p:99,a:"fill"},
+  {k:"total",v:"Rs 48,200.00",p:99,a:"fill"},
+  {k:"due_date",v:"12 Sep 2026",p:2,a:"review",why:"The document says 12 Oct 2026"},
+  {k:"currency",v:"INR",p:85,a:"review",why:"Not written out; picked from \"Rs\""}
+];
+const box=document.getElementById("rows"),demo=document.getElementById("demo"),st=document.getElementById("status");
+box.innerHTML=ROWS.map(r=>`<div class="r wait"><span class="k">${r.k}</span><span class="v">${r.v}</span><span class="chip">Checking</span><span class="why">${r.why||""}</span></div>`).join("");
+const els=[...box.children];
+const settle=(i)=>{const r=ROWS[i],e=els[i];e.className="r "+r.a;e.querySelector(".chip").textContent=(r.a==="fill"?"Filled ":"Check ")+r.p+"%";};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const summary=()=>{const f=ROWS.filter(r=>r.a==="fill").length;st.textContent=f+" filled, "+(ROWS.length-f)+" to check";};
+if(reduce){ROWS.forEach((_,i)=>settle(i));summary();}
+else{
+  const cycle=()=>{els.forEach(e=>{e.className="r wait";e.querySelector(".chip").textContent="Checking";});st.textContent="Checking with Jev";demo.classList.add("running");
+    ROWS.forEach((_,i)=>setTimeout(()=>settle(i),900+i*650));
+    setTimeout(()=>{demo.classList.remove("running");summary();},900+ROWS.length*650);
+    setTimeout(cycle,900+ROWS.length*650+4200);};
+  cycle();
+}
+const rv=[...document.querySelectorAll(".rv")];
+if(reduce||!("IntersectionObserver" in window))rv.forEach(e=>e.classList.add("in"));
+else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.05,rootMargin:"0px 0px -5% 0px"});rv.forEach(e=>io.observe(e));}
+</script>
+</body>
+</html>
