@@ -216,13 +216,13 @@ test("verify asks TypeSafe's Jev once and decides from Jev's probabilities", asy
 test("verify with no fields finds every labelled field, then Jev checks each", async () => {
   const cap = { calls: [] };
   const text = "Invoice No: INV-2231\nDue date: 2026-10-15\nTotal 48,200.00";
-  const answers = { f0: { type: "noul", noul: 0.99 }, f1: { type: "noul", noul: 0.97 }, f2: { type: "noul", noul: 0.6 } };
+  const answers = { f0: { type: "choice", choice: "USD", probabilities: { USD: 0.2, not_stated: 0.1 } }, f1: { type: "noul", noul: 0.99 }, f2: { type: "noul", noul: 0.97 }, f3: { type: "noul", noul: 0.6 } };
   const r = await call(makeVerify(jevFetch(answers, 200, cap)), { body: { text }, headers: { "x-jev-key": "k" } });
   assert.equal(r.status, 200);
   assert.equal(r.json.discovered, true);
-  assert.deepEqual(r.json.fields.map((f) => f.field), ["invoice_no", "due_date", "total"]);
-  assert.deepEqual(r.json.decisions.map((d) => d.action), ["fill", "fill", "review"]);
-  assert.match(r.json.note, /found 3 labelled fields/);
+  assert.deepEqual(r.json.fields.map((f) => f.field), ["currency", "invoice_no", "due_date", "total"]);
+  assert.deepEqual(r.json.decisions.map((d) => d.action), ["review", "fill", "fill", "review"]);
+  assert.match(r.json.note, /found 4 fields/);
 });
 
 test("verify maps Jev auth errors to 502 jev_auth without leaking the key", async () => {

@@ -5,7 +5,7 @@ import pathlib
 import pytest
 
 import jevapi
-from jevapi import answers_to_items, build_questions, check_fields, decide_all, discover_fields, normalize, correctness_probability
+from jevapi import CURRENCY_HINTS, answers_to_items, build_questions, check_fields, core_fields, decide_all, discover_fields, normalize, correctness_probability, vendor_candidates
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 SPEC = json.loads((ROOT / "jevapi/spec/jev_certainty.json").read_text())
@@ -60,9 +60,42 @@ def test_items_and_decisions():
 
 def test_discover_matches_js():
     f = discover_fields("ACME LTD\nInvoice No: INV-2231\nDue date: 2026-10-15\nSub total 21,450\nGST 18% 3,861\nThank you!\nInvoice No: X-2")
-    assert [(x["name"], x["value"]) for x in f] == [
+    assert [(x["name"], x.get("value", x.get("options", [])[:3])) for x in f] == [
+        ("vendor", ["ACME LTD"]), ("currency", ["INR", "USD", "EUR"]),
         ("invoice_no", "INV-2231"), ("due_date", "2026-10-15"), ("sub_total", "21,450"), ("gst_18", "3,861"), ("invoice_no_2", "X-2")]
     assert discover_fields("") == []
+    assert len(discover_fields("\n".join(f"Field {i}: v" for i in range(80)))) == 50
+
+
+def test_vendor_and_currency_always_asked_on_invoices():
+    f = discover_fields("NORTH STAR LOGISTICS PVT LTD\n12 Dock Road\nInvoice\nFreight Mumbai -> Delhi\nT0TAL $25,311")
+    assert next(x for x in f if x["name"] == "vendor")["options"] == ["NORTH STAR LOGISTICS PVT LTD", "12 Dock Road"]
+    assert next(x for x in f if x["name"] == "currency")["options"][0] == "USD"
+    assert vendor_candidates("Invoice\nRemit to:\nWTHI\nBilling Address:\nJohn Roach")[0] == "WTHI"
+    labelled = discover_fields("Invoice\nVendor: Acme\nCurrency: INR")
+    assert [x["name"] for x in labelled] == ["vendor", "currency"] and labelled[0]["value"] == "Acme"
+    assert core_fields("Name: Imran\nSkills: Python") == []
+
+
+def test_real_invoices_always_get_vendor_and_currency():
+    from pathlib import Path
+    fx = json.loads((Path(__file__).resolve().parents[2] / "spec" / "real_invoices.json").read_text())
+    for d in fx["invoices"]:
+        f = discover_fields(d["text"])
+        v = next(x for x in f if x["name"] == "vendor")
+        assert any(w in o.lower() for o in v["options"] for w in d["vendor_any"]), d["id"]
+        assert next(x for x in f if x["name"] == "currency")["options"][0] == "USD"
+
+
+def test_choice_option_keys_map_back():
+    fields = [{"name": "vendor", "options": ["ACME LTD", "Kiran Traders"]}, {"name": "currency", "options": ["INR", "USD"], "hints": CURRENCY_HINTS}]
+    q = build_questions(fields)
+    assert list(q["f0"]["criteria"]) == ["o0", "o1", "not_stated"]
+    assert '"ACME LTD" as the vendor' in q["f0"]["criteria"]["o0"]
+    assert "US dollars" in q["f1"]["criteria"]["USD"]
+    items = answers_to_items(fields, {"f0": {"type": "choice", "choice": "o0", "probabilities": {"o0": 0.9, "o1": 0.05, "not_stated": 0.05}},
+                                      "f1": {"type": "choice", "choice": "not_stated", "probabilities": {"INR": 0.2, "USD": 0.1, "not_stated": 0.7}}})
+    assert [(i["value"], i["jev"]["choice"], i["confidence"]) for i in items] == [("ACME LTD", "ACME LTD", 0.9), (None, "not_stated", 0.7)]
 
 
 class _Resp(io.BytesIO):
@@ -91,10 +124,12 @@ def test_check_fields_posts_typesafe_shape():
 
 def test_check_fields_discovers_when_no_list():
     def opener(req, timeout):
-        return _Resp(json.dumps({"answers": {"f0": {"type": "noul", "noul": 0.99}}}).encode())
+        return _Resp(json.dumps({"answers": {"f0": {"type": "choice", "choice": "not_stated", "probabilities": {"not_stated": 0.8}},
+                                             "f1": {"type": "noul", "noul": 0.99}}}).encode())
 
     items = check_fields("Invoice No: INV-2231", None, key="k", opener=opener)
-    assert items == [{"field": "invoice_no", "label": "Invoice No", "value": "INV-2231", "confidence": 0.99,
+    assert items[0]["field"] == "currency" and items[0]["value"] is None and items[0]["confidence"] == 0.8
+    assert items[1:] == [{"field": "invoice_no", "label": "Invoice No", "value": "INV-2231", "confidence": 0.99,
                       "jev": {"type": "noul", "noul": 0.99, "certainty": pytest.approx(0.98)}}]
 
 

@@ -1,0 +1,88 @@
+{
+ "source": "RealKIE-FCC-Verified (Amazon AGI), https://huggingface.co/datasets/amazon-agi/RealKIE-FCC-Verified . Real invoices from the FCC public inspection files (https://publicfiles.fcc.gov/).",
+ "license": "CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/). Documents: fair use under 17 USC 107, per the dataset card.",
+ "changes": "5 of the 75 documents, OCR text only. Names of individual staff (ATTN / account executive lines) replaced with [name removed]; long legal footers cut; blank lines collapsed. net_amount_due comes from the dataset's verified labels. vendor_any and currency are NOT in the dataset: they were hand-labelled for this check (the station or company that issued the invoice, and US dollars).",
+ "invoices": [
+  {
+   "id": "3b9f33e058641d47cf2ebe76b9382648.pdf",
+   "text": "ONMEDIA\nA MEDIACOM COMMUNICATIONS CO.\nNCC­NEW­DM\nInvoice ID: 52590\nCampaign ID:\nDescription\nGross Advertising Fee\nAgency Commission\nRep. Firm Commission\nInvoice Date: 02-29-2016\nEstimate ID: na\nInvoice\nCARLY FOR PRESIDENT ­DM\nAcct. Exec: NCC­Political, Des Moines\nBill Cycle: 02/16\nContract ID: 31660 Client ID: 6100\nP.O Number: Tax ID:\n/62234133-0100\nAmount\n$230.00\n($34.50)\n($36.17)\nNet Advertising Fee $159.33\nSub Total $159.33\nTotal This Invoice $159.33\nTerms:Net 30\nChecks Payable to:OnMedia Des Moines, IA\nMail to:OnMedia Advertising Sales\n3737 Westown Parkway\nSuite A\nWest Des Moines, IA 50266\n(515) 697-6776\nPlease include invoice or contract # with payment. Thank you for your business!",
+   "vendor_any": [
+    "onmedia"
+   ],
+   "currency": "USD",
+   "net_amount_due": 159.33,
+   "dataset_labels": {
+    "Agency": "ONMEDIA",
+    "Advertiser": "CARLY FOR PRESIDENT-DM",
+    "GrossTotal": 230.0,
+    "NetAmountDue": 159.33,
+    "PaymentTerms": "Net 30"
+   }
+  },
+  {
+   "id": "dc1df85e4e29cc5406286fc8d909f17c.pdf",
+   "text": "iiomcast\nSPOTLIGHT_\nDATE:\nINVOICE #\nBill To:\nNCC Media\n405 Lexington Avenue, 6th Floor\nNew York, NY 10174\n212-548-3300\nAgency: GMMB\nAdvertiser: Hillary For America 2016 Proj#200112\nNCC Order #: 62241286\nSys Code: 0900\nINVOICE\n4/27/2016\n0316-NCC-DAI-03\nMarket\nFlight date\nImpressions* Net CPM\nAMOUNT\n*\nCO, GA, MA, MI, MN, TN, TX, VA, IL, FL\n2/29/2016 3/15/2016 1,590,961 $76.50\n$ 121,708.52\nTotal Gross Billing\nLess: Agency Fee\nTotal Net Billing (Gross less Agency Fee)\nLess: NCC Rep Fee\n$ 143,186.49\n$ (21,477.97)\n$ 121,708.52\n$ (15,822.11)\nTerms:\nDue Upon Receipt\nCheck Payable to: Comcast Spotlight\n*See separate Billing Summary for additional Mail Check to:\ndetails.\nComcast Spotlight\nOne Comcast Center\n36th Floor\nPhiladelphia, PA, 19103\nAttn: [name removed]\nTOTAL\n$ 105,886.41\nTHANK YOU FOR YOUR BUSINESS!",
+   "vendor_any": [
+    "comcast"
+   ],
+   "currency": "USD",
+   "net_amount_due": 105886.41,
+   "dataset_labels": {
+    "Agency": "GMMB",
+    "Advertiser": "Hillary For America 2016",
+    "GrossTotal": 143186.49,
+    "NetAmountDue": 105886.41,
+    "PaymentTerms": "Due Upon Receipt"
+   }
+  },
+  {
+   "id": "8ecb95435a6eeb3dd384d6eb2f007c3c.pdf",
+   "text": "COX MEDIA - WEST\nCCI - CFC A/R\nP.O. BOX 105353\nATLANTA, GA 30348\n(877)695-3338\nInvoice\nATTN: [name removed]\nASELLUS GROUP INC\nATTN: [name removed]\n2005 PALMER AVE #198\nLARCHMONT, NY 10538\nInvoice ID: 1323943 Invoice Date: 05-31-2016\nCampaign ID: Estimate ID: na\nLORRETTA SANCHEZ FOR US SENATE\n2005 PALMER AVE #198\nLARCHMONT, NY 10538\nAcct. Exec: [name removed]\nBill Cycle: 05/16\nContract ID: 1255372 Client ID: 103050\nP.O Number: NA Tax ID:\nDescnpuon Amount\nGross Advertising Fee\nAgency Commission\nRep. Firm Commission\nPosted Pre -Payments\n$2,215.00\n($332.25)\n($150.62)\nNet Advertising Fee $1,732.13\nSub Total\n$1,732.13\n($1,732.13)\nTotal This Invoice $0.00\nLorretta Sanchez US Senate 5.20 -\nThank you for using Cox Media.\nTerms: Net 30\nChecks Payable to: COX MEDIA LLC SAN DIEGO\nMail to: COX MEDIA LLC SAN DIEGO\nFILE 50456\nLOS ANGELES, CA 90074\nCFC_AR@coxmedia.com\nPlease include the invoice numbers on your check or remittance.",
+   "vendor_any": [
+    "cox media"
+   ],
+   "currency": "USD",
+   "net_amount_due": 1732.13,
+   "dataset_labels": {
+    "Agency": "ASELLUS GROUP INC",
+    "Advertiser": "LORRETTA SANCHEZ FOR US SENATE",
+    "GrossTotal": 2215.0,
+    "NetAmountDue": 1732.13,
+    "PaymentTerms": "Net 30"
+   }
+  },
+  {
+   "id": "52f1588f1bedc25f07c5cb6981e5f7dd.pdf",
+   "text": "WTHI\n-PI\nRemit Address:\nWTHI\n90359 Collections Center Drive\nChicago, IL 60693\nMain: (812) 232-9481\nBilling: (317) 296-3100\nBilling Address:\nPOL/Committee to Elect Judge John Roach\nAttention: Accounts Payable\n1421 South Center\nTerre Haute, IN 47802\nUSA\nINVOICE\nDUPLICATE ____\nAdvertiser POL/Committee to Elect Judge John Roa\nProduct\nEstimate Number\nProperty\nWTHI\nAccount Executive\nWTHI Political House\nSales Office\nTerre Haute Local Sales Office\nSales Region\nLocal\nBilling Calendar\nCalendar\nBilling Type\nCash\nSpecial Handling\nPage 1 of 1\nInvoice #\n954780-1\nInvoice Date\n10/31/16\nInvoice Month\nOctober 2016\nInvoice Period\n10/01/16 - 10/31/16\nOrder #\n954780\nAlt Order #\nDeal #\nOrder Flight\n10/24/16 - 11/07/16\nAgency Code\nAdvertiser Code\nProduct 1/2\nAgency Ref\nAdvertiser Ref\nLine\nChannel\nDescription\nTime\nDay\nDate\nLength\nAir Time\nAd -ID\nRate\nReconciliation\nRef #\n1 WTHI\nWTHI\nWTHI\nWTHI\nNews 10 M -F\n6a -7a\n10/24/16 to 10/30/16 2x\nMTWTF--\nTu 10/25/16 :30 6:16 AM\nROACHREV3\nF 10/28/16 :30 6:09 AM\nROACHREV3\n10/31/16 to 11/06/16 2x\nMTWTF--\nM 10/31/16 :30 6:48 AM\nROACHREV3\nAired Spots\n3\n$150.00\n$150.00\n$150.00\nGross Total\n$450.00\nAgency Commission\n$67.50\nNet Amount Due\n$382.50\nPayment Terms 30 Days",
+   "vendor_any": [
+    "wthi"
+   ],
+   "currency": "USD",
+   "net_amount_due": 382.5,
+   "dataset_labels": {
+    "Agency": "WTHI",
+    "Advertiser": "POL/Committee to Elect Judge John Roach",
+    "GrossTotal": 450.0,
+    "NetAmountDue": 382.5,
+    "PaymentTerms": "30 Days"
+   }
+  },
+  {
+   "id": "a501c2b139c99cc56e6d41a8f9df17a1.pdf",
+   "text": "INVOICE\nPage 1 of 1\nPCNC-TV\n- WPXI, Inc.\nE PO Box 809291\nNESS Chicago, IL 60680-9291\nBilling Address:\nMain: (855) 333-2676\nBilling:\nGreer Margolis Mitchell\nAttention: Accounts Payable\n1010 Wisconsin Ave Ste 800\nWashington, DC 20007\nSend Payment To:\nPCNC-TV\nWPXI, Inc.\nPO Box 809291\nChicago, IL 60680-9291\nInvoice #\n142737-2\nInvoice Date\n08/07/16\nInvoice Month\nAugust 2016\nInvoice Period\n08/01/16 - 08/07/16\nProperty\nPCNC-TV\nAccount Executive\nWashington DC CoxReps\nSales Office\nCoxReps Washi\nSales Region\nngton National DC\nAdvertiser\nPOL/Hillary Clinton/D/PRES\nProduct\nHFA 7/26\nEstimate Number\n5075\nFlight Dates\n07/26/16 - 08/01/16\nOrder #\n142737\nAlt Order #\n08330227\nBilling Calendar\nBroadcast\nBilling Type\nCash\nDeal #\nSpecial Handling\nAgency Code\nTV12856\nAdvertiser Code\n278\nProduct 1/2\n295\nAgency Ref\n6219\nAdvertiser Ref\n7979\nLine\nSpot #\nCh\nDay Air Date Air Time Description Start/End Time Length Ad -ID\n2 1 PCNC M 08/01/16 8:42 AM M -Su 4a -4a ROS 8:00 AM -9:00 AM :30 HFA16T311H\n4 1 PCNC M 08/01/16 9:39 AM M -Su 4a -4a ROS 9:30 AM -10:00 AM :30 HFA16R310H\nTotal Spots\n2\nPayment Terms 30 Days\nRate\nType\n$30.00 NM\n$30.00 NM\nGross Total\n$60.00\nAgency Commission\n$9.00\nNet Amount Due\n$51.00",
+   "vendor_any": [
+    "pcnc",
+    "wpxi"
+   ],
+   "currency": "USD",
+   "net_amount_due": 51.0,
+   "dataset_labels": {
+    "Agency": "Greer Margolis Mitchell",
+    "Advertiser": "POL/Hillary Clinton/D/PRES",
+    "GrossTotal": 60.0,
+    "NetAmountDue": 51.0,
+    "PaymentTerms": "30 Days"
+   }
+  }
+ ]
+}

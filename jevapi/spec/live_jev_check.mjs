@@ -3,8 +3,12 @@
 // candidate values, plus one run with no field list (auto-discovery). It checks
 // that the integration works end to end and prints what Jev said. This is a
 // smoke test, not a calibration study.
-import { checkFields, decideAll } from "../js/src/index.js";
+import { checkFields, decideAll, discoverFields } from "../js/src/index.js";
 import { SAMPLES } from "../../web/jevapi/samples.js";
+import { readFileSync } from "node:fs";
+
+// Real public invoices (FCC public files, via RealKIE-FCC-Verified, CC BY-NC 4.0; see real_invoices.json).
+const REAL = JSON.parse(readFileSync(new URL("./real_invoices.json", import.meta.url), "utf8"));
 
 const key = process.env.TYPESAFE_API_KEY;
 if (!key) {
@@ -54,6 +58,31 @@ try {
   console.log(rows.join("\n"));
   console.log("\nNo field list (clean invoice), fields found and Jev's yes-probability:");
   for (const it of disc.items) console.log(`  ${it.field.padEnd(14)} ${String(it.value).padEnd(32)} jev=${it.confidence.toFixed(3)}`);
+  if (!disc.items.some((it) => it.field === "vendor") || !disc.items.some((it) => it.field === "currency")) throw new Error("discovery did not ask about vendor and currency");
+
+  // Real invoices, no field list: vendor and currency must always be asked; Jev picks.
+  console.log(`\nReal public invoices (${REAL.invoices.length}, from ${REAL.source.split(",")[0]}), no field list:`);
+  let vRight = 0, cRight = 0, nYes = 0, fills = 0, reviews = 0, found = 0;
+  for (const d of REAL.invoices) {
+    const disc2 = discoverFields(d.text);
+    if (!disc2.some((f) => f.name === "vendor" && f.options) || !disc2.some((f) => f.name === "currency")) throw new Error(`${d.id}: vendor or currency was not asked`);
+    const net = Number(d.net_amount_due).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fields = [...disc2, { name: "net_amount_due", value: net }];
+    const out = await checkFields({ document: d.text, fields, key, provider: "typesafe" });
+    requests += 1;
+    tokens += out.usage?.input_tokens || 0;
+    if (out.items.some((it) => typeof it.confidence !== "number")) throw new Error(`${d.id}: unusable Jev answer`);
+    const v = out.items.find((it) => it.field === "vendor");
+    const c = out.items.find((it) => it.field === "currency");
+    const n = out.items[out.items.length - 1];
+    const vOk = !!v.value && d.vendor_any.some((w) => v.value.toLowerCase().includes(w));
+    const cOk = c.value === d.currency;
+    vRight += vOk ? 1 : 0; cRight += cOk ? 1 : 0; nYes += n.confidence >= 0.5 ? 1 : 0;
+    const acts = decideAll(null, out.items.slice(0, -1)).decisions.map((x) => x.action);
+    fills += acts.filter((a) => a === "fill").length; reviews += acts.filter((a) => a === "review").length; found += acts.length;
+    console.log(`  ${d.id.slice(0, 8)}  vendor=${JSON.stringify(v.value)} p=${v.confidence.toFixed(2)} ${vOk ? "ok" : "MISS"} | currency=${c.value} p=${c.confidence.toFixed(2)} ${cOk ? "ok" : "MISS"} | net ${net} jev=${n.confidence.toFixed(2)} | ${acts.length} fields found: ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review`);
+  }
+  console.log(`Real invoices: vendor right ${vRight}/${REAL.invoices.length}, currency right ${cRight}/${REAL.invoices.length}, Jev said yes to the dataset's net amount on ${nYes}/${REAL.invoices.length}. ${found} fields found: ${fills} fill, ${reviews} review.`);
 } catch (e) {
   console.error(`Live Jev check FAILED: ${e.message}${e.status ? ` (HTTP ${e.status})` : ""}`);
   process.exit(1);

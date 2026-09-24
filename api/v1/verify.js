@@ -60,7 +60,7 @@ export function makeVerify(fetchImpl) {
       fields: out.items,
       ...result,
       calibrated: !!profile,
-      note: (discovered ? (out.items.length ? `No field list sent: found ${out.items.length} labelled fields in the text. ` : "No field list sent and no labelled fields found; send fields, or use /api/v1/extract with your AI key. ") : "") +
+      note: (discovered ? (out.items.length ? `No field list sent: found ${out.items.length} fields in the text (labelled lines, plus vendor and currency on invoices). ` : "No field list sent and no labelled fields found; send fields, or use /api/v1/extract with your AI key. ") : "") +
         (profile ? "Jev's probabilities were calibrated with your profile." : "No profile sent: these are Jev's raw probabilities. Measure them on your own labelled documents with /api/v1/calibrate before trusting them."),
     }];
   });

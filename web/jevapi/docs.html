@@ -60,7 +60,7 @@ a{color:#2f6f62}
   -d '{"text":"INVOICE INV-2231 ...",
        "fields":[{"name":"invoice_number","value":"INV-2231"},
                  {"name":"currency","options":["INR","USD"]}]}'</pre>
-<p class="mut">No field list? Leave out <code>fields</code>. <code>/verify</code> then finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each. <code>/extract</code> without <code>fields</code> asks your AI for every field it can find. Add <code>"judge":"jev"</code> (plus <code>X-Jev-Key</code>) to an extract call so Jev checks what your AI read. Jev's numbers are raw until you calibrate them on your own labelled documents with <code>/api/v1/calibrate</code>.</p>
+<p class="mut">No field list? Leave out <code>fields</code>. <code>/verify</code> then finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each. On invoices it always asks about the vendor and the currency too, even when they are unlabelled (Jev picks from the letterhead and "payable to" names, and from a currency list). <code>/extract</code> without <code>fields</code> asks your AI for every field it can find. Add <code>"judge":"jev"</code> (plus <code>X-Jev-Key</code>) to an extract call so Jev checks what your AI read. Jev's numbers are raw until you calibrate them on your own labelled documents with <code>/api/v1/calibrate</code>.</p>
 
 <h2>Options</h2>
 <table>

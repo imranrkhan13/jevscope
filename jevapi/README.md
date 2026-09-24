@@ -96,7 +96,7 @@ from jevapi import check_fields, decide_all
 items = check_fields(text, [{"name": "invoice_number", "value": "INV-2231"}], key=os.environ["TYPESAFE_API_KEY"])
 ```
 
-No field list? Pass no fields (`fields: null` / `None`). JevAPI finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each one. That finder is simple pattern matching; for free-form documents use the hosted `/api/v1/extract` without `fields`, which asks your AI for every field, with `"judge": "jev"`.
+No field list? Pass no fields (`fields: null` / `None`). JevAPI finds every labelled field in the text ("Invoice No: ...", "Total 48,200") and Jev checks each one. On invoice-like text it also always asks about the vendor and the currency, even when no line labels them: it offers Jev the letterhead, "Remit to / Checks payable to" names and company-looking lines as options, plus a list of currencies, and Jev picks one or says not_stated. That finder is simple pattern matching; for free-form documents use the hosted `/api/v1/extract` without `fields`, which asks your AI for every field, with `"judge": "jev"`.
 
 Hosted: `POST /api/v1/verify` with header `X-Jev-Key`, or `POST /api/v1/extract` with `"judge": "jev"`.
 

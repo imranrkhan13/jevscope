@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, JEV_PROVIDERS, JevError } from "../src/index.js";
+import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, vendorCandidates, coreFields, CURRENCY_HINTS, JEV_PROVIDERS, JevError } from "../src/index.js";
 
 const spec = JSON.parse(readFileSync(new URL("../../spec/jev_certainty.json", import.meta.url)));
 const close = (a, b) => (a === null || b === null ? assert.equal(a, b) : assert.ok(Math.abs(a - b) < 1e-12, `${a} vs ${b}`));
@@ -68,12 +68,46 @@ test("Jev items flow into decide: confident yes fills, confident no and blanks g
 
 test("discoverFields finds fields nobody listed, matching the Python version", () => {
   const f = discoverFields("ACME LTD\nInvoice No: INV-2231\nDue date: 2026-10-15\nSub total 21,450\nGST 18% 3,861\nThank you!\nInvoice No: X-2");
-  assert.deepEqual(f.map((x) => [x.name, x.value]), [
+  assert.deepEqual(f.map((x) => [x.name, x.value ?? x.options.slice(0, 3)]), [
+    ["vendor", ["ACME LTD"]], ["currency", ["INR", "USD", "EUR"]],
     ["invoice_no", "INV-2231"], ["due_date", "2026-10-15"], ["sub_total", "21,450"], ["gst_18", "3,861"], ["invoice_no_2", "X-2"],
   ]);
-  assert.equal(f[0].label, "Invoice No");
+  assert.equal(f[2].label, "Invoice No");
   assert.deepEqual(discoverFields(""), []);
   assert.equal(discoverFields(Array.from({ length: 80 }, (_, i) => `Field ${i}: v`).join("\n")).length, 50);
+});
+
+test("vendor and currency are always asked on invoices, even with no labels", () => {
+  const f = discoverFields("NORTH STAR LOGISTICS PVT LTD\n12 Dock Road\nInvoice\nFreight Mumbai -> Delhi\nT0TAL $25,311");
+  assert.deepEqual(f.find((x) => x.name === "vendor").options, ["NORTH STAR LOGISTICS PVT LTD", "12 Dock Road"]);
+  assert.equal(f.find((x) => x.name === "currency").options[0], "USD");
+  // "Remit to" beats the letterhead; a labelled vendor or currency line is kept as is.
+  assert.equal(vendorCandidates("Invoice\nRemit to:\nWTHI\nBilling Address:\nJohn Roach")[0], "WTHI");
+  const labelled = discoverFields("Invoice\nVendor: Acme\nCurrency: INR");
+  assert.deepEqual(labelled.map((x) => x.name), ["vendor", "currency"]);
+  assert.equal(labelled[0].value, "Acme");
+  // Not an invoice: no vendor or currency questions.
+  assert.deepEqual(coreFields("Name: Imran\nSkills: Python"), []);
+});
+
+test("on 5 real public invoices, vendor and currency are always asked and the real vendor is an option", () => {
+  const fx = JSON.parse(readFileSync(new URL("../../spec/real_invoices.json", import.meta.url), "utf8"));
+  for (const d of fx.invoices) {
+    const f = discoverFields(d.text);
+    const v = f.find((x) => x.name === "vendor");
+    assert.ok(v && v.options.some((o) => d.vendor_any.some((w) => o.toLowerCase().includes(w))), d.id);
+    assert.equal(f.find((x) => x.name === "currency").options[0], "USD");
+  }
+});
+
+test("choice options with spaces get plain keys, and answers map back to the option text", () => {
+  const fields = [{ name: "vendor", options: ["ACME LTD", "Kiran Traders"] }, { name: "currency", options: ["INR", "USD"], hints: CURRENCY_HINTS }];
+  const q = buildQuestions(fields);
+  assert.deepEqual(Object.keys(q.f0.criteria), ["o0", "o1", "not_stated"]);
+  assert.match(q.f0.criteria.o0, /"ACME LTD" as the vendor/);
+  assert.match(q.f1.criteria.USD, /US dollars/);
+  const items = answersToItems(fields, { f0: { type: "choice", choice: "o0", probabilities: { o0: 0.9, o1: 0.05, not_stated: 0.05 } }, f1: { type: "choice", choice: "not_stated", probabilities: { INR: 0.2, USD: 0.1, not_stated: 0.7 } } });
+  assert.deepEqual(items.map((i) => [i.value, i.jev.choice, i.confidence]), [["ACME LTD", "ACME LTD", 0.9], [null, "not_stated", 0.7]]);
 });
 
 function fakeFetch(status, body, seen) {
@@ -110,8 +144,9 @@ test("checkFields sends one request for all fields and returns usage", async () 
 
 test("checkFields with no field list discovers fields, then Jev checks each", async () => {
   const seen = [];
-  const out = await checkFields({ document: "Invoice No: INV-2231\nTotal: 500", key: "k", fetchImpl: fakeFetch(200, { answers: { f0: { type: "noul", noul: 0.99 }, f1: { type: "noul", noul: 0.4 } } }, seen) });
+  const out = await checkFields({ document: "Invoice No: INV-2231\nTotal: 500", key: "k", fetchImpl: fakeFetch(200, { answers: { f0: { type: "choice", choice: "not_stated", probabilities: { not_stated: 0.8 } }, f1: { type: "noul", noul: 0.99 }, f2: { type: "noul", noul: 0.4 } } }, seen) });
   const q = JSON.parse(seen[0].init.body).questions;
-  assert.match(q.f0.instructions, /"INV-2231" as the invoice_no/);
-  assert.deepEqual(out.items.map((i) => [i.field, i.label, i.value, i.confidence]), [["invoice_no", "Invoice No", "INV-2231", 0.99], ["total", "Total", "500", 0.4]]);
+  assert.equal(q.f0.type, "choice");
+  assert.match(q.f1.instructions, /"INV-2231" as the invoice_no/);
+  assert.deepEqual(out.items.map((i) => [i.field, i.label, i.value, i.confidence]), [["currency", "Currency", null, 0.8], ["invoice_no", "Invoice No", "INV-2231", 0.99], ["total", "Total", "500", 0.4]]);
 });
