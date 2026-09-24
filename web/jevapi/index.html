@@ -31,16 +31,32 @@ input,select,textarea{font:inherit;border:1px solid var(--line);background:#fff;
 textarea{min-height:170px;resize:vertical;white-space:pre}
 label.small{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
 .drop{border:1px dashed var(--mut);padding:14px;text-align:center;color:var(--mut);margin-top:10px}
-.field{border:1px solid var(--line);background:#fff;padding:10px 12px;margin-bottom:10px;border-left:5px solid var(--line)}
-.field.fill{border-left-color:var(--teal);background:linear-gradient(90deg,var(--tealT),#fff 60%)}
-.field.review{border-left-color:var(--ochre);background:linear-gradient(90deg,var(--ochreT),#fff 60%)}
-.field .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.field .name{font-weight:500}
-.badge{font-size:11.5px;padding:1px 7px;border:1px solid}
-.fill .badge{color:var(--teal);border-color:var(--teal)}
-.review .badge{color:var(--ochre);border-color:var(--ochre)}
-.field input{margin-top:6px}
-.field .why{color:var(--mut);font-size:12px;margin-top:6px}
+.note{font-size:12px;color:var(--mut);background:#fff;border:1px solid var(--line);padding:8px 10px;margin-bottom:12px}
+.filter{margin-left:auto}
+.filter button{padding:3px 9px;font-size:12px}
+.group{border:1px solid var(--line);background:#fff;margin-bottom:10px}
+.group>summary{list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary::before{content:"▸";margin-right:6px;color:var(--mut)}
+.group[open]>summary::before{content:"▾"}
+.group .gt{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group .gc{font-size:12px;color:var(--mut);white-space:nowrap}
+.group .gc b{font-weight:500}
+.f{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:7px 12px;border-bottom:1px solid #e6e8e0;border-left:4px solid transparent}
+.f:last-child{border-bottom:0}
+.f.fill{border-left-color:var(--teal)}
+.f.review{border-left-color:var(--ochre);background:var(--ochreT)}
+.f .name{font-size:12px;color:var(--mut);padding-top:6px}
+.f input,.f textarea{padding:5px 7px;min-height:0;white-space:pre-wrap;resize:vertical}
+.f textarea{field-sizing:content;max-height:220px}
+.chip{font-size:11.5px;padding:2px 7px;border:1px solid;white-space:nowrap;margin-top:4px;min-width:92px;text-align:center}
+.fill .chip{color:var(--teal);border-color:var(--teal)}
+.review .chip{color:var(--ochre);border-color:var(--ochre)}
+.f .sugg{grid-column:2/4;font-size:12px;color:var(--ink)}
+.f .sugg b{font-weight:500;color:var(--ochre)}
+.f .more{grid-column:2/4;font-size:11.5px;color:var(--mut)}
+.hide-fill .f.fill,.hide-fill .group.allfill{display:none}
+@media(max-width:560px){.f{grid-template-columns:minmax(0,1fr) auto}.f .name{grid-column:1;padding-top:2px}.f .chip{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more{grid-column:1/3}.group>summary{display:grid;grid-template-columns:14px minmax(0,1fr);gap:2px 0}.group .gt{white-space:normal}.group .gc{grid-column:2}}
 .nums{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px;flex-wrap:wrap}
 .nums b{color:var(--ink);font-weight:500}
 .summary{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
@@ -60,7 +76,7 @@ footer{margin-top:26px;color:var(--mut);font-size:12px;border-top:1px solid var(
 <header>
   <div>
     <h1 class="serif">Fill it, or check it?</h1>
-    <p class="sub">Upload a document. JevAPI fills the fields it can trust and flags the rest for a person, with the reason for each.</p>
+    <p class="sub">Upload a document. JevAPI fills the fields it can trust and flags the rest for a person to check.</p>
     <span class="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span>
   </div>
   <nav><a href="/jevapi/docs">API docs</a><a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a><a href="/">Calibration Lab</a></nav>
@@ -99,6 +115,7 @@ footer{margin-top:26px;color:var(--mut);font-size:12px;border-top:1px solid var(
   <section class="card" aria-label="Form">
     <h2 class="serif">2. The form</h2>
     <div class="summary" id="summary"></div>
+    <div class="note" id="note"></div>
     <form id="form" onsubmit="return false"></form>
     <div class="slider">
       <label class="small" for="cost">A wrong auto-fill costs as much as <b id="costv">20</b> human checks</label>
@@ -139,25 +156,80 @@ function refit() {
   render();
 }
 
+// Group resume fields (job_1_title, project_2_name, skills_tools ...) so the form reads like the resume.
+const CONTACT = ["name", "headline", "email", "phone", "location", "linkedin", "github", "website"];
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const KIND = { job: "Job", project: "Project", education: "Education" };
+function groupOf(field, label) {
+  const m = field.match(/^(job|project|education)_(\d+)_(.+)$/);
+  if (m) return { key: `${m[1]}_${m[2]}`, kind: m[1], n: +m[2], short: cap(String(label || m[3]).replace(new RegExp(`^${KIND[m[1]]} ${m[2]}\\s*`, "i"), "") || m[3]) };
+  if (CONTACT.includes(field) || /^website_\d+$/.test(field)) return { key: "contact", title: "Contact", short: label || field };
+  if (field === "summary") return { key: "summary", title: "Summary", short: "Text" };
+  if (/^skills(_|$)/.test(field)) return { key: "skills", title: "Skills", short: String(label || field).replace(/^Skills:?\s*/, "") || "Skills" };
+  const o = field.match(/^(.+?)(?:_(\d+))?$/);
+  const base = String(label || field).replace(/\s+\d+$/, "");
+  return { key: `s_${o[1]}`, title: base, short: o[2] ? `Item ${o[2]}` : base };
+}
+function groupTitle(g, rows) {
+  const v = (k) => rows.find((r) => r.sub === k)?.ex.value;
+  if (g.kind === "job") return [v("title"), v("company")].filter(Boolean).join(" · ") || `Job ${g.n}`;
+  if (g.kind === "project") return v("name") || `Project ${g.n}`;
+  if (g.kind === "education") return [v("degree"), v("school")].filter(Boolean).join(" · ") || `Education ${g.n}`;
+  return g.title;
+}
+const box = (i, v, hint) => (String(v || hint).length > 70
+  ? `<textarea id="f${i}" rows="2" placeholder="${esc(hint)}">${esc(v)}</textarea>`
+  : `<input id="f${i}" value="${esc(v)}" placeholder="${esc(hint)}">`);
+
+// Long values: grow each box to fit its text (older browsers without field-sizing).
+function fitBoxes() {
+  if (CSS.supports("field-sizing", "content")) return;
+  $("form").querySelectorAll("textarea").forEach((t) => { t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight + 2, 220) + "px"; });
+}
+window.addEventListener("resize", fitBoxes);
+
 function render() {
   // The sample profile was measured on a simulated extractor, not on Jev, so Jev's numbers are shown raw.
   const byJev = state.judge === "jev";
   const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
-  $("summary").innerHTML = `<span class="pill"><b style="color:var(--teal)">${fill}</b> filled automatically</span><span class="pill"><b style="color:var(--ochre)">${review}</b> need a person</span>`;
+  const bar = decisions[0] ? pct(decisions[0].threshold) : pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
+  $("summary").innerHTML = `<span class="pill"><b style="color:var(--teal)">${fill}</b> filled</span><span class="pill"><b style="color:var(--ochre)">${review}</b> to check</span>
+    <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>`;
+  $("note").innerHTML = byJev
+    ? `Scores are Jev's answer to "does the document really say this?". A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. These are raw scores, not yet measured on your own documents.`
+    : `Scores come from the extractor, adjusted with the sample calibration (made-up data). A field is filled when the adjusted score is at least <b>${bar}</b>; the rest go to a person.`;
   const labels = Object.fromEntries(DEFAULT_FIELDS.map((f) => [f.name, f.label]));
-  $("form").innerHTML = decisions
-    .map((d, i) => {
-      const ex = state.extracted[i];
-      const val = d.action === "fill" ? ex.value ?? "" : "";
-      const hint = d.action === "review" && ex.value != null ? `Suggested: ${esc(ex.value)}` : "";
-      return `<div class="field ${d.action}">
-        <div class="top"><label class="name" for="f${i}">${esc(labels[d.field] || ex.label || d.field)}</label><span class="badge">${d.action === "fill" ? "Filled" : "Check this"}</span></div>
-        <input id="f${i}" value="${esc(val)}" placeholder="${hint}">
-        <div class="nums">${byJev ? `<span>Jev said <b>${pct(ex.confidence)}</b></span>${ex.aiConfidence != null ? `<span>Extractor said <b>${pct(ex.aiConfidence)}</b></span>` : ""}` : `<span>Model said <b>${pct(ex.confidence)}</b></span><span>Measured <b>${pct(d.confidence)}</b></span>`}<span>Bar <b>${pct(d.threshold)}</b></span></div>
-        <div class="why">${esc(d.reason)}</div>
-      </div>`;
-    })
-    .join("");
+  const groups = new Map();
+  decisions.forEach((d, i) => {
+    const ex = state.extracted[i];
+    const label = labels[d.field] || ex.label || d.field;
+    const g = groupOf(d.field, label);
+    if (!groups.has(g.key)) groups.set(g.key, { ...g, rows: [] });
+    groups.get(g.key).rows.push({ d, ex, i, label, short: g.short, sub: (d.field.match(/^(?:job|project|education)_\d+_(.+)$/) || [])[1] });
+  });
+  const resume = [...groups.keys()].some((k) => /^(job_|project_|education_|skills|summary)/.test(k));
+  const byI = Object.fromEntries([...groups.values()].flatMap((g) => g.rows).map((r) => [r.i, r]));
+  const row = ({ d, ex, i, label, short }) => {
+    const fillIt = d.action === "fill";
+    const score = byJev ? pct(ex.confidence) : pct(d.confidence);
+    const extra = byJev ? (ex.aiConfidence != null ? `Extractor said ${pct(ex.aiConfidence)}` : "") : `Model said ${pct(ex.confidence)}`;
+    return `<div class="f ${d.action}">
+      <label class="name" for="f${i}">${esc(resume ? short : label)}</label>
+      ${box(i, fillIt ? ex.value ?? "" : "", fillIt || ex.value == null ? "" : "Type the right value")}
+      <span class="chip" title="${esc(d.reason)}">${fillIt ? "Filled" : "Check"} ${score}</span>
+      ${!fillIt && ex.value != null ? `<div class="sugg"><b>Suggested:</b> ${esc(ex.value)}</div>` : ""}
+      ${extra ? `<div class="more">${extra}</div>` : ""}
+    </div>`;
+  };
+  $("form").classList.toggle("hide-fill", !!state.only);
+  $("form").innerHTML = !resume
+    ? `<div class="group"><div>${decisions.map((d, i) => row(byI[i])).join("")}</div></div>`
+    : [...groups.values()].map((g) => {
+        const nf = g.rows.filter((r) => r.d.action === "fill").length, nr = g.rows.length - nf;
+        return `<details class="group${nr ? "" : " allfill"}" open><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--ochre)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
+      }).join("");
+  fitBoxes();
+  $("summary").querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => { state.only = b.dataset.f === "review"; render(); }));
   $("bar").textContent = pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
   $("curl").textContent = `curl -X POST https://jevscope.vercel.app/api/v1/decide \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ items: state.extracted.slice(0, 2), options: { costError: state.cost } })}'\n\n# add "profile": <from /api/v1/calibrate> to use your own calibration`;
 }
