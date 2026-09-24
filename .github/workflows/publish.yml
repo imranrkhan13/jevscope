@@ -1,0 +1,63 @@
+name: Publish
+# Publishes jevapi to PyPI and npm with GitHub trusted publishing (no tokens stored).
+# A version that is already on a registry is skipped, so re-running is safe.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/publish.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: publish
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Test
+        run: |
+          pip install -q pytest && pip install -q -e jevapi/python && pytest -q jevapi/python/tests
+      - name: Check if this version is already on PyPI
+        id: check
+        run: |
+          v=$(python -c "import tomllib;print(tomllib.load(open('jevapi/python/pyproject.toml','rb'))['project']['version'])")
+          if curl -sf "https://pypi.org/pypi/jevapi/$v/json" > /dev/null; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "jevapi $v already on PyPI"; fi
+      - name: Build
+        if: steps.check.outputs.skip != '1'
+        run: |
+          rm -rf jevapi/python/*.egg-info jevapi/python/dist
+          pip install -q build && python -m build jevapi/python
+      - name: Publish to PyPI
+        if: steps.check.outputs.skip != '1'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: jevapi/python/dist
+  npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Test
+        run: cd jevapi/js && npm test
+      - name: Check if this version is already on npm
+        id: check
+        run: |
+          v=$(node -p "require('./jevapi/js/package.json').version")
+          if npm view "jevapi@$v" version > /dev/null 2>&1; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "jevapi $v already on npm"; fi
+      - name: Publish to npm
+        if: steps.check.outputs.skip != '1'
+        run: |
+          npm install -g npm@latest
+          cd jevapi/js && npm publish --access public
