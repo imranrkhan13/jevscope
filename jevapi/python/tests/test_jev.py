@@ -87,6 +87,26 @@ def test_real_invoices_always_get_vendor_and_currency():
         assert next(x for x in f if x["name"] == "currency")["options"][0] == "USD"
 
 
+def test_resume_mode_matches_hand_labels():
+    from pathlib import Path
+    from jevapi import is_resume, join_wrapped
+    fx = json.loads((Path(__file__).resolve().parents[2] / "spec" / "resumes.json").read_text())
+    for r in fx["resumes"]:
+        assert is_resume(r["text"])
+        assert {f["name"]: f["value"] for f in discover_fields(r["text"])} == r["gold"], r["id"]
+    assert join_wrapped("availability-aware schedul-", "  ing and booking") == "availability-aware scheduling and booking"
+    assert join_wrapped("resume uploads, job-", "  description parsing") == "resume uploads, job-description parsing"
+    assert join_wrapped("GitHub Actions, NGINX,", "Azure, GCP") == "GitHub Actions, NGINX, Azure, GCP"
+    assert not is_resume("ACME LTD\nInvoice No: 1\nTotal: 5")
+
+
+def test_jev_reason_wording():
+    r = decide_all(None, [{"field": "a", "value": "x", "confidence": 0.99, "jev": {"type": "noul", "noul": 0.99}},
+                          {"field": "b", "value": "y", "confidence": 0.99}])
+    assert "Jev's raw 99%" in r["decisions"][0]["reason"]
+    assert "extractor's own 99%" in r["decisions"][1]["reason"]
+
+
 def test_choice_option_keys_map_back():
     fields = [{"name": "vendor", "options": ["ACME LTD", "Kiran Traders"]}, {"name": "currency", "options": ["INR", "USD"], "hints": CURRENCY_HINTS}]
     q = build_questions(fields)

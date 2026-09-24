@@ -34,6 +34,17 @@ export const SAMPLES = [
       { field: "total_amount", value: "15000", confidence: 0.95 },
     ],
   },
+  {
+    id: "resume",
+    label: "Resume",
+    text: "Priya    Sharma\nPune, India | priya.sharma@example.com | +91 98765 43210\nlinkedin.com/in/priya-sharma-example | github.com/priya-example | priya.example.dev\n\nSummary\nBackend engineer who builds payment and billing APIs with Go, Python and PostgreSQL. Cares about test coverage,\nclear on-call runbooks and small, safe releases.\n\nExperience\nSoftware Engineer                                                                      Jan 2024 – Present\nLotus Payments Pvt Ltd, Bengaluru\n• Built a refund service in Go that handles 40k requests per day with idempotent retries and\n  audit logs.\n• Cut invoice generation time from 9 minutes to 40 seconds by moving PDF rendering to a queue.\nSoftware Engineering Intern                                                            Jun 2023 – Dec 2023\nKiran Cloud Services, Pune\n• Wrote Python scripts to reconcile ledger entries and flagged 1,200 mismatched rows for re-\n  view.\n\nProjects\nLedgerLite – Double-entry Bookkeeping API                                           Go, PostgreSQL\n• REST API with journal entries, trial balance and month-end close, covered by 180 unit tests.\nQueueWatch – Job Queue Dashboard\n• Shows stuck jobs, retry counts and schedul-\n  ing delays for Redis queues.\n\nTechnical Skills\nLanguages: Go, Python, SQL, TypeScript\nTools: PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana,\nPrometheus\n\nEducation\nBE in Computer Engineering                                                                 2019 – 2023\nSavitribai Phule Pune University\n",
+    extracted: [
+      { field: "name", label: "Name", value: "Priya Sharma", confidence: 0.99 },
+      { field: "email", label: "Email", value: "priya.sharma@example.com", confidence: 0.99 },
+      { field: "job_1_company", label: "Job 1 company", value: "Lotus Payments Pvt Ltd", confidence: 0.97 },
+      { field: "skills_tools", label: "Skills: Tools", value: "PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana", confidence: 0.96 },
+    ],
+  },
 ];
 
 export const DEFAULT_FIELDS = [

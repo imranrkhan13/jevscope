@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, vendorCandidates, coreFields, CURRENCY_HINTS, JEV_PROVIDERS, JevError } from "../src/index.js";
+import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, vendorCandidates, coreFields, CURRENCY_HINTS, JEV_PROVIDERS, JevError, isResume, joinWrapped, resumeFields } from "../src/index.js";
 
 const spec = JSON.parse(readFileSync(new URL("../../spec/jev_certainty.json", import.meta.url)));
 const close = (a, b) => (a === null || b === null ? assert.equal(a, b) : assert.ok(Math.abs(a - b) < 1e-12, `${a} vs ${b}`));
@@ -98,6 +98,32 @@ test("on 5 real public invoices, vendor and currency are always asked and the re
     assert.ok(v && v.options.some((o) => d.vendor_any.some((w) => o.toLowerCase().includes(w))), d.id);
     assert.equal(f.find((x) => x.name === "currency").options[0], "USD");
   }
+});
+
+test("resume mode reads every detail of two synthetic resumes, matching the hand labels exactly", () => {
+  const fx = JSON.parse(readFileSync(new URL("../../spec/resumes.json", import.meta.url), "utf8"));
+  for (const r of fx.resumes) {
+    assert.equal(isResume(r.text), true);
+    const got = Object.fromEntries(discoverFields(r.text).map((f) => [f.name, f.value]));
+    assert.deepEqual(got, r.gold, r.id);
+  }
+  assert.equal(resumeFields(fx.resumes[0].text).find((f) => f.name === "job_1_company").label, "Job 1 company");
+  // Nothing is computed that the resume does not say.
+  assert.ok(!discoverFields(fx.resumes[0].text).some((f) => /years|experience_total/.test(f.name)));
+});
+
+test("a Jev-judged value says it is Jev's raw number, not the extractor's", () => {
+  const r = decideAll(null, [{ field: "a", value: "x", confidence: 0.99, jev: { type: "noul", noul: 0.99 } }, { field: "b", value: "y", confidence: 0.99 }]);
+  assert.match(r.decisions[0].reason, /Jev's raw 99%/);
+  assert.match(r.decisions[1].reason, /extractor's own 99%/);
+});
+
+test("wrapped lines are joined back together, and invoices are not read as resumes", () => {
+  assert.equal(joinWrapped("availability-aware schedul-", "  ing and booking"), "availability-aware scheduling and booking");
+  assert.equal(joinWrapped("resume uploads, job-", "  description parsing"), "resume uploads, job-description parsing");
+  assert.equal(joinWrapped("GitHub Actions, NGINX,", "Azure, GCP"), "GitHub Actions, NGINX, Azure, GCP");
+  assert.equal(isResume("ACME LTD\nInvoice No: 1\nTotal: 5"), false);
+  assert.equal(isResume("Name\nSkills\nPython"), false);
 });
 
 test("choice options with spaces get plain keys, and answers map back to the option text", () => {

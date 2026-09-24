@@ -253,7 +253,9 @@ export function decide(profile, item, overrides = {}) {
   const pct = (x) => `${Math.round(x * 100)}%`;
   let reason;
   if (source === "raw") {
-    reason = `Not calibrated: using the extractor's own ${pct(raw)}, which may be overconfident.`;
+    reason = item.jev
+      ? `Not calibrated: using Jev's raw ${pct(raw)}, not yet measured on your documents.`
+      : `Not calibrated: using the extractor's own ${pct(raw)}, which may be overconfident.`;
   } else {
     const basis = source === "field" ? `this field's ${f.n} examples` : `all ${profile.n} examples (this field has too few of its own)`;
     reason = `Stated ${pct(raw)}; measured on ${basis}, values like this are right about ${pct(p)} of the time` +

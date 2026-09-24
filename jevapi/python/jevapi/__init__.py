@@ -11,6 +11,7 @@ same camelCase names in both languages for that reason.
 """
 
 from .certainty import correctness_probability, normalize
+from .resume import is_resume, join_wrapped, resume_fields
 from .jev import CURRENCY_HINTS, JEV_PROVIDERS, JevError, answers_to_items, ask_jev, build_questions, check_fields, core_fields, discover_fields, option_key, vendor_candidates
 from .core import (
     PROFILE_VERSION,
@@ -35,6 +36,9 @@ __all__ = [
     "check_fields",
     "correctness_probability",
     "discover_fields",
+    "is_resume",
+    "resume_fields",
+    "join_wrapped",
     "core_fields",
     "vendor_candidates",
     "option_key",

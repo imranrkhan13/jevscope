@@ -1,0 +1,65 @@
+{
+ "synthetic": true,
+ "note": "SYNTHETIC resumes written for tests. The people, companies and contact details are made up (example.com / example.org / 555 numbers).",
+ "resumes": [
+  {
+   "id": "A",
+   "text": "Priya    Sharma\nPune, India | priya.sharma@example.com | +91 98765 43210\nlinkedin.com/in/priya-sharma-example | github.com/priya-example | priya.example.dev\n\nSummary\nBackend engineer who builds payment and billing APIs with Go, Python and PostgreSQL. Cares about test coverage,\nclear on-call runbooks and small, safe releases.\n\nExperience\nSoftware Engineer                                                                      Jan 2024 – Present\nLotus Payments Pvt Ltd, Bengaluru\n• Built a refund service in Go that handles 40k requests per day with idempotent retries and\n  audit logs.\n• Cut invoice generation time from 9 minutes to 40 seconds by moving PDF rendering to a queue.\nSoftware Engineering Intern                                                            Jun 2023 – Dec 2023\nKiran Cloud Services, Pune\n• Wrote Python scripts to reconcile ledger entries and flagged 1,200 mismatched rows for re-\n  view.\n\nProjects\nLedgerLite – Double-entry Bookkeeping API                                           Go, PostgreSQL\n• REST API with journal entries, trial balance and month-end close, covered by 180 unit tests.\nQueueWatch – Job Queue Dashboard\n• Shows stuck jobs, retry counts and schedul-\n  ing delays for Redis queues.\n\nTechnical Skills\nLanguages: Go, Python, SQL, TypeScript\nTools: PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana,\nPrometheus\n\nEducation\nBE in Computer Engineering                                                                 2019 – 2023\nSavitribai Phule Pune University\n",
+   "gold": {
+    "name": "Priya Sharma",
+    "location": "Pune, India",
+    "email": "priya.sharma@example.com",
+    "phone": "+91 98765 43210",
+    "linkedin": "linkedin.com/in/priya-sharma-example",
+    "github": "github.com/priya-example",
+    "website": "priya.example.dev",
+    "summary": "Backend engineer who builds payment and billing APIs with Go, Python and PostgreSQL. Cares about test coverage, clear on-call runbooks and small, safe releases.",
+    "job_1_title": "Software Engineer",
+    "job_1_dates": "Jan 2024 – Present",
+    "job_1_company": "Lotus Payments Pvt Ltd",
+    "job_1_location": "Bengaluru",
+    "job_1_highlights": "Built a refund service in Go that handles 40k requests per day with idempotent retries and audit logs.; Cut invoice generation time from 9 minutes to 40 seconds by moving PDF rendering to a queue.",
+    "job_2_title": "Software Engineering Intern",
+    "job_2_dates": "Jun 2023 – Dec 2023",
+    "job_2_company": "Kiran Cloud Services",
+    "job_2_location": "Pune",
+    "job_2_highlights": "Wrote Python scripts to reconcile ledger entries and flagged 1,200 mismatched rows for re-view.",
+    "project_1_name": "LedgerLite",
+    "project_1_summary": "Double-entry Bookkeeping API",
+    "project_1_tech": "Go, PostgreSQL",
+    "project_1_highlights": "REST API with journal entries, trial balance and month-end close, covered by 180 unit tests.",
+    "project_2_name": "QueueWatch",
+    "project_2_summary": "Job Queue Dashboard",
+    "project_2_highlights": "Shows stuck jobs, retry counts and scheduling delays for Redis queues.",
+    "skills_languages": "Go, Python, SQL, TypeScript",
+    "skills_tools": "PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana, Prometheus",
+    "education_1_degree": "BE in Computer Engineering",
+    "education_1_dates": "2019 – 2023",
+    "education_1_school": "Savitribai Phule Pune University"
+   }
+  },
+  {
+   "id": "B",
+   "text": "ARJUN MEHTA\nData Analyst\narjun.mehta@example.org  |  +1 (415) 555-0142  |  San Francisco, CA  |  https://arjun-example.io\n\nPROFESSIONAL EXPERIENCE:\nData Analyst | Northwind Retail    03/2022 - 11/2025\n- Built weekly sales dashboards in Tableau used by 14 store managers.\n- Automated returns reporting with Python and SQL, saving 6 hours a week.\n\nEDUCATION:\nMS in Business Analytics    2020 - 2022\nUniversity of Example, Chicago\n\nSKILLS:\nAnalysis: SQL, Python (pandas), Excel\nVisualization: Tableau, Looker\n\nCERTIFICATIONS:\n- Google Data Analytics Certificate (2021)\n",
+   "gold": {
+    "name": "ARJUN MEHTA",
+    "headline": "Data Analyst",
+    "email": "arjun.mehta@example.org",
+    "phone": "+1 (415) 555-0142",
+    "location": "San Francisco, CA",
+    "website": "https://arjun-example.io",
+    "job_1_title": "Data Analyst",
+    "job_1_company": "Northwind Retail",
+    "job_1_dates": "03/2022 - 11/2025",
+    "job_1_highlights": "Built weekly sales dashboards in Tableau used by 14 store managers.; Automated returns reporting with Python and SQL, saving 6 hours a week.",
+    "education_1_degree": "MS in Business Analytics",
+    "education_1_dates": "2020 - 2022",
+    "education_1_school": "University of Example",
+    "education_1_location": "Chicago",
+    "skills_analysis": "SQL, Python (pandas), Excel",
+    "skills_visualization": "Tableau, Looker",
+    "certifications": "Google Data Analytics Certificate (2021)"
+   }
+  }
+ ]
+}

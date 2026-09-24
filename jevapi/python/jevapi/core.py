@@ -286,7 +286,8 @@ def decide(profile: Optional[Mapping[str, Any]], item: Mapping[str, Any], overri
     used = lower if (opts["conservative"] and blocks) else p
     fill = used >= threshold and used > 0
     if source == "raw":
-        reason = f"Not calibrated: using the extractor's own {_pct(raw)}, which may be overconfident."
+        reason = (f"Not calibrated: using Jev's raw {_pct(raw)}, not yet measured on your documents." if item.get("jev")
+                  else f"Not calibrated: using the extractor's own {_pct(raw)}, which may be overconfident.")
     else:
         basis = (
             f"this field's {f['n']} examples"

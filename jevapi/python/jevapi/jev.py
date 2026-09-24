@@ -16,6 +16,7 @@ import urllib.request
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .certainty import normalize
+from .resume import is_resume, resume_fields
 
 #: Where Jev can be reached, per the providers' own docs:
 #:   typesafe   https://docs.typesafe.ai/api.md
@@ -135,12 +136,15 @@ def core_fields(text: str, found: Sequence[Mapping[str, Any]] = ()) -> list[dict
 def discover_fields(text: str, limit: int = MAX_DISCOVERED) -> list[dict]:
     """Find every "Label: value" style field in a document, with no field list given.
 
-    On invoice-like text it also always asks about the vendor and the currency
+    A resume is read section by section instead (resume.resume_fields). On
+    invoice-like text it also always asks about the vendor and the currency
     (core_fields), since those are often unlabelled. Deliberately simple and
     dependency-free: it proposes candidates, and Jev then checks each one against
     the document. For free-form documents, use an AI extractor with no field list
     instead (the hosted /api/v1/extract does that).
     """
+    if is_resume(text):
+        return resume_fields(text)
     found: list[dict] = []
     seen: set[str] = set()
     for line in str(text or "").splitlines():

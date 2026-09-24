@@ -2,6 +2,7 @@
 // the judgement is Jev's; turning Jev's answer into one number uses the port of
 // jevscope's certainty.py. Bring your own key; nothing here stores it.
 import { normalize } from "./certainty.js";
+import { isResume, resumeFields } from "./resume.js";
 
 // Per each provider's docs: https://docs.typesafe.ai/api.md ,
 // https://venice.ai/lp/jev , https://openrouter.ai/docs/guides/community/jev
@@ -85,8 +86,9 @@ export function coreFields(text, found = []) {
   return out;
 }
 
-/** Find every "Label: value" style field, with no field list given, plus vendor and currency on invoice-like text. Jev then checks each. */
+/** Find every field with no field list given: a resume is read section by section (resume.js); other text gives its "Label: value" lines, plus vendor and currency on invoice-like text. Jev then checks each. */
 export function discoverFields(text, limit = MAX_DISCOVERED) {
+  if (isResume(text)) return resumeFields(text);
   const found = [];
   const seen = new Set();
   for (const line of String(text || "").split(/\r?\n/)) {

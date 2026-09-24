@@ -9,6 +9,10 @@ import { readFileSync } from "node:fs";
 
 // Real public invoices (FCC public files, via RealKIE-FCC-Verified, CC BY-NC 4.0; see real_invoices.json).
 const REAL = JSON.parse(readFileSync(new URL("./real_invoices.json", import.meta.url), "utf8"));
+// SYNTHETIC resumes with hand labels (resumes.json).
+const RESUMES = JSON.parse(readFileSync(new URL("./resumes.json", import.meta.url), "utf8"));
+// The real-invoice run costs about 11k tokens, so it is off the per-ship gate: run it on demand with JEV_REAL_INVOICES=1.
+const RUN_REAL = process.env.JEV_REAL_INVOICES === "1";
 
 const key = process.env.TYPESAFE_API_KEY;
 if (!key) {
@@ -60,6 +64,24 @@ try {
   for (const it of disc.items) console.log(`  ${it.field.padEnd(14)} ${String(it.value).padEnd(32)} jev=${it.confidence.toFixed(3)}`);
   if (!disc.items.some((it) => it.field === "vendor") || !disc.items.some((it) => it.field === "currency")) throw new Error("discovery did not ask about vendor and currency");
 
+  // Synthetic resume A, no field list: resume mode finds every detail, Jev checks each.
+  {
+    const r = RESUMES.resumes[0];
+    const found = discoverFields(r.text);
+    const gold = Object.keys(r.gold);
+    const missing = gold.filter((k) => !found.some((f) => f.name === k && f.value === r.gold[k]));
+    if (missing.length) throw new Error(`resume mode missed ${missing.join(", ")}`);
+    const out = await checkFields({ document: r.text, fields: found, key, provider: "typesafe" });
+    requests += 1;
+    tokens += out.usage?.input_tokens || 0;
+    if (out.items.some((it) => typeof it.confidence !== "number")) throw new Error("resume: unusable Jev answer");
+    const acts = decideAll(null, out.items).decisions.map((x) => x.action);
+    const yes = out.items.filter((it) => it.confidence >= 0.5).length;
+    console.log(`\nSynthetic resume (no field list): ${found.length} fields found (all ${gold.length} hand-labelled values), Jev said yes to ${yes}/${found.length}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
+    for (const it of out.items) if (it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
+  }
+
+  if (RUN_REAL) {
   // Real invoices, no field list: vendor and currency must always be asked; Jev picks.
   console.log(`\nReal public invoices (${REAL.invoices.length}, from ${REAL.source.split(",")[0]}), no field list:`);
   let vRight = 0, cRight = 0, nYes = 0, fills = 0, reviews = 0, found = 0;
@@ -83,6 +105,9 @@ try {
     console.log(`  ${d.id.slice(0, 8)}  vendor=${JSON.stringify(v.value)} p=${v.confidence.toFixed(2)} ${vOk ? "ok" : "MISS"} | currency=${c.value} p=${c.confidence.toFixed(2)} ${cOk ? "ok" : "MISS"} | net ${net} jev=${n.confidence.toFixed(2)} | ${acts.length} fields found: ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review`);
   }
   console.log(`Real invoices: vendor right ${vRight}/${REAL.invoices.length}, currency right ${cRight}/${REAL.invoices.length}, Jev said yes to the dataset's net amount on ${nYes}/${REAL.invoices.length}. ${found} fields found: ${fills} fill, ${reviews} review.`);
+  } else {
+    console.log("\nReal-invoice check skipped (set JEV_REAL_INVOICES=1 to run it; about 11k tokens).");
+  }
 } catch (e) {
   console.error(`Live Jev check FAILED: ${e.message}${e.status ? ` (HTTP ${e.status})` : ""}`);
   process.exit(1);
