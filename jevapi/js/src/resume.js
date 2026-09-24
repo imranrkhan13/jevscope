@@ -9,7 +9,8 @@ const PRE = "(?:selected|relevant|key|other|additional|recent|professional|techn
 const HEADINGS = [
   ["summary", /^(summary|professional summary|profile|professional profile|about|about me|objective|career objective)$/],
   ["experience", new RegExp(`^(${PRE})?(experience|employment|employment history|work history|internships?|research experience)$`)],
-  ["projects", new RegExp(`^(${PRE})?(projects|open source|open-source projects)$`)],
+  // "Projects", "Additional Engineering Projects", "Selected AI Infrastructure Project".
+  ["projects", new RegExp(`^((${PRE})?(projects|open source|open-source projects)|(${PRE})?([a-z&/-]+\\s+){1,2}projects|${PRE}([a-z&/-]+\\s+){0,2}project)$`)],
   ["education", /^(education|academic background|academics|qualifications)$/],
   ["skills", new RegExp(`^(${PRE})?(skills|skills and tools|tech stack|technologies)$`)],
   ["certifications", /^(certifications|certificates|licenses and certifications|licenses & certifications)$/],
@@ -27,7 +28,7 @@ const SPAN = `${ONE}(?:\\s*(?:–|—|-|\u00ad|to)\\s*(?:${ONE}|present|current|
 const DATES = new RegExp(`(^|[\\s|,(])(${SPAN})\\)?(?=$|[\\s|,])`, "i");
 const DATE_ONLY = new RegExp(`^\\(?${SPAN}\\)?$`, "i");
 const DURATION = /^(\d+\s+(years?|yrs?|months?|mos?)\s*)+$/i;
-const NOISE = /^(last updated\b.*|page \d+( of \d+)?|.{1,60}\s[–—-]\s\d{1,2}\/\d{1,2}|.*(?<![A-Za-z])(r[ée]sum[ée]|cv|curriculum vitae)(?![A-Za-z]).*\s\d{1,2})$/i;
+const NOISE = /^(\d{1,3}|last updated\b.*|page \d+( of \d+)?|.{1,60}\s[–—-]\s\d{1,2}\/\d{1,2}|.*(?<![A-Za-z])(r[ée]sum[ée]|cv|curriculum vitae)(?![A-Za-z]).*\s\d{1,2})$/i;
 const BULLET = /^(\s*)([•●▪◦‣*·\-–]|\d{1,2}[.)])\s+/;
 const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/;
 const PHONE = /^\+?\d[\d\s().-]{7,}\d$/;
@@ -37,7 +38,14 @@ const NAME = /^[A-Za-z][A-Za-z.'\- ]{1,60}$/;
 const TITLE = /\b(engineer|developer|programmer|intern|internship|manager|founder|co-founder|cto|ceo|cfo|coo|vp|president|analyst|scientist|designer|lead|director|consultant|researcher|associate|architect|head|officer|specialist|assistant|fellow|professor|lecturer|student|administrator|technician|coordinator|executive|trainee|apprentice|contractor|freelancer|owner|partner|advisor|editor|writer|tutor|teacher|volunteer|member)\b/i;
 const DEGREE = /^(b\.?\s?sc|b\.?\s?s|b\.?\s?a|b\.?\s?e|b\.?\s?tech|b\.?\s?com|bca|m\.?\s?sc|m\.?\s?s|m\.?\s?a|m\.?\s?e|m\.?\s?tech|mca|mba|ph\.?\s?d|md|jd|llb|llm|bachelor|master|doctor|diploma|associate|certificate|high school|hsc|ssc)\b/i;
 const SCHOOL = /\b(university|college|institute|school|academy|polytechnic|iit|nit|iiit|conservatory)\b/i;
+// A place, not a product: "Pune, India", "Remote", or a well-known city or country.
+const PLACE = /^(.*,.*|\(?(remote|hybrid|on-?site|work from home)\)?.*|(mumbai|bombay|bengaluru|bangalore|pune|delhi|new delhi|ncr|hyderabad|chennai|kolkata|gurgaon|gurugram|noida|ahmedabad|jaipur|kochi|london|paris|berlin|munich|amsterdam|dublin|madrid|lisbon|zurich|new york|nyc|san francisco|sf|bay area|seattle|austin|boston|chicago|los angeles|toronto|vancouver|singapore|dubai|sydney|melbourne|tokyo|india|usa|us|uk|united states|united kingdom|germany|france|canada|netherlands|ireland|spain|australia|uae)\.?)$/i;
+// A line of technologies: "Python, FastAPI, Next.js" (short comma-separated items).
+const looksTech = (s) => /,/.test(s) && s.split(/\s*,\s*/).every((x) => x && x.split(/\s+/).length <= 3);
+// A word that cannot end a bullet, so the next line continues it ("... OpenRouter, and" + "LiteLLM.").
+const OPEN_END = /\b(and|or|of|the|to|with|for|in|on|a|an|by|from|across|using|via|into|at|as)$/i;
 const CORP = /^(inc|llc|ltd|pvt|co|corp|gmbh|plc|llp|pvt ltd|private limited)\.?$/i;
+const PROJECT_START = /^[^\s•].{0,60}?\s(\||[–—])\s+\S/;
 export const MAX_RESUME_FIELDS = 120;
 
 const squash = (s) => String(s).replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, " ").replace(/\s+/g, " ").trim();
@@ -56,7 +64,8 @@ export function joinWrapped(a, b) {
 }
 
 function headingOf(line) {
-  const t = squash(line).replace(/[:：]$/, "").toLowerCase();
+  // A subtitle after a bar is ignored: "Selected Projects | Applied AI & Backend Systems".
+  const t = squash(line).replace(/\s+\|\s+.*$/, "").replace(/[:：]$/, "").toLowerCase();
   if (!t || t.length > 40) return null;
   for (const [key, re] of HEADINGS) if (re.test(t)) return key;
   return null;
@@ -86,7 +95,7 @@ const cols = (s) => s.split(/\s{2,}/).map(squash).filter(Boolean);
 // Group a section's lines into entries: { head: [lines], bullets: [text], dates }.
 // Bullets (and numbered items) belong to the entry above; a non-bullet line after
 // bullets or after a blank line starts a new entry; wrapped lines are joined.
-function entries(lines) {
+function entries(lines, startsEntry = null) {
   const out = [];
   let cur = null, last = null, blank = false;
   const start = () => { cur = { head: [], bullets: [], dates: "" }; out.push(cur); return cur; };
@@ -107,18 +116,20 @@ function entries(lines) {
     }
     body = keep.join("   ");
     const text = squash(body);
+    // Some sections mark each entry by its own first line ("Name – what it is"), with no bullets or blank lines between.
+    const opens = Boolean(startsEntry && !b && startsEntry.test(text));
     if (b) {
       if (!cur) start();
       last = { entry: cur, bullet: true, indent: b[0].length, text };
       cur.bullets.push(text);
-    } else if (text && last && !blank && ((last.bullet && indent(raw) >= last.indent - 1 && !DATE_ONLY.test(squash(cols(raw)[0] || ""))) || /^[a-z]/.test(text) || /[,&(\/\u00ad-]$/.test(last.text) || (last.long && text.split(" ").length <= 3 && !/[.:;!?]$/.test(last.text)))) {
+    } else if (text && last && !blank && !opens && ((last.bullet && (OPEN_END.test(last.text) || (/^\d/.test(text) && !/[.!?:;]$/.test(last.text) && !takeDates(body)[1]))) || (last.bullet && indent(raw) >= last.indent - 1 && !DATE_ONLY.test(squash(cols(raw)[0] || ""))) || /^[a-z]/.test(text) || /[,&(\/\u00ad-]$/.test(last.text) || (last.long && text.split(" ").length <= 3 && !/[.:;!?]$/.test(last.text)))) {
       // A wrapped line: join it onto the bullet or header line above.
       const e = last.entry;
       if (last.bullet) e.bullets[e.bullets.length - 1] = last.text = joinWrapped(last.text, text);
       else e.head[e.head.length - 1] = last.text = joinWrapped(e.head[e.head.length - 1], body);
     } else if (text) {
       const [, d] = takeDates(body);
-      if (!cur || blank || cur.bullets.length || (d && (cur.dates || dates))) start();
+      if (!cur || blank || opens || cur.bullets.length || (d && (cur.dates || dates))) start();
       cur.head.push(body.replace(/\s+$/, ""));
       // A long line that lost a right-hand date was likely cut short, so a 1-3 word line after it continues it.
       last = { entry: cur, bullet: false, indent: indent(raw), text, long: Boolean(dates) && text.length >= 65 };
@@ -157,7 +168,7 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
   let cur = null;
   for (const l of lines) {
     const h = headingOf(l);
-    if (h) { cur = { key: h, title: squash(l).replace(/[:：]$/, ""), lines: [] }; sections.push(cur); continue; }
+    if (h) { cur = { key: h, title: squash(l).replace(/\s+\|\s+.*$/, "").replace(/[:：]$/, ""), lines: [] }; sections.push(cur); continue; }
     (cur ? cur.lines : header).push(l);
   }
   // Header: name, then contact parts split on | • · and wide gaps. A short titled
@@ -193,7 +204,7 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
   const next = (k) => (counters[k] = (counters[k] || 0) + 1);
   const points = (p, P, what, e) => e.bullets.forEach((b, k) => add(`${p}_highlight_${k + 1}`, `${P} highlight ${k + 1}`, b, `bullet point ${k + 1} under ${what}`));
   for (const s of sections) {
-    const es = entries(s.lines);
+    const es = entries(s.lines, s.key === "projects" ? PROJECT_START : null);
     if (s.key === "summary") {
       add("summary", "Summary", es.flatMap((e) => [...e.head, ...e.bullets]).join(" "));
     } else if (s.key === "experience") {
@@ -206,7 +217,7 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
           const c = cols(rest);
           if (c.length) rows.push(c);
         }
-        let title = "", company = "", place = "";
+        let title = "", company = "", place = "", product = "", used = 2;
         const first = rows[0] || [];
         const second = rows[1] || [];
         if (first.length > 1 && !TITLE.test(first[first.length - 1])) place = first.pop();
@@ -224,7 +235,10 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
           // "Company" on one line, "Title" under it.
           const [co, pl] = place ? [line, ""] : orgPlace(line);
           [company, title] = [co, second[0]];
-          place = place || pl || second.slice(1).join(" ");
+          // "Title    ShipIt": the text beside the title is a place only if it looks like one; otherwise it is the product or team.
+          const side = second.slice(1).join(" ");
+          if (side && !place && !pl && !PLACE.test(side)) product = side;
+          else place = place || pl || side;
         } else {
           title = line;
           if (second.length) {
@@ -234,12 +248,17 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
             place = place || pl || right.join(" ");
           }
         }
+        if (at || (comma && !second.length)) used = 1;
+        // Any other line under the title ("Tracking for small shops") describes the job.
+        const about = rows.slice(used).map((r) => r.join(" ")).join(" ");
         if (!title && !company) { e.bullets.forEach((b) => add(`experience_${next("experience_note")}`, "Experience note", b)); continue; }
         const what = `the ${title ? `"${title}"` : ""} job${company ? ` at "${company}"` : ""}`.replace("the  job", "the job");
         add(`${p}_title`, `${P} title`, title, `job title of job ${n}${company ? `, the one at "${company}"` : ""}`);
         add(`${p}_company`, `${P} company`, company, `company or employer of job ${n}${title ? `, the "${title}" job` : ""}`);
         add(`${p}_location`, `${P} location`, place, `location of ${what}`);
+        add(`${p}_product`, `${P} product or team`, product, `product, team or client named with ${what}`);
         add(`${p}_dates`, `${P} dates`, dates, `dates of ${what}`);
+        add(`${p}_about`, `${P} about`, about, `short description given under ${what}`);
         points(p, P, what, e);
       }
     } else if (s.key === "education") {
@@ -295,8 +314,19 @@ export function resumeFields(text, limit = MAX_RESUME_FIELDS) {
         let dates = e.dates;
         const [h0, d0] = takeDates(e.head[0]);
         if (d0 && !dates) dates = d0;
-        const [left, ...right] = cols(h0);
-        const [nm, ...sub] = (left || "").split(/\s+[–—-]\s+|:\s+/);
+        let [left, ...right] = cols(h0);
+        let [nm, ...sub] = (left || "").split(/\s+[–—-]\s+|:\s+/);
+        if (right.length && /^[–—-]\s/.test(right[0])) {
+          // "Name   – what it is" with a wide gap before the dash.
+          sub = [...sub, right.join(" ").replace(/^[–—-]\s+/, "")]; right = [];
+        }
+        if (/\s\|\s/.test(squash(h0))) {
+          // "Name | tagline | tech" or "Name | tagline".
+          const bits = squash(h0).split(/\s*\|\s*/).filter(Boolean);
+          nm = bits[0]; right = []; sub = bits.slice(1);
+          if (sub.length > 1 || (sub.length && looksTech(sub[sub.length - 1]))) right = [sub.pop()];
+          sub = [sub.join(" | ")];
+        }
         const summary = [sub.join(" - "), ...e.head.slice(1).map((h) => squash(takeDates(h)[0]))].filter(Boolean).join(" ");
         const what = `the project "${squash(nm)}"`;
         add(`${p}_name`, `${P} name`, nm, `name of project ${n} in the ${s.title} section`);

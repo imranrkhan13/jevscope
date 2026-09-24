@@ -19,7 +19,8 @@ _AW = r"(?:awards|honors|honours|achievements)"
 _HEADINGS = [
     ("summary", r"^(summary|professional summary|profile|professional profile|about|about me|objective|career objective)$"),
     ("experience", rf"^({_PRE})?(experience|employment|employment history|work history|internships?|research experience)$"),
-    ("projects", rf"^({_PRE})?(projects|open source|open-source projects)$"),
+    # "Projects", "Additional Engineering Projects", "Selected AI Infrastructure Project".
+    ("projects", rf"^(({_PRE})?(projects|open source|open-source projects)|({_PRE})?([a-z&/-]+\s+){{1,2}}projects|{_PRE}([a-z&/-]+\s+){{0,2}}project)$"),
     ("education", r"^(education|academic background|academics|qualifications)$"),
     ("skills", rf"^({_PRE})?(skills|skills and tools|tech stack|technologies)$"),
     ("certifications", r"^(certifications|certificates|licenses and certifications|licenses & certifications)$"),
@@ -39,7 +40,7 @@ _DATES = re.compile(rf"(^|[\s|,(])({_SPAN})\)?(?=$|[\s|,])", re.I)
 _DATE_ONLY = re.compile(rf"^\(?{_SPAN}\)?$", re.I)
 _LEAD_DATE = re.compile(rf"^{_SPAN}\s+(?=\S)", re.I)
 _DURATION = re.compile(r"^(\d+\s+(years?|yrs?|months?|mos?)\s*)+$", re.I)
-_NOISE = re.compile(r"^(last updated\b.*|page \d+( of \d+)?|.{1,60}\s[–—-]\s\d{1,2}/\d{1,2}|.*(?<![A-Za-z])(r[ée]sum[ée]|cv|curriculum vitae)(?![A-Za-z]).*\s\d{1,2})$", re.I)
+_NOISE = re.compile(r"^(\d{1,3}|last updated\b.*|page \d+( of \d+)?|.{1,60}\s[–—-]\s\d{1,2}/\d{1,2}|.*(?<![A-Za-z])(r[ée]sum[ée]|cv|curriculum vitae)(?![A-Za-z]).*\s\d{1,2})$", re.I)
 _BULLET = re.compile(r"^(\s*)([•●▪◦‣*·\-–]|\d{1,2}[.)])\s+")
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+", _A)
 _PHONE = re.compile(r"^\+?\d[\d\s().-]{7,}\d$")
@@ -49,6 +50,11 @@ _NAME = re.compile(r"^[A-Za-z][A-Za-z.'\- ]{1,60}$")
 _TITLE = re.compile(r"\b(engineer|developer|programmer|intern|internship|manager|founder|co-founder|cto|ceo|cfo|coo|vp|president|analyst|scientist|designer|lead|director|consultant|researcher|associate|architect|head|officer|specialist|assistant|fellow|professor|lecturer|student|administrator|technician|coordinator|executive|trainee|apprentice|contractor|freelancer|owner|partner|advisor|editor|writer|tutor|teacher|volunteer|member)\b", re.I | _A)
 _DEGREE = re.compile(r"^(b\.?\s?sc|b\.?\s?s|b\.?\s?a|b\.?\s?e|b\.?\s?tech|b\.?\s?com|bca|m\.?\s?sc|m\.?\s?s|m\.?\s?a|m\.?\s?e|m\.?\s?tech|mca|mba|ph\.?\s?d|md|jd|llb|llm|bachelor|master|doctor|diploma|associate|certificate|high school|hsc|ssc)\b", re.I | _A)
 _SCHOOL = re.compile(r"\b(university|college|institute|school|academy|polytechnic|iit|nit|iiit|conservatory)\b", re.I | _A)
+# A place, not a product: "Pune, India", "Remote", or a well-known city or country.
+_PLACE = re.compile(r"^(.*,.*|\(?(remote|hybrid|on-?site|work from home)\)?.*|(mumbai|bombay|bengaluru|bangalore|pune|delhi|new delhi|ncr|hyderabad|chennai|kolkata|gurgaon|gurugram|noida|ahmedabad|jaipur|kochi|london|paris|berlin|munich|amsterdam|dublin|madrid|lisbon|zurich|new york|nyc|san francisco|sf|bay area|seattle|austin|boston|chicago|los angeles|toronto|vancouver|singapore|dubai|sydney|melbourne|tokyo|india|usa|us|uk|united states|united kingdom|germany|france|canada|netherlands|ireland|spain|australia|uae)\.?)$", re.I)
+# A word that cannot end a bullet, so the next line continues it ("... OpenRouter, and" + "LiteLLM.").
+_OPEN_END = re.compile(r"\b(and|or|of|the|to|with|for|in|on|a|an|by|from|across|using|via|into|at|as)$", re.I)
+_PROJECT_START = re.compile(r"^[^\s•].{0,60}?\s(\||[–—])\s+\S")
 _CORP = re.compile(r"^(inc|llc|ltd|pvt|co|corp|gmbh|plc|llp|pvt ltd|private limited)\.?$", re.I)
 _SKILL = re.compile(r"^\s*([A-Za-z][A-Za-z0-9 &/+.\-]{0,39}?)\s*:\s*(.+)$")
 MAX_RESUME_FIELDS = 120
@@ -83,8 +89,18 @@ def join_wrapped(a: str, b: str) -> str:
     return f"{a} {b}"
 
 
+def _looks_tech(s: str) -> bool:
+    """A line of technologies: "Python, FastAPI, Next.js" (short comma-separated items)."""
+    return "," in s and all(x and len(x.split()) <= 3 for x in re.split(r"\s*,\s*", s))
+
+
+def _title_of(line: str) -> str:
+    # A subtitle after a bar is ignored: "Selected Projects | Applied AI & Backend Systems".
+    return re.sub(r"[:：]$", "", re.sub(r"\s+\|\s+.*$", "", _squash(line)))
+
+
 def _heading_of(line: str) -> Optional[str]:
-    t = re.sub(r"[:：]$", "", _squash(line)).lower()
+    t = _title_of(line).lower()
     if not t or len(t) > 40:
         return None
     for key, rx in _HEADINGS_RE:
@@ -113,7 +129,7 @@ def _cols(s: str) -> list[str]:
     return [c for c in (_squash(x) for x in re.split(r"\s{2,}", s)) if c]
 
 
-def _entries(lines: list[str]) -> list[dict]:
+def _entries(lines: list[str], starts_entry=None) -> list[dict]:
     """Group a section's lines into entries: {head, bullets, dates}."""
     out: list[dict] = []
     cur: Optional[dict] = None
@@ -147,13 +163,16 @@ def _entries(lines: list[str]) -> list[dict]:
             keep.append(p)
         body = "   ".join(keep)
         text = _squash(body)
+        # Some sections mark each entry by its own first line ("Name – what it is").
+        opens = bool(starts_entry and not b and starts_entry.search(text))
         if b:
             if cur is None:
                 cur = start()
             last = {"entry": cur, "bullet": True, "indent": len(b.group(0)), "text": text, "long": False}
             cur["bullets"].append(text)
-        elif text and last and not blank and (
-            (last["bullet"] and _indent(raw) >= last["indent"] - 1 and not _DATE_ONLY.match(_squash((_cols(raw) or [""])[0])))
+        elif text and last and not blank and not opens and (
+            (last["bullet"] and (_OPEN_END.search(last["text"]) or (re.match(r"\d", text) and not re.search(r"[.!?:;]$", last["text"]) and not _take_dates(body)[1])))
+            or (last["bullet"] and _indent(raw) >= last["indent"] - 1 and not _DATE_ONLY.match(_squash((_cols(raw) or [""])[0])))
             or re.match(r"[a-z]", text)
             or re.search(r"[,&(/\u00ad-]$", last["text"])
             or (last["long"] and len(text.split(" ")) <= 3 and not re.search(r"[.:;!?]$", last["text"]))
@@ -167,7 +186,7 @@ def _entries(lines: list[str]) -> list[dict]:
                 e["head"][-1] = last["text"]
         elif text:
             _, d = _take_dates(body)
-            if cur is None or blank or cur["bullets"] or (d and (cur["dates"] or dates)):
+            if cur is None or blank or opens or cur["bullets"] or (d and (cur["dates"] or dates)):
                 cur = start()
             cur["head"].append(body.rstrip())
             # A long line that lost a right-hand date was likely cut short.
@@ -225,7 +244,7 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
     for l in lines:
         h = _heading_of(l)
         if h:
-            cur = {"key": h, "title": re.sub(r"[:：]$", "", _squash(l)), "lines": []}
+            cur = {"key": h, "title": _title_of(l), "lines": []}
             sections.append(cur)
             continue
         (cur["lines"] if cur else header).append(l)
@@ -274,7 +293,7 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
             add(f"{p}_highlight_{k}", f"{P} highlight {k}", b, f"bullet point {k} under {what}")
 
     for s in sections:
-        es = _entries(s["lines"])
+        es = _entries(s["lines"], _PROJECT_START if s["key"] == "projects" else None)
         key = s["key"]
         if key == "summary":
             add("summary", "Summary", " ".join(x for e in es for x in e["head"] + e["bullets"]))
@@ -283,7 +302,8 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
                 n = nxt("job")
                 p, P = f"job_{n}", f"Job {n}"
                 rows, dates = _rows(e)
-                title = company = place = ""
+                title = company = place = product = ""
+                used = 2
                 first = rows[0] if rows else []
                 second = rows[1] if len(rows) > 1 else []
                 if len(first) > 1 and not _TITLE.search(first[-1]):
@@ -304,7 +324,12 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
                 elif second and not _TITLE.search(line) and _TITLE.search(second[0]):
                     co, pl = (line, "") if place else _org_place(line)
                     company, title = co, second[0]
-                    place = place or pl or " ".join(second[1:])
+                    # "Title    ShipIt": beside the title is a place only if it looks like one; otherwise the product or team.
+                    side = " ".join(second[1:])
+                    if side and not place and not pl and not _PLACE.match(side):
+                        product = side
+                    else:
+                        place = place or pl or side
                 else:
                     title = line
                     if second:
@@ -312,6 +337,10 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
                         co, pl = (org, "") if place else _org_place(org)
                         company = co
                         place = place or pl or " ".join(right)
+                if at or (comma and not second):
+                    used = 1
+                # Any other line under the title ("Tracking for small shops") describes the job.
+                about = " ".join(" ".join(r) for r in rows[used:])
                 if not title and not company:
                     for b in e["bullets"]:
                         add(f"experience_{nxt('experience_note')}", "Experience note", b)
@@ -320,7 +349,9 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
                 add(f"{p}_title", f"{P} title", title, f"job title of job {n}" + (f', the one at "{company}"' if company else ""))
                 add(f"{p}_company", f"{P} company", company, f"company or employer of job {n}" + (f', the "{title}" job' if title else ""))
                 add(f"{p}_location", f"{P} location", place, f"location of {what}")
+                add(f"{p}_product", f"{P} product or team", product, f"product, team or client named with {what}")
                 add(f"{p}_dates", f"{P} dates", dates, f"dates of {what}")
+                add(f"{p}_about", f"{P} about", about, f"short description given under {what}")
                 points(p, P, what, e)
         elif key == "education":
             for e in es:
@@ -385,6 +416,17 @@ def resume_fields(text: str, limit: int = MAX_RESUME_FIELDS) -> list[dict]:
                 c = _cols(h0)
                 left, right = (c[0], c[1:]) if c else ("", [])
                 nm, *sub = re.split(r"\s+[–—-]\s+|:\s+", left)
+                if right and re.match(r"[–—-]\s", right[0]):
+                    # "Name   – what it is" with a wide gap before the dash.
+                    sub = sub + [re.sub(r"^[–—-]\s+", "", " ".join(right))]
+                    right = []
+                if re.search(r"\s\|\s", _squash(h0)):
+                    # "Name | tagline | tech" or "Name | tagline".
+                    bits = [x for x in re.split(r"\s*\|\s*", _squash(h0)) if x]
+                    nm, right, sub = bits[0], [], bits[1:]
+                    if len(sub) > 1 or (sub and _looks_tech(sub[-1])):
+                        right = [sub.pop()]
+                    sub = [" | ".join(sub)]
                 summary = " ".join(x for x in [" - ".join(sub)] + [_squash(_take_dates(h)[0]) for h in e["head"][1:]] if x)
                 what = f'the project "{_squash(nm)}"'
                 add(f"{p}_name", f"{P} name", nm, f"name of project {n} in the {s['title']} section")

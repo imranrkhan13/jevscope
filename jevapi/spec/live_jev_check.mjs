@@ -64,9 +64,8 @@ try {
   for (const it of disc.items) console.log(`  ${it.field.padEnd(14)} ${String(it.value).padEnd(32)} jev=${it.confidence.toFixed(3)}`);
   if (!disc.items.some((it) => it.field === "vendor") || !disc.items.some((it) => it.field === "currency")) throw new Error("discovery did not ask about vendor and currency");
 
-  // Synthetic resume A, no field list: resume mode finds every detail, Jev checks each.
-  {
-    const r = RESUMES.resumes[0];
+  // Synthetic resumes A and C (C is the company-first PDF layout), no field list: resume mode finds every detail, Jev checks each.
+  for (const r of [RESUMES.resumes[0], RESUMES.resumes.find((x) => x.id === "synthetic-c")].filter(Boolean)) {
     const found = discoverFields(r.text);
     const gold = Object.keys(r.gold);
     const missing = gold.filter((k) => !found.some((f) => f.name === k && f.value === r.gold[k]));
@@ -77,7 +76,7 @@ try {
     if (out.items.some((it) => typeof it.confidence !== "number")) throw new Error("resume: unusable Jev answer");
     const acts = decideAll(null, out.items).decisions.map((x) => x.action);
     const yes = out.items.filter((it) => it.confidence >= 0.5).length;
-    console.log(`\nSynthetic resume (no field list): ${found.length} fields found (all ${gold.length} hand-labelled values), Jev said yes to ${yes}/${found.length}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
+    console.log(`\nSynthetic resume ${r.id} (no field list): ${found.length} fields found (all ${gold.length} hand-labelled values), Jev said yes to ${yes}/${found.length}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
     for (const it of out.items) if (it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
   }
 

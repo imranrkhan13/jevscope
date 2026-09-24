@@ -100,7 +100,7 @@ test("on 5 real public invoices, vendor and currency are always asked and the re
   }
 });
 
-test("resume mode reads every detail of 5 hand-labelled resumes (2 synthetic, 3 RenderCV layouts) exactly", () => {
+test("resume mode reads every detail of 6 hand-labelled resumes (3 synthetic, 3 RenderCV layouts) exactly", () => {
   const fx = JSON.parse(readFileSync(new URL("../../spec/resumes.json", import.meta.url), "utf8"));
   for (const r of fx.resumes) {
     assert.equal(isResume(r.text), true);
@@ -196,4 +196,28 @@ test("checkFields with no field list discovers fields, then Jev checks each", as
   assert.equal(q.f0.type, "choice");
   assert.match(q.f1.instructions, /"INV-2231" as the invoice_no/);
   assert.deepEqual(out.items.map((i) => [i.field, i.label, i.value, i.confidence]), [["currency", "Currency", null, 0.8], ["invoice_no", "Invoice No", "INV-2231", 0.99], ["total", "Total", "500", 0.4]]);
+});
+
+test("company-first layout: product beside the title, project headings with a subtitle, wrapped bullets and page numbers", () => {
+  const get = (t) => Object.fromEntries(resumeFields(t).map((f) => [f.name, f.value]));
+  const a = get("A B\na@b.co\nProfile\nBuilds APIs.\nExperience\nAcme Labs   Jan 2024 – Present\nBackend Developer   ShipIt\nTracking for small shops\n• Shipped more than\n60 features, fixes, and reports.\n• Used Go, Rust, and\nZig.\nOrbit Co   2022 – 2023\nEngineer   Pune, India\n1\nSelected Projects | Backend\nQueueLens   |   Queue viewer | Python, Redis\n• Shows stuck jobs.\nAdditional Engineering Projects\nShelfScan   – Reads barcodes.\nTinyForms   – Form builder.\n2");
+  assert.equal(a.summary, "Builds APIs.");
+  assert.equal(a.job_1_company, "Acme Labs");
+  assert.equal(a.job_1_title, "Backend Developer");
+  assert.equal(a.job_1_product, "ShipIt");
+  assert.equal(a.job_1_location, undefined);
+  assert.equal(a.job_1_about, "Tracking for small shops");
+  assert.equal(a.job_1_highlight_1, "Shipped more than 60 features, fixes, and reports.");
+  assert.equal(a.job_1_highlight_2, "Used Go, Rust, and Zig.");
+  assert.equal(a.job_2_location, "Pune, India");
+  assert.equal(a.job_2_product, undefined);
+  assert.equal(a.job_3_title, undefined);
+  assert.equal(a.project_1_name, "QueueLens");
+  assert.equal(a.project_1_summary, "Queue viewer");
+  assert.equal(a.project_1_tech, "Python, Redis");
+  assert.equal(a.project_2_name, "ShelfScan");
+  assert.equal(a.project_2_summary, "Reads barcodes.");
+  assert.equal(a.project_3_name, "TinyForms");
+  assert.ok(!Object.keys(a).some((k) => k.startsWith("education")));
+  assert.ok(!Object.values(a).includes("1") && !Object.values(a).includes("2"));
 });

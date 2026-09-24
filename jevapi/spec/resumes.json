@@ -1,6 +1,6 @@
 {
  "synthetic": true,
- "note": "Resumes A and B are SYNTHETIC, written for tests: the people, companies and contact details are made up (example.com / example.org / 555 numbers). The rendercv-* resumes are the fictional John Doe example CV from RenderCV (see \"rendercv\").",
+ "note": "Resumes A, B and C are SYNTHETIC, written for tests: the people, companies and contact details are made up (example.com / example.org / 555 numbers). The rendercv-* resumes are the fictional John Doe example CV from RenderCV (see \"rendercv\"). Resume C copies a common PDF layout: company and dates on one line, then title and product, projects written as \"Name | tagline | tech\" and \"Name – what it is\", and page numbers left in the text.",
  "resumes": [
   {
    "id": "A",
@@ -365,6 +365,55 @@
     "talks_2": "Building AI Infrastructure for the Next Decade — TechCrunch Disrupt (2024)",
     "talks_3": "From Research to Production: Lessons in ML Systems — NeurIPS Workshop (2023)",
     "talks_4": "Efficient Deep Learning: A Practitioner’s Perspective — Google Tech Talk (2022)"
+   }
+  },
+  {
+   "id": "synthetic-c",
+   "text": "Aarav Mehta \nBackend Engineer   |   Data Platforms \n+1 555 010 2233   |   aarav.mehta@example.com   |   linkedin.com/in/aarav-mehta-example\ngithub.com/aarav-example   |   aarav.example.dev \nProfile \nBackend engineer who builds Python services and data pipelines. Owned billing and reporting for a logistics product\nused by more than ten small warehouses. Focused on clear APIs, safe releases, and tools that people can check. \nExperience \nNorthwind Labs Pvt Ltd   Mar 2025 – Present \nBackend Developer   ParcelPoint \nShipment tracking platform for small warehouses\n• Build FastAPI services for shipment events, label printing, and carrier webhooks, used by warehouse staff every\nday.\n• Wrote nightly jobs that reconcile carrier invoices against shipments and flag mismatches for a person to review. \nBluebird Software   Jun 2023 – Feb 2025 \nSoftware Engineer   StockKeep \nInventory SaaS for retail shops\n• Shipped more than\n40 features, fixes, and reports for store owners.\n• Added exports to CSV, PDF, Google Sheets, Excel, and\nAirtable.\nTechnical Skills \nLanguages:   Python, TypeScript, SQL. \nBackend:   FastAPI, Django, Celery, PostgreSQL, Redis. \nEducation \nBachelor of Engineering in Computer Science   2023\nExample Institute of Technology \nSelected Open Source Project \nQueueLens   |   Job queue inspector | Python, Redis \n• Shows stuck jobs, retry counts, and slow workers for Celery and RQ queues.\n• Added 60+ automated tests ; runs in CI on every pull request .\n1 \n\nSelected Projects | Backend & Data \nLedgerNote   |   Double-entry bookkeeping API \n• REST API with journal entries, trial balance, and month-end close, covered by unit tests.\nRouteBoard   |   Delivery planning prototype | TypeScript, Next.js, PostgreSQL \n• Plans delivery routes from order lists and shows late stops on a map. \nAdditional Engineering Projects \nShelfScan   – Barcode reader that fills stock counts from phone photos; flags counts that do not match the last\ndelivery. \nTinyForms   – Form builder with field checks, draft saving, and CSV export. \n2 \n",
+   "gold": {
+    "name": "Aarav Mehta",
+    "headline": "Backend Engineer",
+    "phone": "+1 555 010 2233",
+    "email": "aarav.mehta@example.com",
+    "linkedin": "linkedin.com/in/aarav-mehta-example",
+    "github": "github.com/aarav-example",
+    "website": "aarav.example.dev",
+    "summary": "Backend engineer who builds Python services and data pipelines. Owned billing and reporting for a logistics product used by more than ten small warehouses. Focused on clear APIs, safe releases, and tools that people can check.",
+    "job_1_title": "Backend Developer",
+    "job_1_company": "Northwind Labs Pvt Ltd",
+    "job_1_product": "ParcelPoint",
+    "job_1_dates": "Mar 2025 – Present",
+    "job_1_about": "Shipment tracking platform for small warehouses",
+    "job_1_highlight_1": "Build FastAPI services for shipment events, label printing, and carrier webhooks, used by warehouse staff every day.",
+    "job_1_highlight_2": "Wrote nightly jobs that reconcile carrier invoices against shipments and flag mismatches for a person to review.",
+    "job_2_title": "Software Engineer",
+    "job_2_company": "Bluebird Software",
+    "job_2_product": "StockKeep",
+    "job_2_dates": "Jun 2023 – Feb 2025",
+    "job_2_about": "Inventory SaaS for retail shops",
+    "job_2_highlight_1": "Shipped more than 40 features, fixes, and reports for store owners.",
+    "job_2_highlight_2": "Added exports to CSV, PDF, Google Sheets, Excel, and Airtable.",
+    "skills_languages": "Python, TypeScript, SQL.",
+    "skills_backend": "FastAPI, Django, Celery, PostgreSQL, Redis.",
+    "education_1_degree": "Bachelor of Engineering in Computer Science",
+    "education_1_school": "Example Institute of Technology",
+    "education_1_dates": "2023",
+    "project_1_name": "QueueLens",
+    "project_1_summary": "Job queue inspector",
+    "project_1_tech": "Python, Redis",
+    "project_1_highlight_1": "Shows stuck jobs, retry counts, and slow workers for Celery and RQ queues.",
+    "project_1_highlight_2": "Added 60+ automated tests ; runs in CI on every pull request .",
+    "project_2_name": "LedgerNote",
+    "project_2_summary": "Double-entry bookkeeping API",
+    "project_2_highlight_1": "REST API with journal entries, trial balance, and month-end close, covered by unit tests.",
+    "project_3_name": "RouteBoard",
+    "project_3_summary": "Delivery planning prototype",
+    "project_3_tech": "TypeScript, Next.js, PostgreSQL",
+    "project_3_highlight_1": "Plans delivery routes from order lists and shows late stops on a map.",
+    "project_4_name": "ShelfScan",
+    "project_4_summary": "Barcode reader that fills stock counts from phone photos; flags counts that do not match the last delivery.",
+    "project_5_name": "TinyForms",
+    "project_5_summary": "Form builder with field checks, draft saving, and CSV export."
    }
   }
  ],

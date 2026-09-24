@@ -62,8 +62,25 @@ label.small,.small{display:block;font-size:13px;color:var(--mut);margin:14px 0 6
 .f .sugg{grid-column:2/4;font-size:13px;color:var(--ink)}
 .f .sugg b{font-weight:500;color:var(--amber)}
 .f .more{grid-column:2/4;font-size:12.5px;color:var(--mut)}
+.f .jev{grid-column:2/4;font-size:13px;color:var(--mut)}
+.f .jev b{font-weight:500;color:var(--ink)}
+.f .acts{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.f .acts button{padding:4px 12px;font-size:13px}
+.f .acts button.ok{background:var(--green);border-color:var(--green);color:#fff}
+.f .acts button.ok:hover{background:#276a51}
+.f.done{background:var(--greenT)}
+.done .chip{color:var(--green);background:#d6ebdf}
+.how{border:1px solid var(--line);border-radius:14px;background:var(--soft);padding:14px 16px;margin-bottom:14px;font-size:14px}
+.how h3{font-size:15px;font-weight:600;margin:0 0 8px}
+.how .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 10px}
+.how .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.how .stat b{display:block;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.how .stat span{font-size:12.5px;color:var(--mut)}
+.how p{margin:6px 0 0;color:var(--mut)}
+.how p b{color:var(--ink);font-weight:500}
+.how ul{margin:4px 0 0;padding-left:18px;color:var(--mut)}
 .hide-fill .f.fill,.hide-fill .group.allfill{display:none}
-@media(max-width:560px){.card{padding:18px;border-radius:18px}.f{grid-template-columns:minmax(0,1fr) auto;padding:10px 14px}.f .name{grid-column:1;padding-top:3px}.f .chip{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more{grid-column:1/3}.group>summary{display:grid;grid-template-columns:16px minmax(0,1fr);gap:2px 0;padding:12px 14px}.group>summary::before{margin-top:8px;align-self:start}.group .gt{white-space:normal}.group .gc{grid-column:2}}
+@media(max-width:560px){.card{padding:18px;border-radius:18px}.f{grid-template-columns:minmax(0,1fr) auto;padding:10px 14px}.f .name{grid-column:1;padding-top:3px}.f .chip{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more,.f .jev,.f .acts{grid-column:1/3}.how .stats{grid-template-columns:repeat(3,minmax(0,1fr))}.how .stat b{font-size:18px}.group>summary{display:grid;grid-template-columns:16px minmax(0,1fr);gap:2px 0;padding:12px 14px}.group>summary::before{margin-top:8px;align-self:start}.group .gt{white-space:normal}.group .gc{grid-column:2}}
 .nums{display:flex;gap:16px;font-size:13px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
 .nums b{color:var(--ink);font-weight:500}
 .summary{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
@@ -123,6 +140,7 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
   <section class="card" aria-label="Form">
     <h2 class="serif">2. The form</h2>
     <div class="summary" id="summary"></div>
+    <div id="how"></div>
     <div class="note" id="note"></div>
     <form id="form" onsubmit="return false"></form>
     <div class="slider">
@@ -147,10 +165,10 @@ import { calibrate, decideAll, costThreshold } from "/jevapi/js/src/index.js";
 import { SAMPLES, DEFAULT_FIELDS } from "/web/jevapi/samples.js";
 
 const $ = (id) => document.getElementById(id);
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {} };
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const pct = (x) => (x == null ? "-" : Math.round(x * 100) + "%");
+const pct = (x) => (x == null ? "-" : Math.min(Math.round(x * 100), x < 1 ? 99 : 100) + "%");
 
 async function loadProfile() {
   const r = await fetch("/jevapi/spec/examples.json");
@@ -196,6 +214,43 @@ function fitBoxes() {
 }
 window.addEventListener("resize", fitBoxes);
 
+// What Jev said about one field, in plain words.
+function jevSays(ex) {
+  const j = ex.jev;
+  if (!j) return ex.value == null || ex.value === "" ? "Jev did not check this one: there was no value to check." : "Jev did not answer for this one.";
+  if (j.type === "choice") return j.choice === "not_stated" || ex.value == null ? `Jev: the document does not give this. <b>${pct(ex.confidence)}</b> sure.` : `Jev: the document gives <b>${esc(j.choice)}</b>. ${pct(ex.confidence)} sure.`;
+  const p = ex.confidence;
+  if (p == null) return "Jev did not answer for this one.";
+  if (p >= 0.95) return `Jev: <b>yes</b>, the document says this. ${pct(p)} sure.`;
+  if (p >= 0.5) return `Jev: <b>probably</b>, but not sure enough to fill it. ${pct(p)}.`;
+  if (p >= 0.1) return `Jev: <b>probably not</b>. Only ${pct(p)} likely to be right, so a person should check.`;
+  return `Jev: <b>no</b>, the document does not say this here. Only ${pct(p)} likely to be right.`;
+}
+
+// The overall picture: how many Jev filled, how sure it was, and which fields it trusted least.
+function howJevDid(decisions, fill, review) {
+  if (state.judge !== "jev") return "";
+  const scored = state.extracted.map((ex, i) => ({ ex, d: decisions[i], i })).filter((r) => r.ex.jev && r.ex.confidence != null);
+  if (!scored.length) return "";
+  const avg = (rs) => (rs.length ? pct(rs.reduce((a, r) => a + r.ex.confidence, 0) / rs.length) : "-");
+  const filled = scored.filter((r) => r.d.action === "fill"), toCheck = scored.filter((r) => r.d.action !== "fill");
+  const no = scored.filter((r) => r.ex.confidence < 0.5).length;
+  const mine = Object.values(state.mine).filter((m) => m.how === "accepted").length;
+  const low = [...scored].sort((a, b) => a.ex.confidence - b.ex.confidence).slice(0, 3);
+  const val = (f) => state.extracted.find((x) => x.field === f)?.value;
+  const name = (r) => {
+    const g = groupOf(r.d.field, r.ex.label || r.d.field);
+    if (!g.kind) return g.short;
+    const p = `${g.kind}_${g.n}_`;
+    const t = g.kind === "job" ? [val(p + "title"), val(p + "company")].filter(Boolean).join(" at ") : val(p + (g.kind === "project" ? "name" : "degree"));
+    return `${t || `${KIND[g.kind]} ${g.n}`}: ${g.short.toLowerCase()}`;
+  };
+  return `<div class="how" aria-label="How Jev did"><h3>How Jev did</h3>
+    <div class="stats"><div class="stat"><b style="color:var(--green)">${fill}</b><span>filled, Jev was sure</span></div><div class="stat"><b style="color:var(--amber)">${review}</b><span>left for a person</span></div><div class="stat"><b>${avg(scored)}</b><span>average confidence</span></div></div>
+    <p>Filled fields averaged <b>${avg(filled)}</b>. Fields left to check averaged <b>${avg(toCheck)}</b>.${no ? ` Jev said <b>no</b> to ${no} value${no > 1 ? "s" : ""}: those were probably read wrong, so they were not filled.` : ""}${mine ? ` You accepted <b>${mine}</b> suggestion${mine > 1 ? "s" : ""}.` : ""}</p>
+    <p>Jev trusted these least:</p><ul>${low.map((r) => `<li>${esc(name(r))}: ${pct(r.ex.confidence)}</li>`).join("")}</ul></div>`;
+}
+
 function render() {
   // The sample profile was measured on a simulated extractor, not on Jev, so Jev's numbers are shown raw.
   const byJev = state.judge === "jev";
@@ -203,6 +258,7 @@ function render() {
   const bar = decisions[0] ? pct(decisions[0].threshold) : pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
   $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${review}</b> to check</span>
     <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>`;
+  $("how").innerHTML = howJevDid(decisions, fill, review);
   $("note").innerHTML = byJev
     ? `Scores are Jev's answer to "does the document really say this?". A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. These are raw scores, not yet measured on your own documents.`
     : `Scores come from the extractor, adjusted with the sample calibration (made-up data). A field is filled when the adjusted score is at least <b>${bar}</b>; the rest go to a person.`;
@@ -219,13 +275,20 @@ function render() {
   const byI = Object.fromEntries([...groups.values()].flatMap((g) => g.rows).map((r) => [r.i, r]));
   const row = ({ d, ex, i, label, short }) => {
     const fillIt = d.action === "fill";
+    const mine = state.mine[i];
+    const done = !fillIt && mine && mine.how === "accepted";
     const score = byJev ? pct(ex.confidence) : pct(d.confidence);
     const extra = byJev ? (ex.aiConfidence != null ? `Extractor said ${pct(ex.aiConfidence)}` : "") : `Model said ${pct(ex.confidence)}`;
-    return `<div class="f ${d.action}">
+    const hasSugg = !fillIt && ex.value != null && ex.value !== "";
+    const val = mine ? mine.value : fillIt ? ex.value ?? "" : "";
+    const chip = done ? "Accepted" : mine && !fillIt && mine.value ? "Typed" : `${fillIt ? "Filled" : "Check"} ${score}`;
+    return `<div class="f ${d.action}${done ? " done" : ""}" data-i="${i}">
       <label class="name" for="f${i}">${esc(resume ? short : label)}</label>
-      ${box(i, fillIt ? ex.value ?? "" : "", fillIt || ex.value == null ? "" : "Type the right value")}
-      <span class="chip" title="${esc(d.reason)}">${fillIt ? "Filled" : "Check"} ${score}</span>
-      ${!fillIt && ex.value != null ? `<div class="sugg"><b>Suggested:</b> ${esc(ex.value)}</div>` : ""}
+      ${box(i, val, fillIt || !hasSugg ? "" : "Type the right value")}
+      <span class="chip" title="${esc(d.reason)}">${chip}</span>
+      ${hasSugg && !done ? `<div class="sugg"><b>Suggested:</b> ${esc(ex.value)}</div>` : ""}
+      ${byJev ? `<div class="jev">${jevSays(ex)}</div>` : ""}
+      ${hasSugg ? `<div class="acts">${done ? `<button type="button" data-act="undo" data-i="${i}">Undo</button>` : `<button type="button" class="ok" data-act="accept" data-i="${i}" aria-label="Accept the suggested ${esc(resume ? short : label)}">Accept</button><button type="button" data-act="edit" data-i="${i}">Edit</button>`}</div>` : ""}
       ${extra ? `<div class="more">${extra}</div>` : ""}
     </div>`;
   };
@@ -237,12 +300,15 @@ function render() {
         return `<details class="group${nr ? "" : " allfill"}" open><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
       }).join("");
   fitBoxes();
+  const nMine = Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
+  if (nMine) $("summary").insertAdjacentHTML("afterbegin", `<span class="pill"><b style="color:var(--green)">${nMine}</b> accepted by you</span>`);
   $("summary").querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => { state.only = b.dataset.f === "review"; render(); }));
   $("bar").textContent = pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
   $("curl").textContent = `curl -X POST https://jevscope.vercel.app/api/v1/decide \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ items: state.extracted.slice(0, 2), options: { costError: state.cost } })}'\n\n# add "profile": <from /api/v1/calibrate> to use your own calibration`;
 }
 
 function pickSample(s) {
+  state.mine = {};
   state.sample = s;
   state.extracted = s.extracted;
   state.judge = null;
@@ -251,6 +317,31 @@ function pickSample(s) {
   document.querySelectorAll("#samples button").forEach((b) => b.classList.toggle("on", b.dataset.id === s.id));
   render();
 }
+
+// Accept fills the box with the suggestion; Edit puts it in the box to change; typing is kept too.
+$("form").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const i = Number(b.dataset.i), ex = state.extracted[i];
+  if (b.dataset.act === "accept") state.mine[i] = { value: String(ex.value), how: "accepted" };
+  else if (b.dataset.act === "undo") delete state.mine[i];
+  else if (b.dataset.act === "edit") state.mine[i] = { value: String(ex.value), how: "typed" };
+  render();
+  const box = $(`f${i}`);
+  if (box && b.dataset.act === "edit") { box.focus(); box.setSelectionRange?.(box.value.length, box.value.length); }
+  else document.querySelector(`.f[data-i="${i}"] button`)?.focus({ preventScroll: true });
+});
+$("form").addEventListener("input", (e) => {
+  const m = e.target.id && e.target.id.match(/^f(\d+)$/);
+  if (!m) return;
+  const i = Number(m[1]);
+  if (state.mine[i]?.how === "accepted" && e.target.value !== state.mine[i].value) {
+    state.mine[i] = { value: e.target.value, how: "typed" };
+    const row = e.target.closest(".f");
+    row.classList.remove("done");
+    row.querySelector(".chip").textContent = "Typed";
+  } else state.mine[i] = { value: e.target.value, how: state.mine[i]?.how || "typed" };
+});
 
 $("samples").innerHTML = SAMPLES.map((s) => `<button type="button" data-id="${s.id}">${esc(s.label)}</button>`).join("");
 $("samples").addEventListener("click", (e) => {
@@ -283,6 +374,7 @@ $("file").addEventListener("change", async (e) => {
     const text = await readPdf(f);
     $("doc").value = text.slice(0, 60000);
     document.querySelectorAll("#samples button").forEach((b) => b.classList.remove("on"));
+    state.mine = {};
     state.extracted = DEFAULT_FIELDS.map((f) => ({ field: f.name, value: null, confidence: null }));
     render();
     $("keybox").open = true;
@@ -303,6 +395,7 @@ $("run").addEventListener("click", async () => {
     const j = await r.json();
     if (!r.ok) throw new Error(j.error?.message || "Request failed");
     state.extracted = j.fields;
+    state.mine = {};
     state.judge = null;
     render();
     $("err").textContent = "";
@@ -324,6 +417,7 @@ async function askJev(discover) {
     if (!r.ok) throw new Error(j.error?.message || "Request failed");
     state.extracted = discover ? j.fields : j.fields.map((x, i) => ({ ...x, aiConfidence: state.extracted[i].aiConfidence ?? state.extracted[i].confidence }));
     state.judge = "jev";
+    state.mine = {};
     render();
     $("err").textContent = `Checked by ${j.jevModel || "Jev"}${discover ? `, ${j.fields.length} fields found` : ""}.`;
   } catch (x) {

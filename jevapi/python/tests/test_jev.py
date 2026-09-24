@@ -113,6 +113,20 @@ def test_resume_layouts():
     f = next(f for f in resume_fields("A B\na@b.co\n\nExperience\nEngineer    2020\nAcme, Pune\n\nSkills\nGo") if f["name"] == "job_1_company")
     assert '"Engineer" job' in f["description"]
 
+def test_company_first_layout():
+    from jevapi import resume_fields
+    a = {f["name"]: f["value"] for f in resume_fields("A B\na@b.co\nProfile\nBuilds APIs.\nExperience\nAcme Labs   Jan 2024 – Present\nBackend Developer   ShipIt\nTracking for small shops\n• Shipped more than\n60 features, fixes, and reports.\n• Used Go, Rust, and\nZig.\nOrbit Co   2022 – 2023\nEngineer   Pune, India\n1\nSelected Projects | Backend\nQueueLens   |   Queue viewer | Python, Redis\n• Shows stuck jobs.\nAdditional Engineering Projects\nShelfScan   – Reads barcodes.\nTinyForms   – Form builder.\n2")}
+    assert a["summary"] == "Builds APIs."
+    assert (a["job_1_company"], a["job_1_title"], a["job_1_product"], a["job_1_about"]) == ("Acme Labs", "Backend Developer", "ShipIt", "Tracking for small shops")
+    assert "job_1_location" not in a and "job_3_title" not in a
+    assert a["job_1_highlight_1"] == "Shipped more than 60 features, fixes, and reports."
+    assert a["job_1_highlight_2"] == "Used Go, Rust, and Zig."
+    assert a["job_2_location"] == "Pune, India" and "job_2_product" not in a
+    assert (a["project_1_name"], a["project_1_summary"], a["project_1_tech"]) == ("QueueLens", "Queue viewer", "Python, Redis")
+    assert (a["project_2_name"], a["project_2_summary"], a["project_3_name"]) == ("ShelfScan", "Reads barcodes.", "TinyForms")
+    assert not any(k.startswith("education") for k in a) and "1" not in a.values() and "2" not in a.values()
+
+
 def test_jev_reason_wording():
     r = decide_all(None, [{"field": "a", "value": "x", "confidence": 0.99, "jev": {"type": "noul", "noul": 0.99}},
                           {"field": "b", "value": "y", "confidence": 0.99}])

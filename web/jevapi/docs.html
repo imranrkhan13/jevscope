@@ -272,7 +272,7 @@ print(result["fill"], result["review"])</pre>
 <p>Returns the endpoint list, limits and privacy notes as JSON. Handy for a health check.</p>
 
 <h2 id="resume">Recipe: resumes</h2>
-<p>Send a resume's text to <code>/verify</code> with no <code>fields</code>. JevAPI reads it section by section with no AI key: contact details, links, summary, every job, project and degree, one field per bullet, and skills. Field names look like <code>job_1_title</code>, <code>job_2_company</code>, <code>project_1_name</code>, <code>education_1_degree</code>. Each Jev question names the job or project it is about, so two jobs don't get mixed up.</p>
+<p>Send a resume's text to <code>/verify</code> with no <code>fields</code>. JevAPI reads it section by section with no AI key: contact details, links, summary, every job, project and degree, one field per bullet, and skills. Field names look like <code>job_1_title</code>, <code>job_2_company</code>, <code>project_1_name</code>, <code>education_1_degree</code>. When a job lists a product or team beside the title ("Backend Developer &nbsp; ParcelPoint"), it comes back as <code>job_1_product</code>, and a short line under the title as <code>job_1_about</code>. Each Jev question names the job or project it is about, so two jobs don't get mixed up.</p>
 <pre>curl -X POST https://jevscope.vercel.app/api/v1/verify \
   -H 'Content-Type: application/json' -H "X-Jev-Key: $TYPESAFE_API_KEY" \
   -d "$(jq -n --rawfile t resume.txt '{text: $t}')"</pre>
