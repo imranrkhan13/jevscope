@@ -69,6 +69,7 @@ label.small,.small{display:block;font-size:13px;color:var(--mut);margin:14px 0 6
 .f .acts button.ok{background:var(--green);border-color:var(--green);color:#fff}
 .f .acts button.ok:hover{background:#276a51}
 .f.done{background:var(--greenT)}
+.f.flash{box-shadow:0 0 0 3px rgba(168,106,18,.5);border-radius:8px}
 .done .chip{color:var(--green);background:#d6ebdf}
 .how{border:1px solid var(--line);border-radius:14px;background:var(--soft);padding:14px 16px;margin-bottom:14px;font-size:14px}
 .how h3{font-size:15px;font-weight:600;margin:0 0 8px}
@@ -197,10 +198,15 @@ function refit() {
 // Group resume fields (job_1_title, project_2_name, skills_tools ...) so the form reads like the resume.
 const CONTACT = ["name", "headline", "email", "phone", "location", "linkedin", "github", "website"];
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-const KIND = { job: "Job", project: "Project", education: "Education" };
+const KIND = { job: "Job", project: "Project", education: "Education", item: "Item", row: "Row", transaction: "Transaction" };
+// Money lines and document-level fields on receipts/statements get named groups, not one pile.
+const TOTAL_FIELDS = /^(sub_?total|grand_?total|total|tax.*|gst|vat|pb1|ppn|pajak|discount|disc.*|service.*|svc|cash|tunai|change|kembali|kembalian|rounding|tip|delivery|due?|balance.*|food|beverages?|drinks?|others?|makanan|minuman|snacks?|desserts?|household|grocery|misc|items?|ttl|opening.*|closing.*)$/i;
+const DOC_FIELDS = /^(merchant|store|vendor.*|date|time|receipt.*|bill.*|no|invoice.*|due_date|account.*|bank.*|ifsc.*|period|branch|currency|customer.*)$/i;
 function groupOf(field, label) {
-  const m = field.match(/^(job|project|education)_(\d+)_(.+)$/);
+  const m = field.match(/^(job|project|education|item|row|transaction)_(\d+)_(.+)$/);
   if (m) return { key: `${m[1]}_${m[2]}`, kind: m[1], n: +m[2], short: cap(String(label || m[3]).replace(new RegExp(`^${KIND[m[1]]} ${m[2]}\\s*`, "i"), "") || m[3]) };
+  if (TOTAL_FIELDS.test(field)) return { key: "totals", title: "Totals", short: label || field };
+  if (DOC_FIELDS.test(field)) return { key: "doc", title: "Document", short: label || field };
   if (CONTACT.includes(field) || /^website_\d+$/.test(field)) return { key: "contact", title: "Contact", short: label || field };
   if (field === "summary") return { key: "summary", title: "Summary", short: "Text" };
   if (/^skills(_|$)/.test(field)) return { key: "skills", title: "Skills", short: String(label || field).replace(/^Skills:?\s*/, "") || "Skills" };
@@ -211,6 +217,8 @@ function groupOf(field, label) {
 function groupTitle(g, rows) {
   const v = (k) => rows.find((r) => r.sub === k)?.ex.value;
   if (g.kind === "job") return [v("title"), v("company")].filter(Boolean).join(" · ") || `Job ${g.n}`;
+  if (g.kind === "item") return v("name") || `Item ${g.n}`;
+  if (g.kind === "row" || g.kind === "transaction") return [v("date"), v("description")].filter(Boolean).join(" · ") || `${KIND[g.kind]} ${g.n}`;
   if (g.kind === "project") return v("name") || `Project ${g.n}`;
   if (g.kind === "education") return [v("degree"), v("school")].filter(Boolean).join(" · ") || `Education ${g.n}`;
   return g.title;
@@ -269,6 +277,7 @@ function render() {
   const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
   const bar = decisions[0] ? pct(decisions[0].threshold) : pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
   $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${review}</b> to check</span>
+    ${review ? `<button type="button" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
     <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
   $("note").innerHTML = byJev
@@ -283,7 +292,8 @@ function render() {
     if (!groups.has(g.key)) groups.set(g.key, { ...g, rows: [] });
     groups.get(g.key).rows.push({ d, ex, i, label, short: g.short, sub: (d.field.match(/^(?:job|project|education)_\d+_(.+)$/) || [])[1] });
   });
-  const resume = [...groups.keys()].some((k) => /^(job_|project_|education_|skills|summary)/.test(k));
+  // Group the form when it is long enough to scroll: big resumes, receipts, statements.
+  const resume = decisions.length > 8 && [...groups.values()].some((g) => g.rows.length >= 2);
   const byI = Object.fromEntries([...groups.values()].flatMap((g) => g.rows).map((r) => [r.i, r]));
   // One compact line under the input: the suggestion, what Jev said, the model's score, and Accept/Edit.
   const metaBits = (hasSugg, done, byJev, extra, ex, i, fillIt) => {
@@ -321,6 +331,17 @@ function render() {
   const nMine = Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
   if (nMine) $("summary").insertAdjacentHTML("afterbegin", `<span class="pill"><b style="color:var(--green)">${nMine}</b> accepted by you</span>`);
   $("summary").querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => { state.only = b.dataset.f === "review"; render(); }));
+  $("summary").querySelector("[data-next]")?.addEventListener("click", () => {
+    const rows = [...document.querySelectorAll(".f.review:not(.done)")];
+    if (!rows.length) return;
+    const el = rows.find((r) => r.getBoundingClientRect().top > 140) || rows[0];
+    const det = el.closest("details.group");
+    if (det && !det.open) det.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("flash");
+    setTimeout(() => el.classList.remove("flash"), 1200);
+    el.querySelector("input,textarea")?.focus({ preventScroll: true });
+  });
   $("bar").textContent = pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
   $("curl").textContent = `curl -X POST https://jevscope.vercel.app/api/v1/decide \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ items: state.extracted.slice(0, 2), options: { costError: state.cost } })}'\n\n# add "profile": <from /api/v1/calibrate> to use your own calibration`;
 }
