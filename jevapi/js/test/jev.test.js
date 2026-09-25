@@ -227,7 +227,7 @@ import { isReceipt, receiptFields, isBankStatement, statementFields, isForm, for
 
 const specOf = (f) => JSON.parse(readFileSync(new URL(`../../spec/${f}`, import.meta.url), "utf8"));
 
-test("receipts: 6 real CORD receipts give the dataset's items and totals", () => {
+test("receipts: 10 real CORD receipts give the dataset's items and totals", () => {
   const fx = specOf("receipts.json");
   for (const d of fx.receipts) {
     assert.equal(isReceipt(d.text), true, d.id);
@@ -245,7 +245,7 @@ test("bank statements: 3 statements give header fields and transaction rows", ()
   }
 });
 
-test("forms: 3 real FUNSD forms give their filled blanks, empty blanks stay null", () => {
+test("forms: 5 real FUNSD forms give their filled blanks, empty blanks stay null", () => {
   const fx = specOf("forms.json");
   for (const d of fx.forms) {
     assert.equal(isForm(d.text), true, d.id);

@@ -1,7 +1,7 @@
 {
  "source": "CORD v2 (naver-clova-ix/cord-v2), https://huggingface.co/datasets/naver-clova-ix/cord-v2 . Real shop receipts, mostly Indonesian, collected for OCR research.",
  "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), per the dataset card.",
- "changes": "6 of the 800 test documents. Word boxes re-laid-out into lines; no other edits. CORD's annotation covers only the item and total area, so these texts have no store header, address or date. Note on cord-test-13: the reader's \"total\" is the pre-tax TOTAL line (46.636); the dataset's total_price label points at the GRAND TOTAL line, which the reader proposes as grand_total (51.300). Both are in the text; gold checks both.",
+ "changes": "6 of the 800 test documents. Word boxes re-laid-out into lines; no other edits. CORD's annotation covers only the item and total area, so these texts have no store header, address or date. Note on cord-test-13: the reader's \"total\" is the pre-tax TOTAL line (46.636); the dataset's total_price label points at the GRAND TOTAL line, which the reader proposes as grand_total (51.300). Both are in the text; gold checks both. cord-test-38/41/70/85 were added in a later stress pass: harder receipts (9-11 items, category subtotal rows, wrapped labels, label-only and amount-before-label totals, OCR noise). Their gold checks the totals and the items the text actually shows; wrapped items printed on split lines stay for a person or Jev to check.",
  "receipts": [
   {
    "id": "cord-test-6",
@@ -99,6 +99,58 @@
     "total": "57.000",
     "cash": "60.000",
     "change": "3.000"
+   }
+  },
+  {
+   "id": "cord-test-38",
+   "text": "1   XLB Org Pork 10x   78,000\n1   Sicito Babi\n65,000\n1\nHotplate Tahu\n58,000\n1   DF Fish Fillet Garlc   108,000\n1   LM Pork Belly   88,000\n1   Siew   Mai\n38,800\n5   Kwan   Yin Cup   50,000\n1   Herbal\nJelly   38,000\n1   Onde-Onde\n38,000\nITEMS: 13\n561,800\nService\ncharge   42,135\nPB1\n60,394\nTotal\n664,329",
+   "gold": {
+    "item_1_name": "XLB Org Pork 10x",
+    "item_1_qty": "1",
+    "item_1_price": "78,000",
+    "service_charge": "42,135",
+    "pb1": "60,394",
+    "total": "664,329"
+   }
+  },
+  {
+   "id": "cord-test-41",
+   "text": "Chicken Maryland   47619.00\nCappucino (Hot/Iced)   30303.00\nNaga Lychee Juice   34632.00\nCafe Latte   30303.00\nHot Chocolate Marshmallo   30303.00\nChicken Cesar Salad   43290.00\n12987.00\nMineral Water\nMineral Water   12987.00\n25974.00\nLychee/Peach/Lemon/Mango\nChicken Maryland   47619.00\n316017.00\nSubtotal\nService Charge 5% +   48982.68\n365000.00\nTOTAL",
+   "gold": {
+    "item_1_name": "Chicken Maryland",
+    "item_1_price": "47619.00",
+    "subtotal": "316017.00",
+    "service_charge_5": "48982.68",
+    "total": "365000.00"
+   }
+  },
+  {
+   "id": "cord-test-70",
+   "text": "2   UDANG RE   216,000 432,000\n2   =*LARGE*==\n1   AYM GR JUN NJAN   108,000\n=*MEDIUM*=\n1   SAPO TH SEAFOOD   172,000\n=*LARGE*==\n2   POCAI 3   111,000 222.000\n2   =*MEDIUM*=\n1   GURAME FILLET M   163,000\nASAM MANIS\n1   BIHUN GORENG JJ   116,000\n=*LARGE*==\n5   ICED TEA   12,000   60,000\n7   NASI PUTIH   10,000 70,000\nFOOD   1,213,000\nBEVERAGES   60,000\nOTHERS   70,000\nSUBTOTAL   1,343,000\nSERVICE CHARGE   80,580\nTax 10%   142,358\nDU   1,565,938",
+   "gold": {
+    "item_1_name": "UDANG RE",
+    "item_1_qty": "2",
+    "item_1_unit_price": "216,000",
+    "item_1_price": "432,000",
+    "item_8_name": "NASI PUTIH",
+    "item_8_qty": "7",
+    "item_8_price": "70,000",
+    "food": "1,213,000",
+    "beverages": "60,000",
+    "others": "70,000",
+    "subtotal": "1,343,000",
+    "service_charge": "80,580",
+    "tax_10": "142,358",
+    "du": "1,565,938"
+   }
+  },
+  {
+   "id": "cord-test-85",
+   "text": "3   Nasi\nPutih\n30.000\n1   Nasi\nTambah\n2   Ayam   Pop   7.000\n40.000\n1   Samabal\nSP\n11.000\n1   Sambal\nGabus\nAsin\nCb\n18.000\n1   Kerupuk   Kuah\n15.000\n1   Ikan   Bawal\nBesa\n28.500\n1   Telur   Dadar\n10.000\n1   Teh   Es\n7.000\n1   Teh   Manis\n9.000\n1   Es   Batu\n4.000\nSubtotal\n179.500\nPajak   Rest. 10%\n17.950\nTotal\n14\n197.450\nMakanan\nTtl\n159.500\nMinuman\nTtl\n20.000\nCash\n197.450",
+   "gold": {
+    "subtotal": "179.500",
+    "total": "197.450",
+    "cash": "197.450"
    }
   }
  ]

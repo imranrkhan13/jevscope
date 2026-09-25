@@ -78,6 +78,18 @@ export const SAMPLES = [
       { field: "reason", label: "Reason", value: "Family function", confidence: 0.9 },
     ],
   },
+  {
+    id: "longreceipt",
+    label: "Long receipt (10 items)",
+    text: "ANNA SUPER MARKET\nNo. 5521\n12/09/2026 19:05\n2 Rice 5kg @ 310.00   620.00\n1 Toor Dal 1kg   145.00\n1 Sunflower Oil 1L   132.00\n3 Parle-G Gold @ 10.00   30.00\n1\nDetergent Bar   85.00\n2 Curd Cup 400g @ 35.00   70.00\n1 Wheat Flour 5kg   240.00\n1 Sugar 1kg   45.00\n4 Milk 500ml @ 27.00   108.00\n1 Tea Powder 250g   140.00\nFOOD   1,530.00\nHOUSEHOLD   85.00\nSubtotal   1,615.00\nDiscount   115.00\nTotal\n1,500.00\nCash   2,000.00\nChange   500.00",
+    extracted: [
+      { field: "merchant", label: "Merchant", value: "Anna Super Market", confidence: 0.98 },
+      { field: "item_5_qty", label: "Item 5 quantity", value: null, confidence: 0.5 },
+      { field: "subtotal", label: "Subtotal", value: "1,615.00", confidence: 0.96 },
+      { field: "total", label: "Total", value: "1,500.00", confidence: 0.97 },
+      { field: "change", label: "Change", value: "500.00", confidence: 0.95 },
+    ],
+  },
 ];
 
 export const DEFAULT_FIELDS = [
