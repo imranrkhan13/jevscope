@@ -50,7 +50,7 @@ label.small,.small{display:block;font-size:13px;color:var(--mut);margin:14px 0 6
 .group .gt{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .group .gc{font-size:13px;color:var(--mut);white-space:nowrap}
 .group .gc b{font-weight:500}
-.f{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:6px 12px;align-items:start;padding:10px 16px;border-bottom:1px solid #f1eee8}
+.f{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:4px 12px;align-items:start;padding:8px 16px;border-bottom:1px solid #f1eee8}
 .f:last-child{border-bottom:0}
 .f.review{background:var(--amberT)}
 .f .name{font-size:13px;color:var(--mut);padding-top:8px}
@@ -80,6 +80,17 @@ label.small,.small{display:block;font-size:13px;color:var(--mut);margin:14px 0 6
 .how p b{color:var(--ink);font-weight:500}
 .how ul{margin:4px 0 0;padding-left:18px;color:var(--mut)}
 .hide-fill .f.fill,.hide-fill .group.allfill{display:none}
+@media(min-width:821px){.grid>section:first-child{position:sticky;top:24px}}
+.summary{position:sticky;top:0;background:var(--card);z-index:5;padding-top:4px}
+.f .meta{grid-column:2/4;display:flex;gap:6px 14px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+.f .meta .sugg{color:var(--ink)}
+.f .meta .sugg b{font-weight:500;color:var(--amber)}
+.f .meta .jev b{font-weight:500;color:var(--ink)}
+.f .meta .acts{display:flex;gap:6px;margin-left:auto;align-items:center}
+.f .meta .acts button{padding:3px 11px;font-size:12.5px}
+.f .meta .acts button.ok{background:var(--green);border-color:var(--green);color:#fff}
+.f .meta .acts button.ok:hover{background:#276a51}
+@media(max-width:560px){.f .meta{grid-column:1/3}.f .meta .acts{margin-left:0;width:100%}}
 @media(max-width:560px){.card{padding:18px;border-radius:18px}.f{grid-template-columns:minmax(0,1fr) auto;padding:10px 14px}.f .name{grid-column:1;padding-top:3px}.f .chip{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more,.f .jev,.f .acts{grid-column:1/3}.how .stats{grid-template-columns:repeat(3,minmax(0,1fr))}.how .stat b{font-size:18px}.group>summary{display:grid;grid-template-columns:16px minmax(0,1fr);gap:2px 0;padding:12px 14px}.group>summary::before{margin-top:8px;align-self:start}.group .gt{white-space:normal}.group .gc{grid-column:2}}
 .nums{display:flex;gap:16px;font-size:13px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
 .nums b{color:var(--ink);font-weight:500}
@@ -274,6 +285,15 @@ function render() {
   });
   const resume = [...groups.keys()].some((k) => /^(job_|project_|education_|skills|summary)/.test(k));
   const byI = Object.fromEntries([...groups.values()].flatMap((g) => g.rows).map((r) => [r.i, r]));
+  // One compact line under the input: the suggestion, what Jev said, the model's score, and Accept/Edit.
+  const metaBits = (hasSugg, done, byJev, extra, ex, i, fillIt) => {
+    const bits = [];
+    if (hasSugg && !done) bits.push(`<span class="sugg"><b>Suggested:</b> ${esc(ex.value)}</span>`);
+    if (byJev) bits.push(`<span class="jev">${jevSays(ex)}</span>`);
+    if (extra && !fillIt) bits.push(`<span class="more">${extra}</span>`);
+    if (hasSugg) bits.push(`<span class="acts">${done ? `<button type="button" data-act="undo" data-i="${i}">Undo</button>` : `<button type="button" class="ok" data-act="accept" data-i="${i}" aria-label="Accept">Accept</button><button type="button" data-act="edit" data-i="${i}">Edit</button>`}</span>`);
+    return bits.length ? `<div class="meta">${bits.join("")}</div>` : "";
+  };
   const row = ({ d, ex, i, label, short }) => {
     const fillIt = d.action === "fill";
     const mine = state.mine[i];
@@ -287,10 +307,7 @@ function render() {
       <label class="name" for="f${i}">${esc(resume ? short : label)}</label>
       ${box(i, val, fillIt || !hasSugg ? "" : "Type the right value")}
       <span class="chip" title="${esc(d.reason)}">${chip}</span>
-      ${hasSugg && !done ? `<div class="sugg"><b>Suggested:</b> ${esc(ex.value)}</div>` : ""}
-      ${byJev ? `<div class="jev">${jevSays(ex)}</div>` : ""}
-      ${hasSugg ? `<div class="acts">${done ? `<button type="button" data-act="undo" data-i="${i}">Undo</button>` : `<button type="button" class="ok" data-act="accept" data-i="${i}" aria-label="Accept the suggested ${esc(resume ? short : label)}">Accept</button><button type="button" data-act="edit" data-i="${i}">Edit</button>`}</div>` : ""}
-      ${extra ? `<div class="more">${extra}</div>` : ""}
+      ${metaBits(hasSugg, done, byJev, extra, ex, i, fillIt)}
     </div>`;
   };
   $("form").classList.toggle("hide-fill", !!state.only);
@@ -298,7 +315,7 @@ function render() {
     ? `<div class="group"><div>${decisions.map((d, i) => row(byI[i])).join("")}</div></div>`
     : [...groups.values()].map((g) => {
         const nf = g.rows.filter((r) => r.d.action === "fill").length, nr = g.rows.length - nf;
-        return `<details class="group${nr ? "" : " allfill"}" open><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
+        return `<details class="group${nr ? "" : " allfill"}"${nr ? " open" : ""}><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
       }).join("");
   fitBoxes();
   const nMine = Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
