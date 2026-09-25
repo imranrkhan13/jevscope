@@ -1,0 +1,166 @@
+{
+  "date": "2026-09-25",
+  "docs": [
+    {
+      "id": "cord-test-6",
+      "fields": [
+        {
+          "field": "total",
+          "gold": "46,000",
+          "candidates": 6,
+          "covered": true,
+          "reader_value": "46,000",
+          "reader_ok": true,
+          "jev_value": "46,000",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        },
+        {
+          "field": "cash",
+          "gold": "50,000",
+          "candidates": 6,
+          "covered": true,
+          "reader_value": "50,000",
+          "reader_ok": true,
+          "jev_value": "50,000",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        },
+        {
+          "field": "change",
+          "gold": "4,000",
+          "candidates": 6,
+          "covered": true,
+          "reader_value": "4,000",
+          "reader_ok": true,
+          "jev_value": "4,000",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        }
+      ]
+    },
+    {
+      "id": "cord-test-85",
+      "fields": [
+        {
+          "field": "total",
+          "gold": "197.450",
+          "candidates": 8,
+          "covered": true,
+          "reader_value": "197.450",
+          "reader_ok": true,
+          "jev_value": "197.450",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        },
+        {
+          "field": "cash",
+          "gold": "197.450",
+          "candidates": 8,
+          "covered": true,
+          "reader_value": "197.450",
+          "reader_ok": true,
+          "jev_value": "197.450",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        }
+      ]
+    },
+    {
+      "id": "synthetic-swiss-1",
+      "fields": [
+        {
+          "field": "total",
+          "gold": "54.50",
+          "candidates": 8,
+          "covered": true,
+          "reader_value": "54.50",
+          "reader_ok": true,
+          "jev_value": "54.50",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        }
+      ]
+    },
+    {
+      "id": "3b9f33e058641d47cf2ebe76b9382648.pdf",
+      "fields": [
+        {
+          "field": "vendor",
+          "gold": [
+            "onmedia"
+          ],
+          "candidates": 8,
+          "covered": true,
+          "reader_value": null,
+          "reader_ok": false,
+          "jev_value": "ONMEDIA",
+          "jev_confidence": 0.97,
+          "jev_ok": true
+        },
+        {
+          "field": "net_amount_due",
+          "gold": 159.33,
+          "candidates": 8,
+          "covered": true,
+          "reader_value": null,
+          "reader_ok": false,
+          "jev_value": "159.33",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        }
+      ]
+    },
+    {
+      "id": "funsd-test-0",
+      "fields": [
+        {
+          "field": "date",
+          "gold": "12 /10 /98",
+          "candidates": 1,
+          "covered": true,
+          "reader_value": "12 /10 /98",
+          "reader_ok": true,
+          "jev_value": "12 /10 /98",
+          "jev_confidence": 0.98,
+          "jev_ok": true
+        },
+        {
+          "field": "fax_number",
+          "gold": "(336) 335- 7392",
+          "candidates": 8,
+          "covered": true,
+          "reader_value": "(336) 335- 7392",
+          "reader_ok": true,
+          "jev_value": "614) 466- 5087",
+          "jev_confidence": 0.97,
+          "jev_ok": false
+        },
+        {
+          "field": "number_of_pages_including_cover_sheet",
+          "gold": "3",
+          "candidates": 8,
+          "covered": true,
+          "reader_value": "3",
+          "reader_ok": true,
+          "jev_value": "3",
+          "jev_confidence": 0.99,
+          "jev_ok": true
+        }
+      ]
+    }
+  ],
+  "offline": {
+    "fields": 11,
+    "candidate_coverage": 11,
+    "rule_reader_exact": 9
+  },
+  "live": {
+    "fields": 11,
+    "jev_extract_exact": 10,
+    "abstained": 0,
+    "requests": 5,
+    "input_tokens": 8144,
+    "model": "typesafe default"
+  }
+}

@@ -14,6 +14,7 @@ from .certainty import correctness_probability, normalize
 from .resume import is_resume, join_wrapped, resume_fields
 from .statement import is_bank_statement, statement_fields
 from .receipt import is_receipt, receipt_fields
+from .extract import candidate_spans, build_extract_questions, extract_by_verification, field_kind
 from .form import is_form, form_fields
 from .jev import CURRENCY_HINTS, JEV_PROVIDERS, JevError, answers_to_items, ask_jev, build_questions, check_fields, core_fields, discover_fields, option_key, vendor_candidates
 from .core import (
@@ -43,6 +44,10 @@ __all__ = [
     "statement_fields",
     "is_receipt",
     "receipt_fields",
+    "candidate_spans",
+    "build_extract_questions",
+    "extract_by_verification",
+    "field_kind",
     "is_form",
     "form_fields",
     "is_resume",

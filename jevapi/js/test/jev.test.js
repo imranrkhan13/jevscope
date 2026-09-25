@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, vendorCandidates, coreFields, CURRENCY_HINTS, JEV_PROVIDERS, JevError, isResume, joinWrapped, resumeFields } from "../src/index.js";
+import { normalize, correctnessProbability, buildQuestions, answersToItems, askJev, checkFields, decideAll, discoverFields, vendorCandidates, coreFields, CURRENCY_HINTS, JEV_PROVIDERS, JevError, isResume, joinWrapped, resumeFields , candidateSpans, extractByVerification } from "../src/index.js";
 
 const spec = JSON.parse(readFileSync(new URL("../../spec/jev_certainty.json", import.meta.url)));
 const close = (a, b) => (a === null || b === null ? assert.equal(a, b) : assert.ok(Math.abs(a - b) < 1e-12, `${a} vs ${b}`));
@@ -278,4 +278,48 @@ test("the readers do not fight each other: invoices, resumes and scans keep thei
   const bs = specOf("bank_statements.json");
   assert.equal(isReceipt(bs.bank_statements[0].text), false);
   assert.equal(isForm(bs.bank_statements[0].text), false);
+});
+
+test("extraction by verification: candidate spans match the shared spec", () => {
+  const fx = specOf("extract_candidates.json");
+  for (const c of fx.cases) {
+    assert.deepEqual(candidateSpans(c.document, c.field), c.candidates, c.id);
+  }
+});
+
+test("extraction by verification: Jev's best candidate wins, a weak best abstains", async () => {
+  const doc = "MART\n2x Tea 4.50 CHF 9.00\nTotal : CHF 54.50\nCash 100.00";
+  const probs = { "4.50": 0.05, "9.00": 0.2, "54.50": 0.97, "100.00": 0.4 };
+  const fetchImpl = async (url, init) => {
+    const body = JSON.parse(init.body);
+    const answers = {};
+    for (const [k, q] of Object.entries(body.questions)) {
+      const m = q.instructions.match(/give "([^"]+)"/);
+      answers[k] = { type: "noul", noul: probs[m[1]] };
+    }
+    return { ok: true, json: async () => ({ answers, usage: { input_tokens: 1 }, model: "mock" }) };
+  };
+  const out = await extractByVerification({ document: doc, fields: ["total"], key: "k", fetchImpl });
+  assert.equal(out.items[0].value, "54.50");
+  assert.equal(out.items[0].confidence, 0.97);
+  assert.equal(out.items[0].jev.candidates, 4);
+  // When Jev is not sure of any candidate, the field abstains to a human.
+  const low = await extractByVerification({ document: doc, fields: ["total"], key: "k", fetchImpl: async (url, init) => {
+    const body = JSON.parse(init.body);
+    const answers = Object.fromEntries(Object.keys(body.questions).map((k) => [k, { type: "noul", noul: 0.3 }]));
+    return { ok: true, json: async () => ({ answers }) };
+  } });
+  assert.equal(low.items[0].value, null);
+  assert.equal(low.items[0].jev.abstained, true);
+  // A confidently-wrong noul (0.02) must NOT beat a genuinely-right one.
+  const trap = await extractByVerification({ document: doc, fields: ["total"], key: "k", fetchImpl: async (url, init) => {
+    const body = JSON.parse(init.body);
+    const answers = {};
+    for (const [k, q] of Object.entries(body.questions)) {
+      const m = q.instructions.match(/give "([^"]+)"/);
+      answers[k] = { type: "noul", noul: m[1] === "9.00" ? 0.02 : m[1] === "54.50" ? 0.6 : 0.1 };
+    }
+    return { ok: true, json: async () => ({ answers }) };
+  } });
+  assert.equal(trap.items[0].value, "54.50");
 });

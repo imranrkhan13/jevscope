@@ -86,3 +86,9 @@ export const MAX_STATEMENT_TXNS: number;
 export function isForm(text: string): boolean;
 export function formFields(text: string, limit?: number): DiscoveredField[];
 export const MAX_FORM_FIELDS: number;
+
+export type ExtractField = { name: string; label?: string; kind?: "amount" | "date" | "id" | "text" | "any"; maxCandidates?: number };
+export function fieldKind(name?: string): "amount" | "date" | "id" | "text" | "any";
+export function candidateSpans(document: unknown, field: string | ExtractField): string[];
+export function buildExtractQuestions(fields: (string | ExtractField)[], document: unknown): { questions: Record<string, object>; map: { field: ExtractField; candidates: string[] }[] };
+export function extractByVerification(o: { document: unknown; fields: (string | ExtractField)[]; key: string; provider?: JevProvider; model?: string; fetchImpl?: typeof fetch; timeoutMs?: number; minConfidence?: number }): Promise<{ items: { field: string; label?: string; value: string | null; confidence: number | null; jev: { type: "extract"; candidates: number; top: string | null; abstained?: boolean } }[]; usage?: object | null; model?: string | null }>;

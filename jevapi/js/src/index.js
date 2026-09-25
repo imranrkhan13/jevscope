@@ -5,3 +5,5 @@ export * from "./resume.js";
 export * from "./receipt.js";
 export * from "./statement.js";
 export * from "./form.js";
+
+export * from "./extract.js";

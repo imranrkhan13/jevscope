@@ -231,3 +231,47 @@ def test_readers_do_not_fight_each_other():
     assert not is_receipt(_spec("forms.json")["forms"][2]["text"])
     stmt = _spec("bank_statements.json")["bank_statements"][0]["text"]
     assert not is_receipt(stmt) and not is_form(stmt)
+
+
+def test_extract_candidate_spans_match_shared_spec():
+    fx = json.loads((ROOT / "jevapi/spec/extract_candidates.json").read_text())
+    for c in fx["cases"]:
+        assert jevapi.candidate_spans(c["document"], c["field"]) == c["candidates"], c["id"]
+
+
+def test_extract_by_verification_picks_jevs_best_and_abstains(monkeypatch):
+    doc = "MART\n2x Tea 4.50 CHF 9.00\nTotal : CHF 54.50\nCash 100.00"
+    probs = {"4.50": 0.05, "9.00": 0.2, "54.50": 0.97, "100.00": 0.4}
+
+    def fake_ask(state, questions, key, **opts):
+        answers = {}
+        for k, q in questions.items():
+            v = q["instructions"].split('give "')[1].split('"')[0]
+            answers[k] = {"type": "noul", "noul": probs[v]}
+        return {"answers": answers, "usage": {"input_tokens": 1}, "model": "mock"}
+
+    monkeypatch.setattr("jevapi.extract.ask_jev", fake_ask)
+    out = jevapi.extract_by_verification(doc, ["total"], key="k")
+    assert out["items"][0]["value"] == "54.50"
+    assert out["items"][0]["confidence"] == 0.97
+    assert out["items"][0]["jev"]["candidates"] == 4
+
+    def low_ask(state, questions, key, **opts):
+        return {"answers": {k: {"type": "noul", "noul": 0.3} for k in questions}}
+
+    monkeypatch.setattr("jevapi.extract.ask_jev", low_ask)
+    low = jevapi.extract_by_verification(doc, ["total"], key="k")
+    assert low["items"][0]["value"] is None
+    assert low["items"][0]["jev"]["abstained"] is True
+
+    # A confidently-wrong noul (0.02) must NOT beat a genuinely-right one.
+    def trap_ask(state, questions, key, **opts):
+        answers = {}
+        for k, q in questions.items():
+            v = q["instructions"].split('give "')[1].split('"')[0]
+            answers[k] = {"type": "noul", "noul": 0.02 if v == "9.00" else 0.6 if v == "54.50" else 0.1}
+        return {"answers": answers}
+
+    monkeypatch.setattr("jevapi.extract.ask_jev", trap_ask)
+    trap = jevapi.extract_by_verification(doc, ["total"], key="k")
+    assert trap["items"][0]["value"] == "54.50"
