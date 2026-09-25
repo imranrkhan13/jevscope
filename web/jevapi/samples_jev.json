@@ -56,31 +56,31 @@
     {
       "field": "item_2_name",
       "value": "Wheat Flour 1kg",
-      "confidence": 0.73,
+      "confidence": 0.68,
       "jev": {
         "type": "noul",
-        "noul": 0.73,
-        "certainty": 0.45999999999999996
+        "noul": 0.68,
+        "certainty": 0.3600000000000001
       }
     },
     {
       "field": "item_2_price",
       "value": "58.00",
-      "confidence": 0.98,
-      "jev": {
-        "type": "noul",
-        "noul": 0.98,
-        "certainty": 0.96
-      }
-    },
-    {
-      "field": "item_3_name",
-      "value": "Sunflower Oil 1L",
       "confidence": 0.97,
       "jev": {
         "type": "noul",
         "noul": 0.97,
         "certainty": 0.94
+      }
+    },
+    {
+      "field": "item_3_name",
+      "value": "Sunflower Oil 1L",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {
@@ -96,11 +96,11 @@
     {
       "field": "item_4_name",
       "value": "Milk 500ml",
-      "confidence": 0.85,
+      "confidence": 0.84,
       "jev": {
         "type": "noul",
-        "noul": 0.85,
-        "certainty": 0.7
+        "noul": 0.84,
+        "certainty": 0.6799999999999999
       }
     },
     {
@@ -146,11 +146,11 @@
     {
       "field": "item_6_price",
       "value": "120.00",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "jev": {
         "type": "noul",
-        "noul": 0.98,
-        "certainty": 0.96
+        "noul": 0.97,
+        "certainty": 0.94
       }
     },
     {
@@ -186,11 +186,11 @@
     {
       "field": "cash",
       "value": "100.00",
-      "confidence": 0.02,
+      "confidence": 0.01,
       "jev": {
         "type": "noul",
-        "noul": 0.02,
-        "certainty": 0.96
+        "noul": 0.01,
+        "certainty": 0.98
       }
     },
     {
