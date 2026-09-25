@@ -221,3 +221,61 @@ test("company-first layout: product beside the title, project headings with a su
   assert.ok(!Object.keys(a).some((k) => k.startsWith("education")));
   assert.ok(!Object.values(a).includes("1") && !Object.values(a).includes("2"));
 });
+
+// ---- Receipts, bank statements, forms (real public datasets; see spec/*.json for source and license) ----
+import { isReceipt, receiptFields, isBankStatement, statementFields, isForm, formFields } from "../src/index.js";
+
+const specOf = (f) => JSON.parse(readFileSync(new URL(`../../spec/${f}`, import.meta.url), "utf8"));
+
+test("receipts: 6 real CORD receipts give the dataset's items and totals", () => {
+  const fx = specOf("receipts.json");
+  for (const d of fx.receipts) {
+    assert.equal(isReceipt(d.text), true, d.id);
+    const got = Object.fromEntries(discoverFields(d.text).map((f) => [f.name, f.value ?? null]));
+    for (const [k, v] of Object.entries(d.gold)) assert.deepEqual(got[k], v, `${d.id} ${k}`);
+  }
+});
+
+test("bank statements: 3 statements give header fields and transaction rows", () => {
+  const fx = specOf("bank_statements.json");
+  for (const d of fx.bank_statements) {
+    assert.equal(isBankStatement(d.text), true, d.id);
+    const got = Object.fromEntries(discoverFields(d.text).map((f) => [f.name, f.value ?? null]));
+    for (const [k, v] of Object.entries(d.gold)) assert.deepEqual(got[k], v, `${d.id} ${k}`);
+  }
+});
+
+test("forms: 3 real FUNSD forms give their filled blanks, empty blanks stay null", () => {
+  const fx = specOf("forms.json");
+  for (const d of fx.forms) {
+    assert.equal(isForm(d.text), true, d.id);
+    const got = Object.fromEntries(discoverFields(d.text).map((f) => [f.name, f.value ?? null]));
+    for (const [k, v] of Object.entries(d.gold)) assert.deepEqual(got[k], v, `${d.id} ${k}`);
+  }
+});
+
+test("the readers do not fight each other: invoices, resumes and scans keep their routes", () => {
+  // Real invoices stay on the generic + vendor/currency route.
+  const inv = specOf("real_invoices.json");
+  for (const d of inv.invoices) {
+    assert.equal(isReceipt(d.text), false, d.id);
+    assert.equal(isBankStatement(d.text), false, d.id);
+    assert.equal(isForm(d.text), false, d.id);
+    assert.ok(discoverFields(d.text).some((f) => f.name === "vendor"), d.id);
+  }
+  // Resumes stay resumes.
+  const res = specOf("resumes.json");
+  for (const r of res.resumes) assert.ok(discoverFields(r.text).some((f) => f.name === "name"), r.id);
+  // A messy scan of an invoice is not a receipt just because an OCR fragment says "receipt".
+  const scan = "1nvoice\nBlll To: Acme\nAM0UNT DUE: 700.00\nremit to\nreceipt of payment\nJAN 1 2 1999\n83443897";
+  assert.equal(isReceipt(scan), false);
+  assert.equal(isForm(scan), false);
+  // A receipt is not a form, a form is not a receipt, a statement is neither.
+  const fx = specOf("receipts.json");
+  assert.equal(isForm(fx.receipts[0].text), false);
+  const ff = specOf("forms.json");
+  assert.equal(isReceipt(ff.forms[2].text), false);
+  const bs = specOf("bank_statements.json");
+  assert.equal(isReceipt(bs.bank_statements[0].text), false);
+  assert.equal(isForm(bs.bank_statements[0].text), false);
+});

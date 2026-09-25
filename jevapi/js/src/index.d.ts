@@ -72,3 +72,17 @@ export function answersToItems(fields: JevField[], answers: Record<string, JevAn
 export class JevError extends Error { status?: number }
 export function askJev(o: { state: unknown; questions: Record<string, object>; key: string; provider?: JevProvider; model?: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<{ answers?: Record<string, JevAnswer>; usage?: object; model?: string }>;
 export function checkFields(o: { document: string; fields?: JevField[] | null; key: string; provider?: JevProvider; model?: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<{ items: (Item & { label?: string; jev: object | null })[]; usage: object | null; model: string | null }>;
+export interface DiscoveredField { name: string; label: string; value: string | null }
+export function isResume(text: string): boolean;
+export function resumeFields(text: string, limit?: number): DiscoveredField[];
+export function isReceipt(text: string): boolean;
+export function receiptFields(text: string, limit?: number): DiscoveredField[];
+export const MAX_RECEIPT_FIELDS: number;
+export const MAX_RECEIPT_ITEMS: number;
+export function isBankStatement(text: string): boolean;
+export function statementFields(text: string, limit?: number): DiscoveredField[];
+export const MAX_STATEMENT_FIELDS: number;
+export const MAX_STATEMENT_TXNS: number;
+export function isForm(text: string): boolean;
+export function formFields(text: string, limit?: number): DiscoveredField[];
+export const MAX_FORM_FIELDS: number;

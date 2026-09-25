@@ -17,6 +17,9 @@ from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .certainty import normalize
 from .resume import is_resume, resume_fields
+from .statement import is_bank_statement, statement_fields
+from .receipt import is_receipt, receipt_fields
+from .form import is_form, form_fields
 
 #: Where Jev can be reached, per the providers' own docs:
 #:   typesafe   https://docs.typesafe.ai/api.md
@@ -69,6 +72,7 @@ CURRENCY_HINTS: dict[str, str] = {
     "CAD": "Canadian dollars (C$ or CAD)",
     "JPY": "Japanese yen (¥ or JPY)",
     "CNY": "Chinese yuan (CN¥, RMB or CNY)",
+    "IDR": "Indonesian rupiah (Rp or IDR)",
 }
 MAX_VENDOR_OPTIONS = 8
 
@@ -126,7 +130,7 @@ def core_fields(text: str, found: Sequence[Mapping[str, Any]] = ()) -> list[dict
                         "options": options, "core": True})
     if not any("currency" in n for n in names):
         codes = [c for c in CURRENCY_HINTS if re.search(rf"\b{c}\b", t)]
-        sym = [c for s, c in (("₹", "INR"), ("Rs", "INR"), ("€", "EUR"), ("£", "GBP"), ("$", "USD"), ("¥", "JPY")) if s in t]
+        sym = [c for s, c in (("₹", "INR"), ("Rs", "INR"), ("Rp", "IDR"), ("€", "EUR"), ("£", "GBP"), ("$", "USD"), ("¥", "JPY")) if s in t]
         options = list(dict.fromkeys(codes + sym + list(CURRENCY_HINTS)))
         out.append({"name": "currency", "label": "Currency", "description": "the currency the amounts are in",
                     "options": options, "hints": dict(CURRENCY_HINTS), "core": True})
@@ -145,6 +149,15 @@ def discover_fields(text: str, limit: int = MAX_DISCOVERED) -> list[dict]:
     """
     if is_resume(text):
         return resume_fields(text)
+    # Receipts, bank statements, and forms have their own readers; a receipt still
+    # gets the currency question when its own fields do not cover it.
+    if is_bank_statement(text):
+        return statement_fields(text)[:limit]
+    if is_receipt(text):
+        rf = receipt_fields(text)
+        return (rf + [f for f in core_fields(text, rf) if f["name"] == "currency"])[:limit]
+    if is_form(text):
+        return form_fields(text)[:limit]
     found: list[dict] = []
     seen: set[str] = set()
     for line in str(text or "").splitlines():

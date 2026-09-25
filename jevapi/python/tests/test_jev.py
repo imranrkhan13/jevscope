@@ -183,3 +183,51 @@ def test_check_fields_discovers_when_no_list():
 def test_key_required():
     with pytest.raises(ValueError):
         jevapi.ask_jev("d", {}, key="")
+
+
+# ---- Receipts, bank statements, forms (real public datasets; see spec/*.json for source and license) ----
+
+def _spec(name):
+    return json.loads((pathlib.Path(__file__).resolve().parents[2] / "spec" / name).read_text())
+
+
+def test_receipts_match_cord_labels():
+    from jevapi import is_receipt
+    for d in _spec("receipts.json")["receipts"]:
+        assert is_receipt(d["text"]), d["id"]
+        got = {f["name"]: f.get("value") for f in discover_fields(d["text"])}
+        for k, v in d["gold"].items():
+            assert got.get(k) == v, f"{d['id']} {k}: {got.get(k)!r} != {v!r}"
+
+
+def test_bank_statements_match_labels():
+    from jevapi import is_bank_statement
+    for d in _spec("bank_statements.json")["bank_statements"]:
+        assert is_bank_statement(d["text"]), d["id"]
+        got = {f["name"]: f.get("value") for f in discover_fields(d["text"])}
+        for k, v in d["gold"].items():
+            assert got.get(k) == v, f"{d['id']} {k}: {got.get(k)!r} != {v!r}"
+
+
+def test_forms_match_funsd_labels():
+    from jevapi import is_form
+    for d in _spec("forms.json")["forms"]:
+        assert is_form(d["text"]), d["id"]
+        got = {f["name"]: f.get("value") for f in discover_fields(d["text"])}
+        for k, v in d["gold"].items():
+            assert got.get(k) == v, f"{d['id']} {k}: {got.get(k)!r} != {v!r}"
+
+
+def test_readers_do_not_fight_each_other():
+    from jevapi import is_bank_statement, is_form, is_receipt
+    for d in _spec("real_invoices.json")["invoices"]:
+        assert not is_receipt(d["text"]) and not is_bank_statement(d["text"]) and not is_form(d["text"]), d["id"]
+        assert any(f["name"] == "vendor" for f in discover_fields(d["text"])), d["id"]
+    for r in _spec("resumes.json")["resumes"]:
+        assert any(f["name"] == "name" for f in discover_fields(r["text"])), r["id"]
+    scan = "1nvoice\nBlll To: Acme\nAM0UNT DUE: 700.00\nremit to\nreceipt of payment\nJAN 1 2 1999\n83443897"
+    assert not is_receipt(scan) and not is_form(scan)
+    assert not is_form(_spec("receipts.json")["receipts"][0]["text"])
+    assert not is_receipt(_spec("forms.json")["forms"][2]["text"])
+    stmt = _spec("bank_statements.json")["bank_statements"][0]["text"]
+    assert not is_receipt(stmt) and not is_form(stmt)

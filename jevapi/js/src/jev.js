@@ -3,6 +3,9 @@
 // jevscope's certainty.py. Bring your own key; nothing here stores it.
 import { normalize } from "./certainty.js";
 import { isResume, resumeFields } from "./resume.js";
+import { isBankStatement, statementFields } from "./statement.js";
+import { isReceipt, receiptFields } from "./receipt.js";
+import { isForm, formFields } from "./form.js";
 
 // Per each provider's docs: https://docs.typesafe.ai/api.md ,
 // https://venice.ai/lp/jev , https://openrouter.ai/docs/guides/community/jev
@@ -39,6 +42,7 @@ export const CURRENCY_HINTS = Object.freeze({
   CAD: "Canadian dollars (C$ or CAD)",
   JPY: "Japanese yen (¥ or JPY)",
   CNY: "Chinese yuan (CN¥, RMB or CNY)",
+  IDR: "Indonesian rupiah (Rp or IDR)",
 });
 const MAX_VENDOR_OPTIONS = 8;
 
@@ -79,7 +83,7 @@ export function coreFields(text, found = []) {
   }
   if (!names.some((n) => /currency/.test(n))) {
     const seenCodes = Object.keys(CURRENCY_HINTS).filter((c) => new RegExp(`\\b${c}\\b`).test(t));
-    const sym = [["₹", "INR"], ["Rs", "INR"], ["€", "EUR"], ["£", "GBP"], ["$", "USD"], ["¥", "JPY"]].filter(([s]) => t.includes(s)).map(([, c]) => c);
+    const sym = [["₹", "INR"], ["Rs", "INR"], ["Rp", "IDR"], ["€", "EUR"], ["£", "GBP"], ["$", "USD"], ["¥", "JPY"]].filter(([s]) => t.includes(s)).map(([, c]) => c);
     const options = [...new Set([...seenCodes, ...sym, ...Object.keys(CURRENCY_HINTS)])];
     out.push({ name: "currency", label: "Currency", description: "the currency the amounts are in", options, hints: CURRENCY_HINTS, core: true });
   }
@@ -89,6 +93,15 @@ export function coreFields(text, found = []) {
 /** Find every field with no field list given: a resume is read section by section (resume.js); other text gives its "Label: value" lines, plus vendor and currency on invoice-like text. Jev then checks each. */
 export function discoverFields(text, limit = MAX_DISCOVERED) {
   if (isResume(text)) return resumeFields(text);
+  // Receipts, bank statements, and forms have their own readers; a receipt still
+  // gets the vendor and currency questions when its own fields do not cover them.
+  if (isBankStatement(text)) return statementFields(text).slice(0, limit);
+  // Currency only: the receipt reader already proposes the merchant when the text shows one.
+  if (isReceipt(text)) {
+    const rf = receiptFields(text);
+    return [...rf, ...coreFields(text, rf).filter((f) => f.name === "currency")].slice(0, limit);
+  }
+  if (isForm(text)) return formFields(text).slice(0, limit);
   const found = [];
   const seen = new Set();
   for (const line of String(text || "").split(/\r?\n/)) {

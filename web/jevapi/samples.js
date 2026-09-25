@@ -45,6 +45,39 @@ export const SAMPLES = [
       { field: "skills_tools", label: "Skills: Tools", value: "PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana", confidence: 0.96 },
     ],
   },
+  {
+    id: "receipt",
+    label: "Receipt",
+    text: "KRISHNA STORES\nReceipt #KS-1141\nDate: 12/09/2026 18:42\n2 Amul Milk 500ml @ 27.00   54.00\n1 Britannia Bread   45.00\n1 Tata Salt 1kg   28.00\nSubtotal   127.00\nTotal   127.00\nCash   150.00\nChange   23.00",
+    extracted: [
+      { field: "merchant", label: "Merchant", value: "Krishna Stores", confidence: 0.98 },
+      { field: "total", label: "Total", value: "127.00", confidence: 0.97 },
+      { field: "change", label: "Change", value: "32.00", confidence: 0.9 },
+      { field: "date", label: "Date", value: "12/09/2026", confidence: 0.95 },
+    ],
+  },
+  {
+    id: "statement",
+    label: "Bank statement",
+    text: "LAKEVIEW BANK\nAccount Statement as of 30 Sep 2026\nAccount Holder    MEERA NAIR\nAccount Number    50200123456\nIFSC Code    LAKE0001234\nPeriod    01 Sep 2026 to 30 Sep 2026\nOpening Balance    12,500.00\nClosing Balance    9,804.00\n01/09/2026 UPI-RAJU TEA STALL DR 40.00 12,460.00\n03/09/2026 SALARY CREDIT CR 45,000.00 57,460.00\n10/09/2026 ELECTRICITY BOARD DR 1,820.00 55,640.00\n28/09/2026 RENT TRANSFER DR 18,000.00 37,640.00\n30/09/2026 ATM CASH WITHDRAWAL DR 27,836.00 9,804.00",
+    extracted: [
+      { field: "bank_name", label: "Bank", value: "Lakeview Bank", confidence: 0.99 },
+      { field: "account_number", label: "Account number", value: "50200123456", confidence: 0.97 },
+      { field: "closing_balance", label: "Closing balance", value: "9,804.00", confidence: 0.96 },
+      { field: "opening_balance", label: "Opening balance", value: "12,500", confidence: 0.93 },
+    ],
+  },
+  {
+    id: "form",
+    label: "Form",
+    text: "LEAVE APPLICATION FORM\nNAME:   Meera Nair\nDEPARTMENT:   Accounts\nFROM DATE:   05/10/2026   TO DATE:   09/10/2026\nREASON:   Family function\nCONTACT NUMBER:   98450 12345\nSIGNATURE:\nAPPROVED BY:",
+    extracted: [
+      { field: "name", label: "Name", value: "Meera Nair", confidence: 0.98 },
+      { field: "department", label: "Department", value: "Accounts", confidence: 0.97 },
+      { field: "from_date", label: "From date", value: "05/10/2026", confidence: 0.96 },
+      { field: "reason", label: "Reason", value: "Family function", confidence: 0.9 },
+    ],
+  },
 ];
 
 export const DEFAULT_FIELDS = [

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JevAPI docs - fill it, or check it?</title>
-<meta name="description" content="Use JevAPI in your own app: quickstart, curl, JavaScript and Python examples, every endpoint, recipes for resumes and invoices, errors, keys and limits.">
+<meta name="description" content="Use JevAPI in your own app: quickstart, curl, JavaScript and Python examples, every endpoint, recipes for resumes, invoices, receipts, bank statements and forms, errors, keys and limits.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -197,7 +197,7 @@ print(result["fill"], result["review"])</pre>
 
 <h2 id="how">How it works</h2>
 <ol class="steps">
-<li><b>Get values.</b> From your own extractor, from your AI through <a href="#extract">/extract</a>, or let JevAPI find them (resumes and labelled lines like "Invoice No: ...").</li>
+<li><b>Get values.</b> From your own extractor, from your AI through <a href="#extract">/extract</a>, or let JevAPI find them (resumes, receipts, bank statements, forms, and labelled lines like "Invoice No: ...").</li>
 <li><b>Jev checks each one.</b> For every field it answers "does the document really say this?" as a probability, or picks from your list of options. One request per document.</li>
 <li><b>JevAPI decides.</b> Fill when the score clears the bar (95% by default, set by your costs). Everything else goes to review, with a reason a person can read.</li>
 <li><b>Calibrate later.</b> Label a few hundred of your own fields as right or wrong, send them to <a href="#calibrate">/calibrate</a>, and the scores are measured against your real documents.</li>
@@ -277,6 +277,13 @@ print(result["fill"], result["review"])</pre>
   -H 'Content-Type: application/json' -H "X-Jev-Key: $TYPESAFE_API_KEY" \
   -d "$(jq -n --rawfile t resume.txt '{text: $t}')"</pre>
 <p class="mut">Group by the prefix (<code>job_1_</code>, <code>project_2_</code>) to show one card per job, like the <a href="/jevapi/demo">demo</a> does.</p>
+
+<h2 id="receipts">Recipe: receipts, bank statements and forms</h2>
+<p>With no <code>fields</code>, <code>/verify</code> also reads three more kinds of document with no AI key. A store receipt gives the merchant and date when shown, one field group per item (name, quantity, unit price, price), then every labelled total (subtotal, tax, total, cash, change, and the Indonesian TUNAI / KEMBALI). A bank statement gives the header (bank, account holder, number, IFSC, branch, period, opening and closing balance) and one group per transaction row (date, description, DR/CR, amount, balance). A form gives one field per filled blank ("NAME: ..."), and empty blanks come back with a null value for a person to fill, never invented.</p>
+<p>Tested on real public data: 6 receipts from CORD v2 (CC BY 4.0), 3 forms from FUNSD (research use), and 3 bank statements from AgamiAI's Indian-Bank-Statements (Apache 2.0). The bank statement set is <b>synthetic</b> (machine-generated), because real bank statements are not openly licensed for privacy reasons; item lists on the CORD texts cover the item and total area only, so merchant and date are only proposed when the text shows them. Wrapped or split rows stay for review: the reader proposes only what the text plainly says, and Jev checks each value. See <code>spec/receipts.json</code>, <code>spec/bank_statements.json</code> and <code>spec/forms.json</code> for the exact documents, licences and changes.</p>
+<pre>curl -X POST https://jevscope.vercel.app/api/v1/verify \
+  -H 'Content-Type: application/json' -H "X-Jev-Key: $TYPESAFE_API_KEY" \
+  -d "$(jq -n --rawfile t receipt.txt '{text: $t}')"</pre>
 
 <h2 id="invoice">Recipe: invoices</h2>
 <p>With no <code>fields</code>, <code>/verify</code> finds every labelled line ("Invoice No: ...", "Total: ...") and always asks about the vendor and the currency too, even when they are not labelled. Jev picks the vendor from the letterhead and "payable to" names, and the currency from a list.</p>

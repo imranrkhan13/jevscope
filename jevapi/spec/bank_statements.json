@@ -1,0 +1,91 @@
+{
+ "source": "Indian-Bank-Statements (AgamiAI), https://huggingface.co/datasets/AgamiAI/Indian-Bank-Statements . IMPORTANT: this dataset is SYNTHETIC (machine-generated statements with invented banks, people and amounts), not real bank statements. Real bank statements are not openly licensable because they carry personal financial data. JevAPI still ran live Jev checks and demos on synthetic text only.",
+ "license": "Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0), per the dataset card.",
+ "changes": "3 of the documents (one Type-1, two Type-2 layouts). OCR text only; the repeated page watermark (\"SYNTHETIC DATA - MACHINE GENERATED\") removed; person names replaced with [name removed]; only the first transaction rows kept. The Type-1 layout wraps every row over several lines and prints debit/credit as columns, so the text alone cannot say which rows are debits: the reader proposes only the rows whose amounts sit on the date line (rows 1 and 3 of agamai-type1-00001; transaction numbering counts parsed rows only), and wrapped descriptions stay for a human to check.",
+ "bank_statements": [
+  {
+   "id": "agamai-type1-00001",
+   "text": "    Progressive National Bank\n    Current & Saving Account Statement\n    TRADE LINKS INDIA\n    D-234\n    Ground Floor\n    Alipore\n    Kolkata\n    West Bengal\n    702820\n    Account Statement as of 31-03-2024 00:00:00 +0530\n    Account Holders Name    TRADE LINKS INDIA\n    Customer Id    577725115\n    Branch Name    KOLKATA HOWRAH\n    MICR Code    456316854\n    IFSC Code    PROG0920445\n    Searched By\n    From 01 Jan 2024 To 31 Mar 2024\n    Account Number\n    78439336112\n    Account Currency\n    INR\n    Product Name\n    CURRENT ACCOUNT- GENERAL\n    Interest Rate    -    3.18% p.a.    -\n    Opening Balance\n    Rs. 59,131.72\n    Closing Balance\n    Rs. 21,661.82\n    Txn Date    Value Date Cheque No.    Description    Branch\n    Debit    Credit    Balance\n    Code\n 01-01-2024    01 Jan 2024    NEFT Cr-210968206613-ICIC0SF0002-CLOTHING    5749    Rs. 6,086.63    Rs. 65,218.35\n 11:30:55\n 02-01-2024    02 Jan 2024    567302\n    INDUSTRIES LTD--\n    Chq Paid-MICR Inward Clearing-[name removed]-HDFC\n    3421    Rs. 23,702.04    Rs. 41,516.31\n 12:44:20    BANK LTD.\n 03-01-2024    03 Jan 2024    RTGS Dr-CNRBR929510940342-HDFC0004171-BIPLAB    5749    Rs. 9,055.89    Rs. 32,460.42\n",
+   "gold": {
+    "bank_name": "Progressive National Bank",
+    "account_holder": "TRADE LINKS INDIA",
+    "customer_id": "577725115",
+    "branch": "KOLKATA HOWRAH",
+    "micr_code": "456316854",
+    "ifsc_code": "PROG0920445",
+    "account_number": "78439336112",
+    "currency": "INR",
+    "product_name": "CURRENT ACCOUNT- GENERAL",
+    "interest_rate": "3.18% p.a.",
+    "opening_balance": "59,131.72",
+    "closing_balance": "21,661.82",
+    "txn_1_date": "01-01-2024",
+    "txn_1_amount": "6,086.63",
+    "txn_1_balance": "65,218.35",
+    "txn_2_date": "03-01-2024",
+    "txn_2_amount": "9,055.89",
+    "txn_2_balance": "32,460.42"
+   }
+  },
+  {
+   "id": "agamai-type2-00001",
+   "text": "    UNITY NATIONAL BANK\n    Account Statement\n    INVESTMENT SERVICES INDIA\n    B-456\n    Second Floor\n    Banjara Hills\n    Hyderabad\n    Telangana\n    596435\n    Account Holder\n    Customer ID\n    INVESTMENT SERVICES INDIA\n    106483633\n    Branch    HYDERABAD BANJARA HILLS\n    MICR Code    644205304\n    IFSC Code    UNIT0517580\n    Account Number    23908718914\n    Account Type    CURRENT ACCOUNT\n    Currency    INR\n    Period\n    01 Jan 2024 to 31 Mar 2024\n    Opening Balance\n    1,279,072.17\n    Closing Balance\n    110,110.37\n    Transaction\n    Transaction\n    T A Available\n    No.    ID    Value Date\n    Txn Posted Date    Cheque No.    Description    Cr/Dr    Amount\n    Balance\n    1    S85388609    01/01/2024    01/01/2024 12:12:52 PM    -    RTGS-ICICR510742914335-[name removed]    DR    475,617.41    803,454.76\n    IMPS-212190484533-HEALTHCARE\n    2    S80703650    02/01/2024    02/01/2024 10:19:55 AM    -    PRODUCTS LTD    CR    101,795.99    905,250.75\n    IMPS-597987779248-DATABRIDGE\n    3    S72702062    02/01/2024    02/01/2024 10:55:02 AM    -    INFOTECH\n    CR    60,198.25    965,449.00\n    4    S86827774    02/01/2024    02/01/2024 12:58:20 PM    -\n    UPI/CR/586134526249/[name removed]\n    [name removed]/6788808567@pay\n    UPI/DR/700203118416/[name removed]\n    CR    46,334.23    1,011,783.23\n    5    S88433703    02/01/2024    02/01/2024 01:05:39 PM    -    [name removed]/7124029087@pay    DR    9,371.77    1,002,411.46\n    SERVICE CHARGES-Foreign Currency\n    6    S76016136    04/01/2024    04/01/2024 12:21:52 PM    -    Markup    DR    139.96    1,002,271.50\n    7    S82789919    04/01/2024    04/01/2024 02:30:58 PM    -\n    NEFT-403681166106-[name removed]    DR    266,844.11    735,427.39\n    8    S87599277    05/01/2024    05/01/2024 12:31:47 PM    -\n",
+   "gold": {
+    "bank_name": "UNITY NATIONAL BANK",
+    "account_holder": "INVESTMENT SERVICES INDIA",
+    "customer_id": "106483633",
+    "branch": "HYDERABAD BANJARA HILLS",
+    "micr_code": "644205304",
+    "ifsc_code": "UNIT0517580",
+    "account_number": "23908718914",
+    "account_type": "CURRENT ACCOUNT",
+    "currency": "INR",
+    "opening_balance": "1,279,072.17",
+    "closing_balance": "110,110.37",
+    "txn_1_date": "01/01/2024",
+    "txn_1_type": "DR",
+    "txn_1_amount": "475,617.41",
+    "txn_1_balance": "803,454.76",
+    "txn_2_date": "02/01/2024",
+    "txn_2_type": "CR",
+    "txn_2_amount": "101,795.99",
+    "txn_2_balance": "905,250.75",
+    "txn_3_date": "02/01/2024",
+    "txn_3_type": "DR",
+    "txn_3_amount": "9,371.77",
+    "txn_3_balance": "1,002,411.46",
+    "txn_4_date": "04/01/2024",
+    "txn_4_description": "Markup",
+    "txn_4_amount": "139.96"
+   }
+  },
+  {
+   "id": "agamai-type2-00002",
+   "text": "    MILESTONE BANKING SOLUTIONS\n    Account Statement\n    HEALTHPLUS PHARMA LTD -\n    B-456\n    First Floor\n    Pune\n    Hinjewadi\n    Maharashtra\n    157723\n    Account Holder    HEALTHPLUS PHARMA LTD\n    Customer ID    213291722\n    Branch    PUNE HINJEWADI\n    MICR Code    438113247\n    IFSC Code    MILE0267798\n    Account Number    52934702276\n    Account Type    CURRENT ACCOUNT\n    Currency    INR\n    Period\n    01 Jan 2024 to 31 Mar 2024\n    Opening Balance\n    2,581,250.25\n    Closing Balance\n    7,889,260.24\n    Transaction\n    Transaction\n    T A Available\n No.    ID    Value Date\n    Txn Posted Date    Cheque No.    Description    Cr/Dr    Amount\n    Balance\n 1    S97498525    01/01/2024    01/01/2024 01:28:41 PM    726031    CLG-FASHION TEXTILES LTD    CR    486,285.76    3,067,536.01\n    IMPS-513969840044-HEALTHCARE\n 2    S97170045    02/01/2024    02/01/2024 03:17:07 PM    -    PRODUCTS LTD    CR    591,422.08    3,658,958.09\n 3    S85391715    03/01/2024    03/01/2024 05:42:19 PM    199358    CLG-DIGITAL SOLUTIONS INDIA    CR    1,050,190.83    4,709,148.92\n 4    S87713031    04/01/2024    04/01/2024 01:18:24 PM    -    NEFT-765201181612-[name removed]    DR    522,823.65    4,186,325.27\n    NEFT-396114415308-LOAN\n    DISBURSEMENT-NETFORGE\n 5    S99072891    04/01/2024    04/01/2024 01:56:52 PM    -    TECHNOLOGIES    CR    4,753,862.25    8,940,187.52\n 6    S77648647    05/01/2024    05/01/2024 07:13:52 AM    -    NEFT-741122511622-[name removed]    DR    2,966,438.98    5,973,748.54\n 7    S95208111    05/01/2024    05/01/2024 10:00:00 AM    -\n    PAYMENT-MONTHLY RENT\n    NEFT Dr-688652647390-RENT\n    DR    188,232.03    7,676,128.11\n    NEFT-965215640502-CREDIT SERVICES\n 8    S96839071    05/01/2024    05/01/2024 10:54:38 AM    -    CR    1,241,284.27    7,215,032.81\n",
+   "gold": {
+    "bank_name": "MILESTONE BANKING SOLUTIONS",
+    "account_holder": "HEALTHPLUS PHARMA LTD",
+    "customer_id": "213291722",
+    "branch": "PUNE HINJEWADI",
+    "micr_code": "438113247",
+    "ifsc_code": "MILE0267798",
+    "account_number": "52934702276",
+    "account_type": "CURRENT ACCOUNT",
+    "currency": "INR",
+    "opening_balance": "2,581,250.25",
+    "closing_balance": "7,889,260.24",
+    "txn_1_date": "01/01/2024",
+    "txn_1_type": "CR",
+    "txn_1_amount": "486,285.76",
+    "txn_1_balance": "3,067,536.01",
+    "txn_4_date": "04/01/2024",
+    "txn_4_type": "DR",
+    "txn_4_amount": "522,823.65",
+    "txn_7_date": "05/01/2024",
+    "txn_7_type": "CR",
+    "txn_7_amount": "1,241,284.27",
+    "txn_7_balance": "7,215,032.81"
+   }
+  }
+ ]
+}

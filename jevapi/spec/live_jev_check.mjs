@@ -80,6 +80,25 @@ try {
     for (const it of out.items) if (it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
   }
 
+  // Synthetic receipt, bank statement and form samples, no field list: the new readers
+  // route each to its fields and Jev checks each value. Three short documents, one request each.
+  for (const id of ["receipt", "statement", "form"]) {
+    const smp = SAMPLES.find((x) => x.id === id);
+    if (!smp) throw new Error(`sample ${id} missing`);
+    const found = discoverFields(smp.text);
+    if (!found.length) throw new Error(`${id}: discovery found no fields`);
+    const out = await checkFields({ document: smp.text, fields: found, key, provider: "typesafe" });
+    requests += 1;
+    tokens += out.usage?.input_tokens || 0;
+    // Blank fields (a form's empty blanks) get no question and confidence null: they go straight to review.
+    if (out.items.some((it) => it.confidence !== null && typeof it.confidence !== "number")) throw new Error(`${id}: unusable Jev answer`);
+    const acts = decideAll(null, out.items).decisions.map((x) => x.action);
+    const yes = out.items.filter((it) => it.confidence >= 0.5).length;
+    const blanks = out.items.filter((it) => it.confidence === null).length;
+    console.log(`\nSynthetic ${id} (no field list): ${found.length} fields found, Jev said yes to ${yes}/${found.length}${blanks ? `, ${blanks} blank` : ""}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
+    for (const it of out.items) if (it.confidence !== null && it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
+  }
+
   if (RUN_REAL) {
   // Real invoices, no field list: vendor and currency must always be asked; Jev picks.
   console.log(`\nReal public invoices (${REAL.invoices.length}, from ${REAL.source.split(",")[0]}), no field list:`);

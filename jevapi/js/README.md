@@ -2,7 +2,7 @@
 
 **Should this field be filled automatically, or should a person check it?**
 
-Apps that pull data out of documents (invoices, resumes, IDs, insurance forms)
+Apps that pull data out of documents (invoices, resumes, receipts, bank statements, IDs, insurance forms)
 get a value and a confidence for every field. The confidence is a claim, and
 models are often wrong about it. On JevScope's real public-repo study, one
 classifier claimed about 98% confidence and was right 68.5% of the time.
