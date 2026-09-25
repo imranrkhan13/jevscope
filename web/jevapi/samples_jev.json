@@ -56,31 +56,31 @@
     {
       "field": "item_2_name",
       "value": "Wheat Flour 1kg",
-      "confidence": 0.67,
+      "confidence": 0.73,
       "jev": {
         "type": "noul",
-        "noul": 0.67,
-        "certainty": 0.3400000000000001
+        "noul": 0.73,
+        "certainty": 0.45999999999999996
       }
     },
     {
       "field": "item_2_price",
       "value": "58.00",
-      "confidence": 0.97,
-      "jev": {
-        "type": "noul",
-        "noul": 0.97,
-        "certainty": 0.94
-      }
-    },
-    {
-      "field": "item_3_name",
-      "value": "Sunflower Oil 1L",
       "confidence": 0.98,
       "jev": {
         "type": "noul",
         "noul": 0.98,
         "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_3_name",
+      "value": "Sunflower Oil 1L",
+      "confidence": 0.97,
+      "jev": {
+        "type": "noul",
+        "noul": 0.97,
+        "certainty": 0.94
       }
     },
     {
@@ -96,21 +96,21 @@
     {
       "field": "item_4_name",
       "value": "Milk 500ml",
-      "confidence": 0.84,
+      "confidence": 0.85,
       "jev": {
         "type": "noul",
-        "noul": 0.84,
-        "certainty": 0.6799999999999999
+        "noul": 0.85,
+        "certainty": 0.7
       }
     },
     {
       "field": "item_4_price",
       "value": "56.00",
-      "confidence": 0.82,
+      "confidence": 0.85,
       "jev": {
         "type": "noul",
-        "noul": 0.82,
-        "certainty": 0.6399999999999999
+        "noul": 0.85,
+        "certainty": 0.7
       }
     },
     {
@@ -146,11 +146,11 @@
     {
       "field": "item_6_price",
       "value": "120.00",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "jev": {
         "type": "noul",
-        "noul": 0.97,
-        "certainty": 0.94
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {
@@ -186,11 +186,11 @@
     {
       "field": "cash",
       "value": "100.00",
-      "confidence": 0.01,
+      "confidence": 0.02,
       "jev": {
         "type": "noul",
-        "noul": 0.01,
-        "certainty": 0.98
+        "noul": 0.02,
+        "certainty": 0.96
       }
     },
     {

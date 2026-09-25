@@ -109,6 +109,37 @@ input[type=range]{padding:0;width:100%;accent-color:var(--green);border:0;box-sh
 .f.review .meter>i{background:var(--amber)}
 .prog{flex-basis:100%;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
 .prog>i{display:block;height:100%;background:var(--green);transition:width .2s}
+.f{border-left:3px solid transparent}
+.f.fill{border-left-color:var(--green)}
+.f.review{border-left-color:var(--amber)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes grow{from{width:0}}
+.fresh .f{animation:rise .45s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0ms)}
+.fresh .meter>i{animation:grow .8s ease both;animation-delay:calc(var(--d,0ms) + 150ms)}
+.fresh .prog>i{animation:grow .9s .15s ease both}
+.fresh .how .stat{animation:rise .5s ease both}
+.fresh .how .stat:nth-child(2){animation-delay:90ms}
+.fresh .how .stat:nth-child(3){animation-delay:180ms}
+.preview{position:relative}
+.preview.scanning::after{content:"";position:absolute;left:0;right:0;height:34px;top:-34px;background:linear-gradient(180deg,transparent,rgba(46,122,94,.22),transparent);animation:sweep 1.5s ease-in-out 2;pointer-events:none}
+@keyframes sweep{0%{top:-34px}100%{top:100%}}
+@media (prefers-reduced-motion:reduce){.fresh .f,.fresh .meter>i,.fresh .prog>i,.fresh .how .stat,.preview.scanning::after,.qcard.in{animation:none}}
+.qtop{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mut);margin-bottom:10px}
+.qcard{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;box-shadow:0 1px 2px rgba(30,25,15,.04),0 8px 24px rgba(30,25,15,.05)}
+.qcard.in{animation:qin .35s cubic-bezier(.2,.7,.3,1) both}
+@keyframes qin{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+.qgroup{font-size:12.5px;color:var(--mut)}
+.qname{display:block;font-size:16px;font-weight:600;margin:2px 0 10px;letter-spacing:-.01em}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.qmeta .sugg{font-size:13.5px}
+.qmeta .sugg b{color:var(--amber);font-weight:600}
+.qjev{font-size:13px;color:var(--mut);margin-top:8px}
+.qjev b{color:var(--ink);font-weight:500}
+.qacts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.qdone{text-align:center;padding:30px 14px}
+.qdone .big{font-size:42px;color:var(--green);line-height:1}
+.qdone h3{margin:8px 0 4px;font-size:17px}
+.qdone p{color:var(--mut);font-size:14px;margin:0 0 14px}
 .err{color:var(--mut);margin-top:12px;white-space:pre-wrap;font-size:14px}
 .err.bad{color:var(--red)}
 details{margin-top:14px}
@@ -189,7 +220,7 @@ import { calibrate, decideAll, costThreshold } from "/jevapi/js/src/index.js";
 import { SAMPLES, DEFAULT_FIELDS } from "/web/jevapi/samples.js";
 
 const $ = (id) => document.getElementById(id);
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, jevStamp: null };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, jevStamp: null, view: "queue", qpos: 0, qcur: -1, qanim: false };
 
 // Real Jev scores for the photo sample, checked against its OCR text when this page was last shipped.
 fetch("/web/jevapi/samples_jev.json").then((r) => (r.ok ? r.json() : null)).then((j) => {
@@ -211,6 +242,22 @@ function showPreviewNode(node, caption) {
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const pct = (x) => (x == null ? "-" : Math.min(Math.round(x * 100), x < 1 ? 99 : 100) + "%");
+
+// Numbers tick up when a fresh result lands (sample picked, extraction or Jev done).
+function countUps() {
+  document.querySelectorAll("#summary .pill b, .how .stat b").forEach((el) => {
+    const t = parseInt(el.textContent, 10);
+    if (isNaN(t)) return;
+    const suf = el.textContent.replace(/^[\d\s]+/, "");
+    const t0 = performance.now();
+    const step = (t1) => {
+      const p = Math.min(1, (t1 - t0) / 550);
+      el.textContent = Math.round(t * (1 - Math.pow(1 - p, 3))) + suf;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
 
 async function loadProfile() {
   const r = await fetch("/jevapi/spec/examples.json");
@@ -305,10 +352,13 @@ function render() {
   const byJev = state.judge === "jev";
   const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
   const bar = decisions[0] ? pct(decisions[0].threshold) : pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
-  const nDone = fill + Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
-  $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${review}</b> to check</span>
-    ${review ? `<button type="button" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
-    <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>
+  const nMine = Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
+  const nDone = fill + nMine;
+  // Fields still waiting on a person: not filled, not accepted, not typed in.
+  const queueList = decisions.map((d, i) => ({ d, i })).filter(({ d, i }) => d.action !== "fill" && !(state.mine[i] && (state.mine[i].how === "accepted" || state.mine[i].value)));
+  $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${queueList.length}</b> to check</span>
+    ${state.view === "all" && queueList.length ? `<button type="button" class="primary" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
+    <span class="row filter" role="group" aria-label="View"><button type="button" data-v="queue" class="${state.view === "all" ? "" : "on"}">One at a time</button><button type="button" data-v="all" class="${state.view === "all" ? "on" : ""}">All fields</button></span>
     <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
   $("flag").textContent = state.jevStamp
@@ -349,24 +399,56 @@ function render() {
     const hasSugg = !fillIt && ex.value != null && ex.value !== "";
     const val = mine ? mine.value : fillIt ? ex.value ?? "" : "";
     const chip = done ? "Accepted" : mine && !fillIt && mine.value ? "Typed" : `${fillIt ? "Filled" : "Check"} ${score}`;
-    return `<div class="f ${d.action}${done ? " done" : ""}" data-i="${i}">
+    return `<div class="f ${d.action}${done ? " done" : ""}" data-i="${i}" style="--d:${Math.min(i * 35, 420)}ms">
       <label class="name" for="f${i}">${esc(resume ? short : label)}</label>
       ${box(i, val, fillIt || !hasSugg ? "" : "Type the right value")}
       <span class="side"><span class="chip" title="${esc(d.reason)}">${chip}</span><span class="meter" title="How sure: ${score}"><i style="width:${Math.round(((byJev ? ex.confidence : d.confidence) || 0) * 100)}%"></i></span></span>
       ${metaBits(hasSugg, done, byJev, extra, ex, i, fillIt)}
     </div>`;
   };
-  $("form").classList.toggle("hide-fill", !!state.only);
-  $("form").innerHTML = !resume
-    ? `<div class="group"><div>${decisions.map((d, i) => row(byI[i])).join("")}</div></div>`
-    : [...groups.values()].map((g) => {
-        const nf = g.rows.filter((r) => r.d.action === "fill").length, nr = g.rows.length - nf;
-        return `<details class="group${nr ? "" : " allfill"}"${nr ? " open" : ""}><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
-      }).join("");
-  fitBoxes();
-  const nMine = Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
+  $("form").classList.toggle("fresh", !!state.fresh);
+  if (state.view !== "all" && decisions.length) {
+    if (!queueList.length) {
+      $("form").innerHTML = `<div class="qdone${state.qanim ? " in qcard" : ""}"><div class="big">✓</div><h3>All set</h3><p>${fill ? `${fill} field${fill === 1 ? "" : "s"} filled on its own. ` : ""}${nMine ? `${nMine} checked by you. ` : ""}Nothing left to check.</p><button type="button" data-v="all">See the full form</button></div>`;
+    } else {
+      if (state.qpos >= queueList.length) state.qpos = 0;
+      const { d, i } = queueList[state.qpos];
+      const ex = state.extracted[i];
+      const label = labels[d.field] || ex.label || d.field;
+      const g = groupOf(d.field, label);
+      state.qcur = i;
+      const mine = state.mine[i];
+      const score = byJev ? pct(ex.confidence) : pct(d.confidence);
+      const hasSugg = ex.value != null && ex.value !== "";
+      $("form").innerHTML = `<div class="queue">
+        <div class="qtop"><span>Field ${state.qpos + 1} of ${queueList.length} to check</span><span>${fill} already filled</span></div>
+        <div class="qcard${state.qanim ? " in" : ""}">
+          <div class="qgroup">${esc(g.kind ? groupTitle(g, groups.get(g.key).rows) : g.title)}</div>
+          <label class="qname" for="qbox">${esc(g.kind ? g.short : label)}</label>
+          <input id="qbox" value="${esc(mine ? mine.value : "")}" placeholder="Type the right value" autocomplete="off">
+          <div class="qmeta">
+            ${hasSugg ? `<span class="sugg"><b>Suggested:</b> ${esc(ex.value)}</span>` : `<span class="sugg">Nothing suggested for this one.</span>`}
+            <span class="side"><span class="chip" title="${esc(d.reason)}">Check ${score}</span><span class="meter" title="How sure: ${score}"><i style="width:${Math.round(((byJev ? ex.confidence : d.confidence) || 0) * 100)}%"></i></span></span>
+          </div>
+          ${byJev ? `<div class="qjev">${jevSays(ex)}</div>` : ""}
+          <div class="qacts">
+            ${hasSugg ? `<button type="button" class="primary" data-qact="accept">Accept</button><button type="button" data-qact="edit">Edit</button>` : ""}
+            <button type="button" data-qact="skip">${queueList.length > 1 ? "Skip →" : "Later"}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+  } else {
+    $("form").innerHTML = !resume
+      ? `<div class="group"><div>${decisions.map((d, i) => row(byI[i])).join("")}</div></div>`
+      : [...groups.values()].map((g) => {
+          const nf = g.rows.filter((r) => r.d.action === "fill").length, nr = g.rows.length - nf;
+          return `<details class="group${nr ? "" : " allfill"}"${nr ? " open" : ""}><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
+        }).join("");
+    fitBoxes();
+  }
   if (nMine) $("summary").insertAdjacentHTML("afterbegin", `<span class="pill"><b style="color:var(--green)">${nMine}</b> accepted by you</span>`);
-  $("summary").querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => { state.only = b.dataset.f === "review"; render(); }));
+  $("summary").querySelectorAll("[data-v]").forEach((b) => b.addEventListener("click", () => { state.view = b.dataset.v === "all" ? "all" : "queue"; render(); }));
   $("summary").querySelector("[data-next]")?.addEventListener("click", () => {
     const rows = [...document.querySelectorAll(".f.review:not(.done)")];
     if (!rows.length) return;
@@ -379,6 +461,8 @@ function render() {
     el.querySelector("input,textarea")?.focus({ preventScroll: true });
   });
   $("bar").textContent = pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
+  if (state.fresh) { state.fresh = false; countUps(); }
+  state.qanim = false;
   $("curl").textContent = `curl -X POST https://jevscope.vercel.app/api/v1/decide \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify({ items: state.extracted.slice(0, 2), options: { costError: state.cost } })}'\n\n# add "profile": <from /api/v1/calibrate> to use your own calibration`;
 }
 
@@ -398,6 +482,9 @@ function pickSample(s) {
     state.jevStamp = bake;
   }
   showPreview(s.image ? "/web/jevapi/" + s.image : null, s.image ? "The photo this sample was read from. OCR in the browser turns it into the text below; real Jev checked every field." : "");
+  if (s.image) { const pv = $("preview"); pv.classList.add("scanning"); setTimeout(() => pv.classList.remove("scanning"), 3400); }
+  state.fresh = true;
+  state.view = "queue"; state.qpos = 0; state.qanim = true;
   $("doc").value = s.text;
   $("err").textContent = ""; $("err").classList.remove("bad");
   $("samples").value = s.id;
@@ -406,6 +493,28 @@ function pickSample(s) {
 
 // Accept fills the box with the suggestion; Edit puts it in the box to change; typing is kept too.
 $("form").addEventListener("click", (e) => {
+  const vb = e.target.closest("button[data-v]");
+  if (vb) { state.view = vb.dataset.v === "all" ? "all" : "queue"; render(); return; }
+  const q = e.target.closest("button[data-qact]");
+  if (q) {
+    const i = state.qcur, ex = state.extracted[i];
+    if (q.dataset.qact === "accept") {
+      const typed = state.mine[i] && state.mine[i].value !== "" ? state.mine[i].value : null;
+      state.mine[i] = { value: String(typed ?? ex.value ?? ""), how: "accepted" };
+      state.qanim = true;
+    } else if (q.dataset.qact === "edit") {
+      state.mine[i] = { value: String(ex.value ?? ""), how: "typed" };
+      render();
+      const qb = $("qbox");
+      if (qb) { qb.focus(); qb.setSelectionRange(qb.value.length, qb.value.length); }
+      return;
+    } else if (q.dataset.qact === "skip") {
+      state.qpos += 1;
+      state.qanim = true;
+    }
+    render();
+    return;
+  }
   const b = e.target.closest("button[data-act]");
   if (!b) return;
   const i = Number(b.dataset.i), ex = state.extracted[i];
@@ -418,6 +527,12 @@ $("form").addEventListener("click", (e) => {
   else document.querySelector(`.f[data-i="${i}"] button`)?.focus({ preventScroll: true });
 });
 $("form").addEventListener("input", (e) => {
+  if (e.target.id === "qbox") {
+    state.mine[state.qcur] = { value: e.target.value, how: "typed" };
+    const chip = e.target.closest(".qcard")?.querySelector(".chip");
+    if (chip) chip.textContent = "Typed";
+    return;
+  }
   const m = e.target.id && e.target.id.match(/^f(\d+)$/);
   if (!m) return;
   const i = Number(m[1]);
@@ -496,6 +611,7 @@ $("file").addEventListener("change", async (e) => {
     state.mine = {};
     state.judge = null; state.jevStamp = null;
     state.extracted = DEFAULT_FIELDS.map((f) => ({ field: f.name, value: null, confidence: null }));
+    state.view = "queue"; state.qpos = 0;
     render();
     $("keybox").open = true;
     $("err").textContent = text.trim()
@@ -519,6 +635,7 @@ $("run").addEventListener("click", async () => {
     state.extracted = j.fields;
     state.mine = {};
     state.judge = null;
+    state.fresh = true;
     render();
     $("err").textContent = "";
   } catch (x) {
@@ -541,6 +658,7 @@ async function askJev(discover) {
     state.judge = "jev";
     state.jevStamp = null;
     state.mine = {};
+    state.fresh = true;
     render();
     $("err").textContent = `Checked by ${j.jevModel || "Jev"}${discover ? `, ${j.fields.length} fields found` : ""}.`;
   } catch (x) {
