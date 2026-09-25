@@ -3,8 +3,8 @@
 // candidate values, plus one run with no field list (auto-discovery). It checks
 // that the integration works end to end and prints what Jev said. This is a
 // smoke test, not a calibration study.
-import { checkFields, decideAll, discoverFields } from "../js/src/index.js";
-import { SAMPLES } from "../../web/jevapi/samples.js";
+import { checkFields, decideAll, discoverFields, extractByVerification } from "../js/src/index.js";
+import { DEFAULT_FIELDS, SAMPLES } from "../../web/jevapi/samples.js";
 import { readFileSync, writeFileSync } from "node:fs";
 
 // Real public invoices (FCC public files, via RealKIE-FCC-Verified, CC BY-NC 4.0; see real_invoices.json).
@@ -118,6 +118,25 @@ try {
     console.log(`\nSynthetic ${id} (no field list): ${found.length} fields found, Jev said yes to ${yes}/${found.length}${blanks ? `, ${blanks} blank` : ""}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
     for (const it of out.items) if (it.confidence !== null && it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
   }
+
+  // Extraction by verification, baked for the demo's "Let Jev find it" toggle: for each
+  // sample's own field list, Jev picks the value out of candidate spans in the text.
+  // One request per sample; samples with very many fields are skipped to keep token use small.
+  const xbakes = { checkedAt: new Date().toISOString().slice(0, 10), model: null, samples: {} };
+  for (const smp of SAMPLES) {
+    if (!smp.extracted || !smp.extracted.length) continue;
+    if (smp.extracted.length > 30) { console.log(`\nextraction bake: skipped ${smp.id} (${smp.extracted.length} fields, keeps token use small)`); continue; }
+    const fields = smp.extracted.map((x) => ({ name: x.field, label: x.label || (DEFAULT_FIELDS.find((f) => f.name === x.field) || {}).label || x.field.replace(/_/g, " ") }));
+    const out = await extractByVerification({ document: smp.text, fields, key, provider: "typesafe" });
+    requests += 1;
+    tokens += out.usage?.input_tokens || 0;
+    if (out.items.some((it) => it.confidence !== null && typeof it.confidence !== "number")) throw new Error(`extraction bake ${smp.id}: unusable Jev answer`);
+    xbakes.model = out.model || xbakes.model;
+    xbakes.samples[smp.id] = { fields: out.items.map((it) => ({ field: it.field, label: it.label, value: it.value, confidence: it.confidence, candidates: it.jev.candidates, abstained: it.jev.abstained || false })) };
+    console.log(`\nextraction bake ${smp.id}: Jev found ${out.items.filter((it) => it.value != null).length}/${out.items.length} values (${out.items.map((it) => `${it.field}=${it.value == null ? "abstain" : it.confidence.toFixed(2)}`).join(", ")})`);
+  }
+  writeFileSync(new URL("../../web/jevapi/samples_extract.json", import.meta.url), JSON.stringify(xbakes, null, 2) + "\n");
+  console.log(`Baked extraction-by-verification for ${Object.keys(xbakes.samples).length} samples -> web/jevapi/samples_extract.json`);
 
   if (RUN_REAL) {
   // Real invoices, no field list: vendor and currency must always be asked; Jev picks.

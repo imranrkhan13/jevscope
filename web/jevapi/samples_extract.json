@@ -1,0 +1,574 @@
+{
+  "checkedAt": "2026-09-25",
+  "model": "jev-1.13.0",
+  "samples": {
+    "clean": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "value": "ACME SUPPLIES PVT LTD",
+          "confidence": 0.94,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "value": "INV-2231",
+          "confidence": 0.99,
+          "candidates": 3,
+          "abstained": false
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "value": "2026",
+          "confidence": 0.56,
+          "candidates": 4,
+          "abstained": false
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "value": "48,200.00",
+          "confidence": 0.99,
+          "candidates": 4,
+          "abstained": false
+        }
+      ]
+    },
+    "messy": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "value": "N0rth Star Logistics",
+          "confidence": 0.75,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "value": "NS-88l9",
+          "confidence": 0.98,
+          "candidates": 4,
+          "abstained": false
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "value": null,
+          "confidence": 0.05,
+          "candidates": 4,
+          "abstained": true
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "value": "25,311",
+          "confidence": 0.99,
+          "candidates": 4,
+          "abstained": false
+        }
+      ]
+    },
+    "missing": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "value": "Blue Lotus Design Studio",
+          "confidence": 0.75,
+          "candidates": 6,
+          "abstained": false
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "value": "BL-104",
+          "confidence": 0.99,
+          "candidates": 2,
+          "abstained": false
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "value": null,
+          "confidence": 0.03,
+          "candidates": 2,
+          "abstained": true
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "value": "15,000",
+          "confidence": 0.93,
+          "candidates": 2,
+          "abstained": false
+        }
+      ]
+    },
+    "resume": {
+      "fields": [
+        {
+          "field": "name",
+          "label": "Name",
+          "value": "Priya Sharma",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "headline",
+          "label": "Headline",
+          "value": null,
+          "confidence": 0.03,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "email",
+          "label": "Email",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "phone",
+          "label": "Phone",
+          "value": "43210",
+          "confidence": 0.91,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "location",
+          "label": "Location",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "linkedin",
+          "label": "LinkedIn",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "github",
+          "label": "GitHub",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "website",
+          "label": "Website",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "summary",
+          "label": "Summary",
+          "value": "Summary",
+          "confidence": 0.92,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "job_1_title",
+          "label": "Job 1 title",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "job_1_company",
+          "label": "Job 1 company",
+          "value": null,
+          "confidence": 0.11,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "job_1_dates",
+          "label": "Job 1 dates",
+          "value": null,
+          "confidence": null,
+          "candidates": 0,
+          "abstained": false
+        },
+        {
+          "field": "job_1_summary",
+          "label": "Job 1 summary",
+          "value": null,
+          "confidence": 0.11,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "job_2_title",
+          "label": "Job 2 title",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "job_2_company",
+          "label": "Job 2 company",
+          "value": null,
+          "confidence": 0.15,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "job_2_dates",
+          "label": "Job 2 dates",
+          "value": null,
+          "confidence": null,
+          "candidates": 0,
+          "abstained": false
+        },
+        {
+          "field": "project_1_name",
+          "label": "Project 1 name",
+          "value": null,
+          "confidence": 0.03,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "project_1_tech",
+          "label": "Project 1 tech",
+          "value": null,
+          "confidence": 0.08,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "education_1_degree",
+          "label": "Education 1 degree",
+          "value": "2023",
+          "confidence": 0.6,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "education_1_school",
+          "label": "Education 1 school",
+          "value": null,
+          "confidence": 0.05,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "education_1_years",
+          "label": "Education 1 years",
+          "value": "2019",
+          "confidence": 0.8,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "skills_languages",
+          "label": "Skills: Languages",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "skills_tools",
+          "label": "Skills: Tools",
+          "value": null,
+          "confidence": 0.01,
+          "candidates": 8,
+          "abstained": true
+        }
+      ]
+    },
+    "receipt": {
+      "fields": [
+        {
+          "field": "merchant",
+          "label": "Merchant",
+          "value": "KRISHNA STORES",
+          "confidence": 0.97,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "total",
+          "label": "Total",
+          "value": "127.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "change",
+          "label": "Change",
+          "value": "23.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "date",
+          "label": "Date",
+          "value": "12/09/2026",
+          "confidence": 0.99,
+          "candidates": 1,
+          "abstained": false
+        }
+      ]
+    },
+    "statement": {
+      "fields": [
+        {
+          "field": "bank_name",
+          "label": "Bank",
+          "value": "LAKEVIEW BANK",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "account_number",
+          "label": "Account number",
+          "value": "50200123456",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "closing_balance",
+          "label": "Closing balance",
+          "value": "9,804.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "opening_balance",
+          "label": "Opening balance",
+          "value": "12,500.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        }
+      ]
+    },
+    "form": {
+      "fields": [
+        {
+          "field": "name",
+          "label": "Name",
+          "value": "Meera Nair",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "department",
+          "label": "Department",
+          "value": "DEPARTMENT: Accounts",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "from_date",
+          "label": "From date",
+          "value": "05/10/2026",
+          "confidence": 0.99,
+          "candidates": 2,
+          "abstained": false
+        },
+        {
+          "field": "reason",
+          "label": "Reason",
+          "value": null,
+          "confidence": 0.02,
+          "candidates": 8,
+          "abstained": true
+        }
+      ]
+    },
+    "photo": {
+      "fields": [
+        {
+          "field": "merchant",
+          "label": "Merchant",
+          "value": "CITY FRESH MART",
+          "confidence": 0.97,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "bill_no",
+          "label": "Bill number",
+          "value": "8841",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "date",
+          "label": "Date",
+          "value": "21/09/2026",
+          "confidence": 0.99,
+          "candidates": 1,
+          "abstained": false
+        },
+        {
+          "field": "item_1_name",
+          "label": "Item 1 name",
+          "value": "Rice 5kg 1 420.00",
+          "confidence": 0.8,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "item_1_price",
+          "label": "Item 1 price",
+          "value": "420.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "item_2_name",
+          "label": "Item 2 name",
+          "value": null,
+          "confidence": 0.05,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_2_price",
+          "label": "Item 2 price",
+          "value": null,
+          "confidence": 0.08,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_3_name",
+          "label": "Item 3 name",
+          "value": null,
+          "confidence": 0.04,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_3_price",
+          "label": "Item 3 price",
+          "value": null,
+          "confidence": 0.04,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_4_name",
+          "label": "Item 4 name",
+          "value": null,
+          "confidence": 0.04,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_4_price",
+          "label": "Item 4 price",
+          "value": null,
+          "confidence": 0.06,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_5_name",
+          "label": "Item 5 name",
+          "value": null,
+          "confidence": 0.29,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_5_price",
+          "label": "Item 5 price",
+          "value": null,
+          "confidence": 0.11,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_6_name",
+          "label": "Item 6 name",
+          "value": null,
+          "confidence": 0.11,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "item_6_price",
+          "label": "Item 6 price",
+          "value": null,
+          "confidence": 0.07,
+          "candidates": 8,
+          "abstained": true
+        },
+        {
+          "field": "subtotal",
+          "label": "Subtotal",
+          "value": "864.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "discount",
+          "label": "Discount",
+          "value": "43.20",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "total",
+          "label": "Total",
+          "value": "820.80",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "cash",
+          "label": "Cash",
+          "value": "1000.00",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        },
+        {
+          "field": "change",
+          "label": "Change",
+          "value": "179.20",
+          "confidence": 0.99,
+          "candidates": 8,
+          "abstained": false
+        }
+      ]
+    }
+  }
+}

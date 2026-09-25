@@ -206,6 +206,7 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
 
   <section class="card pane on" id="formpane" aria-label="Form">
     <h2 class="serif">2. The form</h2>
+    <div class="row" style="margin:-2px 0 12px"><button id="xfind" type="button">Let Jev find it</button><span class="small" style="margin:0">Jev picks each value out of the text itself - no rules, no AI writer</span></div>
     <div class="summary" id="summary"></div>
     <form id="form" onsubmit="return false"></form>
     <div class="slider">
@@ -239,12 +240,14 @@ document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("cli
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".pane").forEach((pn) => pn.classList.toggle("on", pn.id === b.dataset.pane));
 }));
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, jevStamp: null, view: "queue", qpos: 0, qcur: -1, qanim: false };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, xbakes: null, jevStamp: null, view: "queue", qpos: 0, qcur: -1, qanim: false };
 
 // Real Jev scores for the photo sample, checked against its OCR text when this page was last shipped.
 fetch("/web/jevapi/samples_jev.json").then((r) => (r.ok ? r.json() : null)).then((j) => {
   if (j && j.sample) { state.bakes[j.sample] = j; if (state.sample.id === j.sample) pickSample(state.sample); }
 }).catch(() => {});
+// Jev-found values for every sample, picked out of the text by real Jev when this page was last shipped.
+fetch("/web/jevapi/samples_extract.json").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && j.samples) state.xbakes = j; }).catch(() => {});
 
 function showPreview(src, caption) {
   const p = $("preview");
@@ -381,11 +384,15 @@ function render() {
     <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
   $("flag").textContent = state.jevStamp
-    ? "The receipt photo is synthetic, but every score below is real Jev's, checked when this page was last shipped."
+    ? state.jevStamp.extract
+      ? "The document is synthetic, but every value below was picked out of its text by real Jev itself, checked when this page was last shipped."
+      : "The receipt photo is synthetic, but every score below is real Jev's, checked when this page was last shipped."
     : "Demo data is synthetic. The calibration below comes from made-up examples, not a real model.";
   $("note").innerHTML = byJev
     ? state.jevStamp
-      ? `Real Jev (${esc(state.jevStamp.model)}) answered "does the photo's OCR text really say this?" for every field on ${esc(state.jevStamp.checkedAt)}. A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. No simulation here.`
+      ? state.jevStamp.extract
+        ? `Real Jev (${esc(state.jevStamp.model)}) found each value itself on ${esc(state.jevStamp.checkedAt)}: for every field it weighed candidate spans from the text and kept the one it was most sure of (raw scores shown; fields Jev abstained on stay with a person). A field is filled when Jev is at least <b>${bar}</b> sure. No rules, no AI writer.`
+        : `Real Jev (${esc(state.jevStamp.model)}) answered "does the photo's OCR text really say this?" for every field on ${esc(state.jevStamp.checkedAt)}. A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. No simulation here.`
       : `Scores are Jev's answer to "does the document really say this?". A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. These are raw scores, not yet measured on your own documents.`
     : `Scores come from the extractor, adjusted with the sample calibration (made-up data). A field is filled when the adjusted score is at least <b>${bar}</b>; the rest go to a person.`;
   const labels = Object.fromEntries(DEFAULT_FIELDS.map((f) => [f.name, f.label]));
@@ -720,6 +727,19 @@ async function askJev(discover) {
     $("err").textContent = x.message; $("err").classList.add("bad");
   }
 }
+$("xfind").addEventListener("click", () => {
+  $("err").classList.remove("bad");
+  const bake = state.xbakes && state.xbakes.samples[state.sample.id];
+  if (!bake) { $("err").textContent = "Jev-found values are baked for the bundled samples only, not for documents you upload."; return; }
+  state.extracted = bake.fields.map((f) => ({ field: f.field, label: f.label, value: f.value, confidence: f.confidence, jev: { type: "extract", candidates: f.candidates } }));
+  state.judge = "jev";
+  state.jevStamp = { model: state.xbakes.model, checkedAt: state.xbakes.checkedAt, extract: true };
+  state.mine = {};
+  state.fresh = true;
+  state.view = "queue"; state.qpos = 0; state.qcur = -1; state.qanim = true;
+  render();
+  $("err").textContent = `Jev found these values itself on ${state.xbakes.checkedAt} (baked at the last ship, so no key is needed).`;
+});
 $("jevrun").addEventListener("click", () => askJev(false));
 $("jevall").addEventListener("click", () => askJev(true));
 
