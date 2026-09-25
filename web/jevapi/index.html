@@ -290,7 +290,7 @@ function render() {
     const label = labels[d.field] || ex.label || d.field;
     const g = groupOf(d.field, label);
     if (!groups.has(g.key)) groups.set(g.key, { ...g, rows: [] });
-    groups.get(g.key).rows.push({ d, ex, i, label, short: g.short, sub: (d.field.match(/^(?:job|project|education)_\d+_(.+)$/) || [])[1] });
+    groups.get(g.key).rows.push({ d, ex, i, label, short: g.short, sub: (d.field.match(/^(?:job|project|education|item|row|transaction)_\d+_(.+)$/) || [])[1] });
   });
   // Group the form when it is long enough to scroll: big resumes, receipts, statements.
   const resume = decisions.length > 8 && [...groups.values()].some((g) => g.rows.length >= 2);
