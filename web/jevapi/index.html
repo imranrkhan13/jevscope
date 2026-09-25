@@ -124,7 +124,7 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
   <div>
     <h1 class="serif">Fill it, or check it?</h1>
     <p class="sub">Upload a document. JevAPI fills the fields it can trust and flags the rest for a person to check.</p>
-    <span class="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span>
+    <span class="flag" id="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span>
   </div>
   <nav><a href="/jevapi">Home</a><a href="/jevapi/docs">Docs</a><a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav>
 </header>
@@ -311,6 +311,9 @@ function render() {
     <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>
     <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
+  $("flag").textContent = state.jevStamp
+    ? "The receipt photo is synthetic, but every score below is real Jev's, checked when this page was last shipped."
+    : "Demo data is synthetic. The calibration below comes from made-up examples, not a real model.";
   $("note").innerHTML = byJev
     ? state.jevStamp
       ? `Real Jev (${esc(state.jevStamp.model)}) answered "does the photo's OCR text really say this?" for every field on ${esc(state.jevStamp.checkedAt)}. A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. No simulation here.`
