@@ -95,7 +95,7 @@
           "reader_value": null,
           "reader_ok": false,
           "jev_value": "ONMEDIA",
-          "jev_confidence": 0.97,
+          "jev_confidence": 0.96,
           "jev_ok": true
         },
         {
@@ -133,7 +133,7 @@
           "reader_value": "(336) 335- 7392",
           "reader_ok": true,
           "jev_value": "614) 466- 5087",
-          "jev_confidence": 0.98,
+          "jev_confidence": 0.97,
           "jev_ok": false
         },
         {

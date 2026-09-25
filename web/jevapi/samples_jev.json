@@ -56,21 +56,21 @@
     {
       "field": "item_2_name",
       "value": "Wheat Flour 1kg",
-      "confidence": 0.73,
+      "confidence": 0.72,
       "jev": {
         "type": "noul",
-        "noul": 0.73,
-        "certainty": 0.45999999999999996
+        "noul": 0.72,
+        "certainty": 0.43999999999999995
       }
     },
     {
       "field": "item_2_price",
       "value": "58.00",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "jev": {
         "type": "noul",
-        "noul": 0.97,
-        "certainty": 0.94
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {
@@ -96,11 +96,11 @@
     {
       "field": "item_4_name",
       "value": "Milk 500ml",
-      "confidence": 0.85,
+      "confidence": 0.82,
       "jev": {
         "type": "noul",
-        "noul": 0.85,
-        "certainty": 0.7
+        "noul": 0.82,
+        "certainty": 0.6399999999999999
       }
     },
     {
@@ -146,11 +146,11 @@
     {
       "field": "item_6_price",
       "value": "120.00",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "jev": {
         "type": "noul",
-        "noul": 0.97,
-        "certainty": 0.94
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {
@@ -166,11 +166,11 @@
     {
       "field": "discount",
       "value": "-43.20",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "jev": {
         "type": "noul",
-        "noul": 0.99,
-        "certainty": 0.98
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {

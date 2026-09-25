@@ -174,6 +174,17 @@ curl -X POST https://jevscope.vercel.app/api/v1/verify \
   </div>
 </section>
 
+<section class="s rv">
+  <h2>Jev vs Lev</h2>
+  <p class="sub">Lev launched on 24 September 2026: an open decision engine, built by Dmitri Sotnikov, that speaks the same API as Jev. Same idea (fast typed yes/no and choice answers with probabilities), different trade-offs. Numbers we did not measure ourselves are marked *.</p>
+  <div class="cards">
+    <div class="card"><div class="n">Jev</div><h3>Hosted by TypeSafe</h3><p>Your text goes to TypeSafe's servers. About $0.04 per million input tokens*. Large context: TypeSafe says it can sort thousands of emails in one pass*. One model, no built-in fallback. Nothing to install; you need a TypeSafe key.</p></div>
+    <div class="card"><div class="n">Lev</div><h3>Open, runs locally</h3><p>One binary on your own machine, works offline, nothing leaves it. Free open weights (laya checkpoints, Apache-2.0). 512-token context on the English model today*. When the fast model is unsure it asks a small local LLM instead: on the author's own adversarial test that lifted correct answers from about 61% to about 92%*.</p></div>
+    <div class="card"><div class="n">=</div><h3>What both share</h3><p>Neither writes prose; both answer questions you define up front. Independent tests quoted by Lev's author score Jev at 66% on a 150-passage set, tying Claude Haiku 4.5, and find Jev slow to admit "I don't know" (49.7% of the time vs 97-100% for LLMs)*. Treat every confidence as a claim to calibrate, whoever the model is.</p></div>
+  </div>
+  <p class="sub" style="margin-top:22px">Because Lev speaks Jev's wire API, everything JevAPI does, including extraction-by-verification ("Let Jev find it"), should be able to run on Lev fully offline. We have not tested this yet. Our own measured numbers, on real Jev, are public: <a href="https://github.com/imranrkhan13/jevscope/blob/main/jevapi/spec/jev_extract_eval.json">10 of 11 field values picked correctly on our small gold set</a>. Sources: <a href="https://yogthos.net/posts/2026-09-24-introducing-lev.html">Introducing Lev (yogthos.net)</a> &middot; <a href="https://huggingface.co/convaiinnovations/laya">laya weights</a>. * measured or stated by Lev's author or TypeSafe, not by us.</p>
+</section>
+
 <div class="band rv">
   <h2>See it on a real document</h2>
   <p>Load a sample invoice, resume, receipt, bank statement or form, add your TypeSafe key, and watch each field get filled or flagged.</p>
