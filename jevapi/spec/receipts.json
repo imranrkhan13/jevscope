@@ -1,157 +1,185 @@
 {
- "source": "CORD v2 (naver-clova-ix/cord-v2), https://huggingface.co/datasets/naver-clova-ix/cord-v2 . Real shop receipts, mostly Indonesian, collected for OCR research.",
- "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), per the dataset card.",
- "changes": "6 of the 800 test documents. Word boxes re-laid-out into lines; no other edits. CORD's annotation covers only the item and total area, so these texts have no store header, address or date. Note on cord-test-13: the reader's \"total\" is the pre-tax TOTAL line (46.636); the dataset's total_price label points at the GRAND TOTAL line, which the reader proposes as grand_total (51.300). Both are in the text; gold checks both. cord-test-38/41/70/85 were added in a later stress pass: harder receipts (9-11 items, category subtotal rows, wrapped labels, label-only and amount-before-label totals, OCR noise). Their gold checks the totals and the items the text actually shows; wrapped items printed on split lines stay for a person or Jev to check.",
- "receipts": [
-  {
-   "id": "cord-test-6",
-   "text": "1   EGG TART   13,000\n2   CHOCO CUS ARD PASTRY   24,000\n1   REDBEAN BREAD   9,000\nTOTAL   46,000\nCASH   50,000\nCHANGE   4,000",
-   "gold": {
-    "item_1_name": "EGG TART",
-    "item_1_qty": "1",
-    "item_1_price": "13,000",
-    "item_2_name": "CHOCO CUS ARD PASTRY",
-    "item_2_qty": "2",
-    "item_2_price": "24,000",
-    "item_3_name": "REDBEAN BREAD",
-    "item_3_qty": "1",
-    "item_3_price": "9,000",
-    "total": "46,000",
-    "cash": "50,000",
-    "change": "4,000"
-   }
-  },
-  {
-   "id": "cord-test-13",
-   "text": "BASO KUAH   1 43.636   43.636\nA.MINERAL GELAS   1   3,000   3,000\nTOTAL   46.636\nDPP   46.636\nTAX 10.00 %   4.664\nGRAND TOTAL   51.300\nTUNAI   52.000\nKEMBALI   700",
-   "gold": {
-    "item_1_name": "BASO KUAH",
-    "item_1_qty": "1",
-    "item_1_unit_price": "43.636",
-    "item_1_price": "43.636",
-    "item_2_name": "A.MINERAL GELAS",
-    "item_2_qty": "1",
-    "item_2_price": "3,000",
-    "total": "46.636",
-    "tax_10_00": "4.664",
-    "grand_total": "51.300",
-    "tunai": "52.000",
-    "kembali": "700"
-   }
-  },
-  {
-   "id": "cord-test-25",
-   "text": "1   TWIST   STRAWBERRY   DONUT   10,000\n1   TLJ   CROQUETTE   17,000\n1   POTATO PEPPER   BAGEL   16,000\nTOTAL   43,000\nCASH   50,000\nCHANGE   7,000",
-   "gold": {
-    "item_1_name": "TWIST STRAWBERRY DONUT",
-    "item_1_price": "10,000",
-    "item_2_name": "TLJ CROQUETTE",
-    "item_2_price": "17,000",
-    "item_3_name": "POTATO PEPPER BAGEL",
-    "item_3_price": "16,000",
-    "total": "43,000",
-    "cash": "50,000",
-    "change": "7,000"
-   }
-  },
-  {
-   "id": "cord-test-34",
-   "text": "Ash Chick Sambal Matah   5   75.000\nJamur Goreng 2   10.000\nSubtotal   85.000\nPajak (10%)   8.500\nTotal   93.500\nTunai   100.000\nKembali   6.500",
-   "gold": {
-    "item_1_name": "Ash Chick Sambal Matah",
-    "item_1_qty": "5",
-    "item_1_price": "75.000",
-    "item_2_name": "Jamur Goreng",
-    "item_2_qty": "2",
-    "item_2_price": "10.000",
-    "subtotal": "85.000",
-    "pajak_10": "8.500",
-    "total": "93.500",
-    "tunai": "100.000",
-    "kembali": "6.500"
-   }
-  },
-  {
-   "id": "cord-test-46",
-   "text": "1X S-Bubble Milk Tea   @20,000   20,000\n100%\n1X S-Caramel Milk Tea   @20,000   20,000\n100%\nTotal:   40,000\nCash:   40,000\nCHANGE   0",
-   "gold": {
-    "item_1_name": "S-Bubble Milk Tea",
-    "item_1_qty": "1X",
-    "item_1_unit_price": "20,000",
-    "item_1_price": "20,000",
-    "item_2_name": "S-Caramel Milk Tea",
-    "item_2_price": "20,000",
-    "total": "40,000",
-    "cash": "40,000",
-    "change": "0"
-   }
-  },
-  {
-   "id": "cord-test-63",
-   "text": "Kopi   Susu Kampung.   x1   19.000\nIce\nKopi   Susu Kampung   Less   Ice   0\nKopi   Susu Kampung.   x2   38.000\nIce\nSubtotal   57.000\nTotal\n57.000\nCash\n60.000\nChange\n3.000",
-   "gold": {
-    "item_1_name": "Kopi Susu Kampung.",
-    "item_1_qty": "x1",
-    "item_1_price": "19.000",
-    "item_2_name": "Kopi Susu Kampung.",
-    "item_2_price": "38.000",
-    "subtotal": "57.000",
-    "total": "57.000",
-    "cash": "60.000",
-    "change": "3.000"
-   }
-  },
-  {
-   "id": "cord-test-38",
-   "text": "1   XLB Org Pork 10x   78,000\n1   Sicito Babi\n65,000\n1\nHotplate Tahu\n58,000\n1   DF Fish Fillet Garlc   108,000\n1   LM Pork Belly   88,000\n1   Siew   Mai\n38,800\n5   Kwan   Yin Cup   50,000\n1   Herbal\nJelly   38,000\n1   Onde-Onde\n38,000\nITEMS: 13\n561,800\nService\ncharge   42,135\nPB1\n60,394\nTotal\n664,329",
-   "gold": {
-    "item_1_name": "XLB Org Pork 10x",
-    "item_1_qty": "1",
-    "item_1_price": "78,000",
-    "service_charge": "42,135",
-    "pb1": "60,394",
-    "total": "664,329"
-   }
-  },
-  {
-   "id": "cord-test-41",
-   "text": "Chicken Maryland   47619.00\nCappucino (Hot/Iced)   30303.00\nNaga Lychee Juice   34632.00\nCafe Latte   30303.00\nHot Chocolate Marshmallo   30303.00\nChicken Cesar Salad   43290.00\n12987.00\nMineral Water\nMineral Water   12987.00\n25974.00\nLychee/Peach/Lemon/Mango\nChicken Maryland   47619.00\n316017.00\nSubtotal\nService Charge 5% +   48982.68\n365000.00\nTOTAL",
-   "gold": {
-    "item_1_name": "Chicken Maryland",
-    "item_1_price": "47619.00",
-    "subtotal": "316017.00",
-    "service_charge_5": "48982.68",
-    "total": "365000.00"
-   }
-  },
-  {
-   "id": "cord-test-70",
-   "text": "2   UDANG RE   216,000 432,000\n2   =*LARGE*==\n1   AYM GR JUN NJAN   108,000\n=*MEDIUM*=\n1   SAPO TH SEAFOOD   172,000\n=*LARGE*==\n2   POCAI 3   111,000 222.000\n2   =*MEDIUM*=\n1   GURAME FILLET M   163,000\nASAM MANIS\n1   BIHUN GORENG JJ   116,000\n=*LARGE*==\n5   ICED TEA   12,000   60,000\n7   NASI PUTIH   10,000 70,000\nFOOD   1,213,000\nBEVERAGES   60,000\nOTHERS   70,000\nSUBTOTAL   1,343,000\nSERVICE CHARGE   80,580\nTax 10%   142,358\nDU   1,565,938",
-   "gold": {
-    "item_1_name": "UDANG RE",
-    "item_1_qty": "2",
-    "item_1_unit_price": "216,000",
-    "item_1_price": "432,000",
-    "item_8_name": "NASI PUTIH",
-    "item_8_qty": "7",
-    "item_8_price": "70,000",
-    "food": "1,213,000",
-    "beverages": "60,000",
-    "others": "70,000",
-    "subtotal": "1,343,000",
-    "service_charge": "80,580",
-    "tax_10": "142,358",
-    "du": "1,565,938"
-   }
-  },
-  {
-   "id": "cord-test-85",
-   "text": "3   Nasi\nPutih\n30.000\n1   Nasi\nTambah\n2   Ayam   Pop   7.000\n40.000\n1   Samabal\nSP\n11.000\n1   Sambal\nGabus\nAsin\nCb\n18.000\n1   Kerupuk   Kuah\n15.000\n1   Ikan   Bawal\nBesa\n28.500\n1   Telur   Dadar\n10.000\n1   Teh   Es\n7.000\n1   Teh   Manis\n9.000\n1   Es   Batu\n4.000\nSubtotal\n179.500\nPajak   Rest. 10%\n17.950\nTotal\n14\n197.450\nMakanan\nTtl\n159.500\nMinuman\nTtl\n20.000\nCash\n197.450",
-   "gold": {
-    "subtotal": "179.500",
-    "total": "197.450",
-    "cash": "197.450"
-   }
-  }
- ]
+  "source": "CORD v2 (naver-clova-ix/cord-v2), https://huggingface.co/datasets/naver-clova-ix/cord-v2 . Real shop receipts, mostly Indonesian, collected for OCR research.",
+  "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), per the dataset card.",
+  "changes": "6 of the 800 test documents. Word boxes re-laid-out into lines; no other edits. CORD's annotation covers only the item and total area, so these texts have no store header, address or date. Note on cord-test-13: the reader's \"total\" is the pre-tax TOTAL line (46.636); the dataset's total_price label points at the GRAND TOTAL line, which the reader proposes as grand_total (51.300). Both are in the text; gold checks both. cord-test-38/41/70/85 were added in a later stress pass: harder receipts (9-11 items, category subtotal rows, wrapped labels, label-only and amount-before-label totals, OCR noise). Their gold checks the totals and the items the text actually shows; wrapped items printed on split lines stay for a person or Jev to check. synthetic-swiss-1 is fully synthetic: a made-up Swiss hotel receipt (German labels, CHF codes, à unit prices, OCR edge junk) added as a regression case for European receipts; it is not a real document.",
+  "receipts": [
+    {
+      "id": "cord-test-6",
+      "text": "1   EGG TART   13,000\n2   CHOCO CUS ARD PASTRY   24,000\n1   REDBEAN BREAD   9,000\nTOTAL   46,000\nCASH   50,000\nCHANGE   4,000",
+      "gold": {
+        "item_1_name": "EGG TART",
+        "item_1_qty": "1",
+        "item_1_price": "13,000",
+        "item_2_name": "CHOCO CUS ARD PASTRY",
+        "item_2_qty": "2",
+        "item_2_price": "24,000",
+        "item_3_name": "REDBEAN BREAD",
+        "item_3_qty": "1",
+        "item_3_price": "9,000",
+        "total": "46,000",
+        "cash": "50,000",
+        "change": "4,000"
+      }
+    },
+    {
+      "id": "cord-test-13",
+      "text": "BASO KUAH   1 43.636   43.636\nA.MINERAL GELAS   1   3,000   3,000\nTOTAL   46.636\nDPP   46.636\nTAX 10.00 %   4.664\nGRAND TOTAL   51.300\nTUNAI   52.000\nKEMBALI   700",
+      "gold": {
+        "item_1_name": "BASO KUAH",
+        "item_1_qty": "1",
+        "item_1_unit_price": "43.636",
+        "item_1_price": "43.636",
+        "item_2_name": "A.MINERAL GELAS",
+        "item_2_qty": "1",
+        "item_2_price": "3,000",
+        "total": "46.636",
+        "tax_10_00": "4.664",
+        "grand_total": "51.300",
+        "tunai": "52.000",
+        "kembali": "700"
+      }
+    },
+    {
+      "id": "cord-test-25",
+      "text": "1   TWIST   STRAWBERRY   DONUT   10,000\n1   TLJ   CROQUETTE   17,000\n1   POTATO PEPPER   BAGEL   16,000\nTOTAL   43,000\nCASH   50,000\nCHANGE   7,000",
+      "gold": {
+        "item_1_name": "TWIST STRAWBERRY DONUT",
+        "item_1_price": "10,000",
+        "item_2_name": "TLJ CROQUETTE",
+        "item_2_price": "17,000",
+        "item_3_name": "POTATO PEPPER BAGEL",
+        "item_3_price": "16,000",
+        "total": "43,000",
+        "cash": "50,000",
+        "change": "7,000"
+      }
+    },
+    {
+      "id": "cord-test-34",
+      "text": "Ash Chick Sambal Matah   5   75.000\nJamur Goreng 2   10.000\nSubtotal   85.000\nPajak (10%)   8.500\nTotal   93.500\nTunai   100.000\nKembali   6.500",
+      "gold": {
+        "item_1_name": "Ash Chick Sambal Matah",
+        "item_1_qty": "5",
+        "item_1_price": "75.000",
+        "item_2_name": "Jamur Goreng",
+        "item_2_qty": "2",
+        "item_2_price": "10.000",
+        "subtotal": "85.000",
+        "pajak_10": "8.500",
+        "total": "93.500",
+        "tunai": "100.000",
+        "kembali": "6.500"
+      }
+    },
+    {
+      "id": "cord-test-46",
+      "text": "1X S-Bubble Milk Tea   @20,000   20,000\n100%\n1X S-Caramel Milk Tea   @20,000   20,000\n100%\nTotal:   40,000\nCash:   40,000\nCHANGE   0",
+      "gold": {
+        "item_1_name": "S-Bubble Milk Tea",
+        "item_1_qty": "1X",
+        "item_1_unit_price": "20,000",
+        "item_1_price": "20,000",
+        "item_2_name": "S-Caramel Milk Tea",
+        "item_2_price": "20,000",
+        "total": "40,000",
+        "cash": "40,000",
+        "change": "0"
+      }
+    },
+    {
+      "id": "cord-test-63",
+      "text": "Kopi   Susu Kampung.   x1   19.000\nIce\nKopi   Susu Kampung   Less   Ice   0\nKopi   Susu Kampung.   x2   38.000\nIce\nSubtotal   57.000\nTotal\n57.000\nCash\n60.000\nChange\n3.000",
+      "gold": {
+        "item_1_name": "Kopi Susu Kampung.",
+        "item_1_qty": "x1",
+        "item_1_price": "19.000",
+        "item_2_name": "Kopi Susu Kampung.",
+        "item_2_price": "38.000",
+        "subtotal": "57.000",
+        "total": "57.000",
+        "cash": "60.000",
+        "change": "3.000"
+      }
+    },
+    {
+      "id": "cord-test-38",
+      "text": "1   XLB Org Pork 10x   78,000\n1   Sicito Babi\n65,000\n1\nHotplate Tahu\n58,000\n1   DF Fish Fillet Garlc   108,000\n1   LM Pork Belly   88,000\n1   Siew   Mai\n38,800\n5   Kwan   Yin Cup   50,000\n1   Herbal\nJelly   38,000\n1   Onde-Onde\n38,000\nITEMS: 13\n561,800\nService\ncharge   42,135\nPB1\n60,394\nTotal\n664,329",
+      "gold": {
+        "item_1_name": "XLB Org Pork 10x",
+        "item_1_qty": "1",
+        "item_1_price": "78,000",
+        "service_charge": "42,135",
+        "pb1": "60,394",
+        "total": "664,329"
+      }
+    },
+    {
+      "id": "cord-test-41",
+      "text": "Chicken Maryland   47619.00\nCappucino (Hot/Iced)   30303.00\nNaga Lychee Juice   34632.00\nCafe Latte   30303.00\nHot Chocolate Marshmallo   30303.00\nChicken Cesar Salad   43290.00\n12987.00\nMineral Water\nMineral Water   12987.00\n25974.00\nLychee/Peach/Lemon/Mango\nChicken Maryland   47619.00\n316017.00\nSubtotal\nService Charge 5% +   48982.68\n365000.00\nTOTAL",
+      "gold": {
+        "item_1_name": "Chicken Maryland",
+        "item_1_price": "47619.00",
+        "subtotal": "316017.00",
+        "service_charge_5": "48982.68",
+        "total": "365000.00"
+      }
+    },
+    {
+      "id": "cord-test-70",
+      "text": "2   UDANG RE   216,000 432,000\n2   =*LARGE*==\n1   AYM GR JUN NJAN   108,000\n=*MEDIUM*=\n1   SAPO TH SEAFOOD   172,000\n=*LARGE*==\n2   POCAI 3   111,000 222.000\n2   =*MEDIUM*=\n1   GURAME FILLET M   163,000\nASAM MANIS\n1   BIHUN GORENG JJ   116,000\n=*LARGE*==\n5   ICED TEA   12,000   60,000\n7   NASI PUTIH   10,000 70,000\nFOOD   1,213,000\nBEVERAGES   60,000\nOTHERS   70,000\nSUBTOTAL   1,343,000\nSERVICE CHARGE   80,580\nTax 10%   142,358\nDU   1,565,938",
+      "gold": {
+        "item_1_name": "UDANG RE",
+        "item_1_qty": "2",
+        "item_1_unit_price": "216,000",
+        "item_1_price": "432,000",
+        "item_8_name": "NASI PUTIH",
+        "item_8_qty": "7",
+        "item_8_price": "70,000",
+        "food": "1,213,000",
+        "beverages": "60,000",
+        "others": "70,000",
+        "subtotal": "1,343,000",
+        "service_charge": "80,580",
+        "tax_10": "142,358",
+        "du": "1,565,938"
+      }
+    },
+    {
+      "id": "cord-test-85",
+      "text": "3   Nasi\nPutih\n30.000\n1   Nasi\nTambah\n2   Ayam   Pop   7.000\n40.000\n1   Samabal\nSP\n11.000\n1   Sambal\nGabus\nAsin\nCb\n18.000\n1   Kerupuk   Kuah\n15.000\n1   Ikan   Bawal\nBesa\n28.500\n1   Telur   Dadar\n10.000\n1   Teh   Es\n7.000\n1   Teh   Manis\n9.000\n1   Es   Batu\n4.000\nSubtotal\n179.500\nPajak   Rest. 10%\n17.950\nTotal\n14\n197.450\nMakanan\nTtl\n159.500\nMinuman\nTtl\n20.000\nCash\n197.450",
+      "gold": {
+        "subtotal": "179.500",
+        "total": "197.450",
+        "cash": "197.450"
+      }
+    },
+    {
+      "id": "synthetic-swiss-1",
+      "text": "| BERGHOTEL ALPENBLICK\nGrosse Scheidegg\n3818 Grindelwald\nFamilie R. Mueller\nRech.Nr. 4572 30.07.2026/13:29\nBar Tisch 7/01\n2xLatte Macchiato à 4.50 CHF 9.00\nIxGloki à 5.00 CHF 5.00\n1xSchweinschnitzel à 22.00 CHF 22.00 a\n1xChaesspaetzli à 18.50 CHF 18.50 ‘\nTotal : CHF 54.50 a\nIncl. 7.6% MwSt 54.50 CHF: 3.85\n7 Entspricht in Euro 36.33 EUR ia\nEs bediente Sie: Ursula\nMwSt Nr.: 430 234\nTel.: 033 853 67 16",
+      "gold": {
+        "merchant": "BERGHOTEL ALPENBLICK",
+        "date": "30.07.2026",
+        "receipt_number": "4572",
+        "item_1_name": "Latte Macchiato",
+        "item_1_qty": "2",
+        "item_1_unit_price": "4.50",
+        "item_1_price": "9.00",
+        "item_2_name": "Gloki",
+        "item_2_qty": "1",
+        "item_2_unit_price": "5.00",
+        "item_2_price": "5.00",
+        "item_3_name": "Schweinschnitzel",
+        "item_3_qty": "1",
+        "item_3_unit_price": "22.00",
+        "item_3_price": "22.00",
+        "item_4_name": "Chaesspaetzli",
+        "item_4_qty": "1",
+        "item_4_unit_price": "18.50",
+        "item_4_price": "18.50",
+        "total": "54.50",
+        "incl_7_6_mwst_54_50_chf": "3.85",
+        "entspricht_in_euro": "36.33"
+      }
+    }
+  ]
 }
