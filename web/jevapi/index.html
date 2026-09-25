@@ -110,7 +110,8 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
 <div class="grid">
   <section class="card" aria-label="Document">
     <h2 class="serif">1. The document</h2>
-    <div class="row" id="samples" role="group" aria-label="Sample documents"></div>
+    <label class="small" for="samples" style="margin-top:0">Try a sample</label>
+    <select id="samples" aria-label="Sample documents"></select>
     <label class="small" for="doc">Document text</label>
     <textarea id="doc" spellcheck="false"></textarea>
     <div class="drop" id="drop">
@@ -314,7 +315,7 @@ function pickSample(s) {
   state.judge = null;
   $("doc").value = s.text;
   $("err").textContent = ""; $("err").classList.remove("bad");
-  document.querySelectorAll("#samples button").forEach((b) => b.classList.toggle("on", b.dataset.id === s.id));
+  $("samples").value = s.id;
   render();
 }
 
@@ -343,10 +344,10 @@ $("form").addEventListener("input", (e) => {
   } else state.mine[i] = { value: e.target.value, how: state.mine[i]?.how || "typed" };
 });
 
-$("samples").innerHTML = SAMPLES.map((s) => `<button type="button" data-id="${s.id}">${esc(s.label)}</button>`).join("");
-$("samples").addEventListener("click", (e) => {
-  const b = e.target.closest("button");
-  if (b) pickSample(SAMPLES.find((s) => s.id === b.dataset.id));
+$("samples").innerHTML = `<option value="" disabled>Pick a sample document</option>` + SAMPLES.map((s) => `<option value="${s.id}">${esc(s.label)}</option>`).join("");
+$("samples").addEventListener("change", (e) => {
+  const s = SAMPLES.find((x) => x.id === e.target.value);
+  if (s) pickSample(s);
 });
 $("cost").addEventListener("input", (e) => {
   state.cost = Number(e.target.value);
@@ -373,7 +374,7 @@ $("file").addEventListener("change", async (e) => {
   try {
     const text = await readPdf(f);
     $("doc").value = text.slice(0, 60000);
-    document.querySelectorAll("#samples button").forEach((b) => b.classList.remove("on"));
+    $("samples").value = "";
     state.mine = {};
     state.extracted = DEFAULT_FIELDS.map((f) => ({ field: f.name, value: null, confidence: null }));
     render();
