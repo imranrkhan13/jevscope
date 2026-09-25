@@ -1,0 +1,207 @@
+{
+  "sample": "photo",
+  "model": "jev-1.13.0",
+  "checkedAt": "2026-09-25",
+  "fields": [
+    {
+      "field": "merchant",
+      "value": "City Fresh Mart",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "bill_no",
+      "value": "8841",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "date",
+      "value": "21/09/2026",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "item_1_name",
+      "value": "Rice 5kg",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_1_price",
+      "value": "420.00",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_2_name",
+      "value": "Wheat Flour 1kg",
+      "confidence": 0.73,
+      "jev": {
+        "type": "noul",
+        "noul": 0.73,
+        "certainty": 0.45999999999999996
+      }
+    },
+    {
+      "field": "item_2_price",
+      "value": "58.00",
+      "confidence": 0.97,
+      "jev": {
+        "type": "noul",
+        "noul": 0.97,
+        "certainty": 0.94
+      }
+    },
+    {
+      "field": "item_3_name",
+      "value": "Sunflower Oil 1L",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_3_price",
+      "value": "165.00",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_4_name",
+      "value": "Milk 500ml",
+      "confidence": 0.82,
+      "jev": {
+        "type": "noul",
+        "noul": 0.82,
+        "certainty": 0.6399999999999999
+      }
+    },
+    {
+      "field": "item_4_price",
+      "value": "56.00",
+      "confidence": 0.82,
+      "jev": {
+        "type": "noul",
+        "noul": 0.82,
+        "certainty": 0.6399999999999999
+      }
+    },
+    {
+      "field": "item_5_name",
+      "value": "Sugar 1kg",
+      "confidence": 0.97,
+      "jev": {
+        "type": "noul",
+        "noul": 0.97,
+        "certainty": 0.94
+      }
+    },
+    {
+      "field": "item_5_price",
+      "value": "45.00",
+      "confidence": 0.97,
+      "jev": {
+        "type": "noul",
+        "noul": 0.97,
+        "certainty": 0.94
+      }
+    },
+    {
+      "field": "item_6_name",
+      "value": "Tea Powder 250g",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "item_6_price",
+      "value": "120.00",
+      "confidence": 0.98,
+      "jev": {
+        "type": "noul",
+        "noul": 0.98,
+        "certainty": 0.96
+      }
+    },
+    {
+      "field": "subtotal",
+      "value": "864.00",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "discount",
+      "value": "-43.20",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "total",
+      "value": "820.80",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "cash",
+      "value": "100.00",
+      "confidence": 0.01,
+      "jev": {
+        "type": "noul",
+        "noul": 0.01,
+        "certainty": 0.98
+      }
+    },
+    {
+      "field": "change",
+      "value": "179.20",
+      "confidence": 0.99,
+      "jev": {
+        "type": "noul",
+        "noul": 0.99,
+        "certainty": 0.98
+      }
+    }
+  ]
+}

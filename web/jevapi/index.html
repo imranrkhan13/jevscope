@@ -92,13 +92,23 @@ label.small,.small{display:block;font-size:13px;color:var(--mut);margin:14px 0 6
 .f .meta .acts button.ok{background:var(--green);border-color:var(--green);color:#fff}
 .f .meta .acts button.ok:hover{background:#276a51}
 @media(max-width:560px){.f .meta{grid-column:1/3}.f .meta .acts{margin-left:0;width:100%}}
-@media(max-width:560px){.card{padding:18px;border-radius:18px}.f{grid-template-columns:minmax(0,1fr) auto;padding:10px 14px}.f .name{grid-column:1;padding-top:3px}.f .chip{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more,.f .jev,.f .acts{grid-column:1/3}.how .stats{grid-template-columns:repeat(3,minmax(0,1fr))}.how .stat b{font-size:18px}.group>summary{display:grid;grid-template-columns:16px minmax(0,1fr);gap:2px 0;padding:12px 14px}.group>summary::before{margin-top:8px;align-self:start}.group .gt{white-space:normal}.group .gc{grid-column:2}}
+@media(max-width:560px){.card{padding:18px;border-radius:18px}.f{grid-template-columns:minmax(0,1fr) auto;padding:10px 14px}.f .name{grid-column:1;padding-top:3px}.f .side{grid-column:2;grid-row:1;margin-top:0}.f input,.f textarea{grid-column:1/3}.f .sugg,.f .more,.f .jev,.f .acts{grid-column:1/3}.how .stats{grid-template-columns:repeat(3,minmax(0,1fr))}.how .stat b{font-size:18px}.group>summary{display:grid;grid-template-columns:16px minmax(0,1fr);gap:2px 0;padding:12px 14px}.group>summary::before{margin-top:8px;align-self:start}.group .gt{white-space:normal}.group .gc{grid-column:2}}
 .nums{display:flex;gap:16px;font-size:13px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
 .nums b{color:var(--ink);font-weight:500}
 .summary{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .pill{padding:5px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-size:14px}
 .slider{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
 input[type=range]{padding:0;width:100%;accent-color:var(--green);border:0;box-shadow:none}
+.preview{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--soft)}
+.preview img,.preview canvas{display:block;width:100%;height:auto}
+.preview .cap{font-size:12.5px;color:var(--mut);padding:8px 12px;border-top:1px solid var(--line)}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:5px;margin-top:6px}
+.side .chip{margin-top:0}
+.meter{display:block;width:84px;height:5px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter>i{display:block;height:100%;background:var(--green)}
+.f.review .meter>i{background:var(--amber)}
+.prog{flex-basis:100%;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.prog>i{display:block;height:100%;background:var(--green);transition:width .2s}
 .err{color:var(--mut);margin-top:12px;white-space:pre-wrap;font-size:14px}
 .err.bad{color:var(--red)}
 details{margin-top:14px}
@@ -125,13 +135,14 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
     <label class="small" for="samples" style="margin-top:0">Try a sample</label>
     <select id="samples" aria-label="Sample documents"></select>
     <label class="small" for="doc">Document text</label>
+    <div class="preview" id="preview" hidden></div>
     <textarea id="doc" spellcheck="false"></textarea>
     <div class="drop" id="drop">
-      <label for="file" style="cursor:pointer"><u>Upload your own PDF</u> (read in your browser, never uploaded)</label>
-      <input id="file" type="file" accept="application/pdf,.pdf,.txt" style="display:none">
+      <label for="file" style="cursor:pointer"><u>Upload your own PDF or photo</u> (read in your browser, never uploaded)</label>
+      <input id="file" type="file" accept="application/pdf,.pdf,.txt,image/*" style="display:none">
     </div>
     <details id="keybox">
-      <summary>Use your own AI key for your own PDFs</summary>
+      <summary>Use your own AI key for your own PDFs and photos</summary>
       <p class="sub">Your key goes with each request to the AI company you pick, through JevAPI's free endpoint. JevAPI's code does not save or log it, and this page forgets it when you close the tab. For full control, run the open-source package yourself.</p>
       <div class="row">
         <select id="provider" style="width:auto"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="gemini">Google Gemini</option></select>
@@ -178,7 +189,25 @@ import { calibrate, decideAll, costThreshold } from "/jevapi/js/src/index.js";
 import { SAMPLES, DEFAULT_FIELDS } from "/web/jevapi/samples.js";
 
 const $ = (id) => document.getElementById(id);
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {} };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, jevStamp: null };
+
+// Real Jev scores for the photo sample, checked against its OCR text when this page was last shipped.
+fetch("/web/jevapi/samples_jev.json").then((r) => (r.ok ? r.json() : null)).then((j) => {
+  if (j && j.sample) { state.bakes[j.sample] = j; if (state.sample.id === j.sample) pickSample(state.sample); }
+}).catch(() => {});
+
+function showPreview(src, caption) {
+  const p = $("preview");
+  if (!src) { p.hidden = true; p.innerHTML = ""; return; }
+  p.hidden = false;
+  p.innerHTML = `<img src="${src}" alt="Document preview"><div class="cap">${esc(caption)}</div>`;
+}
+function showPreviewNode(node, caption) {
+  const p = $("preview");
+  p.hidden = false; p.innerHTML = "";
+  p.appendChild(node);
+  p.insertAdjacentHTML("beforeend", `<div class="cap">${esc(caption)}</div>`);
+}
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const pct = (x) => (x == null ? "-" : Math.min(Math.round(x * 100), x < 1 ? 99 : 100) + "%");
@@ -276,12 +305,16 @@ function render() {
   const byJev = state.judge === "jev";
   const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
   const bar = decisions[0] ? pct(decisions[0].threshold) : pct(costThreshold({ costError: state.cost, costReview: 1, reviewAccuracy: 1 }));
+  const nDone = fill + Object.entries(state.mine).filter(([i, m]) => m.how === "accepted" && decisions[i] && decisions[i].action !== "fill").length;
   $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${review}</b> to check</span>
     ${review ? `<button type="button" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
-    <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>`;
+    <span class="row filter" role="group" aria-label="Show"><button type="button" data-f="all" class="${state.only ? "" : "on"}">All</button><button type="button" data-f="review" class="${state.only ? "on" : ""}">Only to check</button></span>
+    <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
   $("note").innerHTML = byJev
-    ? `Scores are Jev's answer to "does the document really say this?". A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. These are raw scores, not yet measured on your own documents.`
+    ? state.jevStamp
+      ? `Real Jev (${esc(state.jevStamp.model)}) answered "does the photo's OCR text really say this?" for every field on ${esc(state.jevStamp.checkedAt)}. A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. No simulation here.`
+      : `Scores are Jev's answer to "does the document really say this?". A field is filled when Jev is at least <b>${bar}</b> sure; the rest go to a person. These are raw scores, not yet measured on your own documents.`
     : `Scores come from the extractor, adjusted with the sample calibration (made-up data). A field is filled when the adjusted score is at least <b>${bar}</b>; the rest go to a person.`;
   const labels = Object.fromEntries(DEFAULT_FIELDS.map((f) => [f.name, f.label]));
   const groups = new Map();
@@ -316,7 +349,7 @@ function render() {
     return `<div class="f ${d.action}${done ? " done" : ""}" data-i="${i}">
       <label class="name" for="f${i}">${esc(resume ? short : label)}</label>
       ${box(i, val, fillIt || !hasSugg ? "" : "Type the right value")}
-      <span class="chip" title="${esc(d.reason)}">${chip}</span>
+      <span class="side"><span class="chip" title="${esc(d.reason)}">${chip}</span><span class="meter" title="How sure: ${score}"><i style="width:${Math.round(((byJev ? ex.confidence : d.confidence) || 0) * 100)}%"></i></span></span>
       ${metaBits(hasSugg, done, byJev, extra, ex, i, fillIt)}
     </div>`;
   };
@@ -351,6 +384,17 @@ function pickSample(s) {
   state.sample = s;
   state.extracted = s.extracted;
   state.judge = null;
+  state.jevStamp = null;
+  const bake = state.bakes[s.id];
+  if (bake) {
+    state.extracted = s.extracted.map((ex) => {
+      const f = bake.fields.find((x) => x.field === ex.field);
+      return f ? { ...ex, value: f.value ?? ex.value, confidence: f.confidence, jev: f.jev } : ex;
+    });
+    state.judge = "jev";
+    state.jevStamp = bake;
+  }
+  showPreview(s.image ? "/web/jevapi/" + s.image : null, s.image ? "The photo this sample was read from. OCR in the browser turns it into the text below; real Jev checked every field." : "");
   $("doc").value = s.text;
   $("err").textContent = ""; $("err").classList.remove("bad");
   $("samples").value = s.id;
@@ -394,7 +438,7 @@ $("cost").addEventListener("input", (e) => {
 });
 
 async function readPdf(file) {
-  if (/\.txt$/i.test(file.name)) return file.text();
+  if (/\.txt$/i.test(file.name)) return { text: await file.text(), doc: null };
   const pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.min.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.min.mjs";
   const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
@@ -403,21 +447,57 @@ async function readPdf(file) {
     const c = await (await doc.getPage(p)).getTextContent();
     pages.push(c.items.map((it) => it.str + (it.hasEOL ? "\n" : " ")).join(""));
   }
-  return pages.join("\n\n");
+  return { text: pages.join("\n\n"), doc };
+}
+// Photos are read with OCR (Tesseract.js) right in the browser. Nothing is uploaded.
+async function readImage(file) {
+  if (!window.Tesseract) {
+    $("err").textContent = "Loading the OCR engine (first photo only)...";
+    await new Promise((res, rej) => {
+      const sc = document.createElement("script");
+      sc.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+      sc.onload = res;
+      sc.onerror = () => rej(new Error("could not load the OCR engine"));
+      document.head.appendChild(sc);
+    });
+  }
+  const out = await Tesseract.recognize(file, "eng", {
+    logger: (m) => { if (m.status === "recognizing text") $("err").textContent = `Reading the photo... ${Math.round(m.progress * 100)}%`; },
+  });
+  return out.data.text;
 }
 $("file").addEventListener("change", async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   $("err").textContent = "Reading " + f.name + "..."; $("err").classList.remove("bad");
   try {
-    const text = await readPdf(f);
+    let text, doc = null;
+    if (f.type.startsWith("image/")) {
+      showPreview(URL.createObjectURL(f), "Your photo. It is read with OCR in this browser tab and never uploaded.");
+      text = await readImage(f);
+    } else {
+      ({ text, doc } = await readPdf(f));
+      if (doc) {
+        try {
+          const page = await doc.getPage(1);
+          const vp = page.getViewport({ scale: 1.4 });
+          const cv = document.createElement("canvas");
+          cv.width = vp.width; cv.height = vp.height;
+          await page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+          showPreviewNode(cv, "First page of your PDF, drawn in your browser.");
+        } catch { showPreview(null); }
+      } else showPreview(null);
+    }
     $("doc").value = text.slice(0, 60000);
     $("samples").value = "";
     state.mine = {};
+    state.judge = null; state.jevStamp = null;
     state.extracted = DEFAULT_FIELDS.map((f) => ({ field: f.name, value: null, confidence: null }));
     render();
     $("keybox").open = true;
-    $("err").textContent = text.trim() ? "Read. Add your AI key below to pull the fields out." : "No text found. This may be a scanned image; JevAPI needs text (OCR is not built in yet).";
+    $("err").textContent = text.trim()
+      ? (f.type.startsWith("image/") ? "Read with OCR, in your browser. Add your AI key below to pull the fields out, or check fields with Jev." : "Read. Add your AI key below to pull the fields out.")
+      : "No text found. If this is a scan, upload a photo of it instead and the demo will read it with OCR.";
   } catch (x) {
     $("err").textContent = "Could not read that file: " + x.message; $("err").classList.add("bad");
   }
@@ -456,6 +536,7 @@ async function askJev(discover) {
     if (!r.ok) throw new Error(j.error?.message || "Request failed");
     state.extracted = discover ? j.fields : j.fields.map((x, i) => ({ ...x, aiConfidence: state.extracted[i].aiConfidence ?? state.extracted[i].confidence }));
     state.judge = "jev";
+    state.jevStamp = null;
     state.mine = {};
     render();
     $("err").textContent = `Checked by ${j.jevModel || "Jev"}${discover ? `, ${j.fields.length} fields found` : ""}.`;

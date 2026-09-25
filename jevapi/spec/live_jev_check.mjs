@@ -5,7 +5,7 @@
 // smoke test, not a calibration study.
 import { checkFields, decideAll, discoverFields } from "../js/src/index.js";
 import { SAMPLES } from "../../web/jevapi/samples.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 // Real public invoices (FCC public files, via RealKIE-FCC-Verified, CC BY-NC 4.0; see real_invoices.json).
 const REAL = JSON.parse(readFileSync(new URL("./real_invoices.json", import.meta.url), "utf8"));
@@ -78,6 +78,26 @@ try {
     const yes = out.items.filter((it) => it.confidence >= 0.5).length;
     console.log(`\nSynthetic resume ${r.id} (no field list): ${found.length} fields found (all ${gold.length} hand-labelled values), Jev said yes to ${yes}/${found.length}; ${acts.filter((a) => a === "fill").length} fill, ${acts.filter((a) => a === "review").length} review.`);
     for (const it of out.items) if (it.confidence < 0.95) console.log(`  below bar: ${it.field} jev=${it.confidence.toFixed(2)}`);
+  }
+
+  // Bake real Jev scores for the photo sample (receipt image -> OCR text -> Jev) into the
+  // demo, so visitors see a real Jev run without a key. One short request per ship.
+  const bakeSample = SAMPLES.find((x) => x.bake);
+  if (bakeSample) {
+    const toCheck = bakeSample.extracted.filter((x) => x.value != null && x.value !== "").map((x) => ({ name: x.field, value: x.value, description: x.label }));
+    const out = await checkFields({ document: bakeSample.text, fields: toCheck, key, provider: "typesafe" });
+    requests += 1;
+    tokens += out.usage?.input_tokens || 0;
+    if (out.items.length !== toCheck.length || out.items.some((it) => typeof it.confidence !== "number")) throw new Error("photo bake: unusable Jev answer");
+    const baked = {
+      sample: bakeSample.id,
+      model: out.model,
+      checkedAt: new Date().toISOString().slice(0, 10),
+      fields: out.items.map((it) => ({ field: it.field, value: it.value, confidence: it.confidence, jev: it.jev })),
+    };
+    writeFileSync(new URL("../../web/jevapi/samples_jev.json", import.meta.url), JSON.stringify(baked, null, 2) + "\n");
+    const no = out.items.filter((it) => it.confidence < 0.5).map((it) => `${it.field}=${it.confidence.toFixed(2)}`);
+    console.log(`\nBaked ${baked.fields.length} Jev-checked fields for sample "${bakeSample.id}" -> web/jevapi/samples_jev.json${no.length ? `; Jev doubted: ${no.join(", ")}` : ""}`);
   }
 
   // Synthetic receipt, bank statement and form samples, no field list: the new readers
