@@ -264,6 +264,29 @@ header.hd nav{display:flex;gap:6px;margin-left:auto}
 button.ghost{background:transparent;box-shadow:none}
 .slider{margin-top:16px}
 @media (prefers-reduced-motion:reduce){.scard{transition:none}}
+
+/* theme: ultra-minimal black and white (Imran-approved direction 3) */
+:root{--bg:#ffffff;--card:#ffffff;--ink:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;--soft:#f5f5f7}
+body{background:#fff}
+.card{box-shadow:none;border-color:var(--line)}
+.scard,.scard:hover{box-shadow:none;transform:none}
+.scard:hover{border-color:#86868b}
+button,.btn{box-shadow:none;border-color:var(--line)}
+button:hover{border-color:#86868b;background:var(--soft);transform:none;box-shadow:none}
+button.primary,button.primary:hover{background:#1d1d1f;border-color:#1d1d1f;color:#fff;box-shadow:none}
+.f .meta .acts button.ok,.f .meta .acts button.ok:hover{background:#1d1d1f;border-color:#1d1d1f;color:#fff;box-shadow:none}
+.qcard{box-shadow:none;border-color:var(--line)}
+nav a,nav a:hover{box-shadow:none;transform:none;border-color:var(--line)}
+.tabs button{box-shadow:none}
+.prog{background:var(--soft)}
+.prog>i{background:#1d1d1f}
+.meter>i,.f.review .meter>i{background:#1d1d1f}
+.qmeta .sugg b,.f .sugg b,.f .meta .sugg b{color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:#86868b;box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+input[type=range]{accent-color:#1d1d1f}
+.drop:hover{border-color:#86868b;background:var(--soft);color:var(--ink)}
+.f.review,.f.done{background:var(--soft)}
+.fill .chip,.done .chip{color:var(--ink);background:var(--soft)}
 </style>
 </head>
 <body>
