@@ -19,7 +19,7 @@
           "gold": "Acme Supplies Pvt Ltd",
           "jev": {
             "value": "ACME SUPPLIES PVT LTD",
-            "confidence": 0.95,
+            "confidence": 0.94,
             "right": true
           },
           "lev": {
@@ -50,8 +50,8 @@
           "label": "Due date",
           "gold": "2026-10-15",
           "jev": {
-            "value": null,
-            "confidence": 0.48,
+            "value": "2026",
+            "confidence": 0.52,
             "right": false
           },
           "lev": {
@@ -82,7 +82,7 @@
       "levRight": 0,
       "bothRight": 0,
       "neither": 1,
-      "jevAbstain": 1,
+      "jevAbstain": 0,
       "levAbstain": 0
     },
     "messy": {
@@ -93,7 +93,7 @@
           "gold": "North Star Logistics",
           "jev": {
             "value": "N0rth Star Logistics",
-            "confidence": 0.73,
+            "confidence": 0.72,
             "right": false
           },
           "lev": {
@@ -167,7 +167,7 @@
           "gold": "Blue Lotus Design Studio",
           "jev": {
             "value": "Blue Lotus Design Studio",
-            "confidence": 0.72,
+            "confidence": 0.75,
             "right": true
           },
           "lev": {
@@ -257,7 +257,7 @@
           "gold": "Backend Engineer",
           "jev": {
             "value": null,
-            "confidence": 0.03,
+            "confidence": 0.02,
             "right": false
           },
           "lev": {
@@ -289,7 +289,7 @@
           "gold": "+91 98765 43210",
           "jev": {
             "value": "43210",
-            "confidence": 0.91,
+            "confidence": 0.92,
             "right": false
           },
           "lev": {
@@ -369,7 +369,7 @@
           "gold": "Backend engineer who builds payment and billing APIs with Go, Python and PostgreSQL.",
           "jev": {
             "value": "Summary",
-            "confidence": 0.92,
+            "confidence": 0.9,
             "right": false
           },
           "lev": {
@@ -401,7 +401,7 @@
           "gold": "Lotus Payments Pvt Ltd",
           "jev": {
             "value": null,
-            "confidence": 0.1,
+            "confidence": 0.12,
             "right": false
           },
           "lev": {
@@ -433,7 +433,7 @@
           "gold": "Built a refund service in Go that handles 40k requests per day with idempotent retries and audit logs.",
           "jev": {
             "value": null,
-            "confidence": 0.1,
+            "confidence": 0.11,
             "right": false
           },
           "lev": {
@@ -465,7 +465,7 @@
           "gold": "Kiran Cloud Services, Pune",
           "jev": {
             "value": null,
-            "confidence": 0.16,
+            "confidence": 0.15,
             "right": false
           },
           "lev": {
@@ -513,7 +513,7 @@
           "gold": "Go, PostgreSQL",
           "jev": {
             "value": null,
-            "confidence": 0.09,
+            "confidence": 0.12,
             "right": false
           },
           "lev": {
@@ -529,7 +529,7 @@
           "gold": "BE in Computer Engineering",
           "jev": {
             "value": "2023",
-            "confidence": 0.54,
+            "confidence": 0.51,
             "right": false
           },
           "lev": {
@@ -545,7 +545,7 @@
           "gold": "Savitribai Phule Pune University",
           "jev": {
             "value": null,
-            "confidence": 0.05,
+            "confidence": 0.06,
             "right": false
           },
           "lev": {
@@ -561,7 +561,7 @@
           "gold": "2019 - 2023",
           "jev": {
             "value": "2019",
-            "confidence": 0.77,
+            "confidence": 0.79,
             "right": false
           },
           "lev": {
@@ -619,7 +619,7 @@
           "gold": "Krishna Stores",
           "jev": {
             "value": "KRISHNA STORES",
-            "confidence": 0.96,
+            "confidence": 0.95,
             "right": true
           },
           "lev": {
@@ -815,7 +815,7 @@
           "gold": "Family function",
           "jev": {
             "value": null,
-            "confidence": 0.01,
+            "confidence": 0.02,
             "right": false
           },
           "lev": {
@@ -889,7 +889,7 @@
           "gold": "Rice 5kg",
           "jev": {
             "value": "Rice 5kg 1 420.00",
-            "confidence": 0.76,
+            "confidence": 0.73,
             "right": false
           },
           "lev": {
@@ -937,7 +937,7 @@
           "gold": "58.00",
           "jev": {
             "value": null,
-            "confidence": 0.07,
+            "confidence": 0.08,
             "right": false
           },
           "lev": {
@@ -985,7 +985,7 @@
           "gold": "Milk 500ml",
           "jev": {
             "value": null,
-            "confidence": 0.03,
+            "confidence": 0.04,
             "right": false
           },
           "lev": {
@@ -1017,7 +1017,7 @@
           "gold": "Sugar 1kg",
           "jev": {
             "value": null,
-            "confidence": 0.29,
+            "confidence": 0.3,
             "right": false
           },
           "lev": {
@@ -1033,7 +1033,7 @@
           "gold": "45.00",
           "jev": {
             "value": null,
-            "confidence": 0.11,
+            "confidence": 0.09,
             "right": false
           },
           "lev": {
@@ -1049,7 +1049,7 @@
           "gold": "Tea Powder 250g",
           "jev": {
             "value": null,
-            "confidence": 0.12,
+            "confidence": 0.14,
             "right": false
           },
           "lev": {
@@ -1170,7 +1170,7 @@
     "levRight": 9,
     "bothRight": 9,
     "neither": 44,
-    "jevAbstain": 32,
+    "jevAbstain": 31,
     "levAbstain": 2
   }
 }

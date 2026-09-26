@@ -8,7 +8,7 @@
           "field": "vendor_name",
           "label": "Vendor",
           "value": "ACME SUPPLIES PVT LTD",
-          "confidence": 0.95,
+          "confidence": 0.94,
           "candidates": 8,
           "abstained": false
         },
@@ -23,10 +23,10 @@
         {
           "field": "due_date",
           "label": "Due date",
-          "value": null,
-          "confidence": 0.48,
+          "value": "2026",
+          "confidence": 0.52,
           "candidates": 4,
-          "abstained": true
+          "abstained": false
         },
         {
           "field": "total_amount",
@@ -44,7 +44,7 @@
           "field": "vendor_name",
           "label": "Vendor",
           "value": "N0rth Star Logistics",
-          "confidence": 0.73,
+          "confidence": 0.72,
           "candidates": 8,
           "abstained": false
         },
@@ -80,7 +80,7 @@
           "field": "vendor_name",
           "label": "Vendor",
           "value": "Blue Lotus Design Studio",
-          "confidence": 0.72,
+          "confidence": 0.75,
           "candidates": 6,
           "abstained": false
         },
@@ -124,7 +124,7 @@
           "field": "headline",
           "label": "Headline",
           "value": null,
-          "confidence": 0.03,
+          "confidence": 0.02,
           "candidates": 8,
           "abstained": true
         },
@@ -140,7 +140,7 @@
           "field": "phone",
           "label": "Phone",
           "value": "43210",
-          "confidence": 0.91,
+          "confidence": 0.92,
           "candidates": 8,
           "abstained": false
         },
@@ -180,7 +180,7 @@
           "field": "summary",
           "label": "Summary",
           "value": "Summary",
-          "confidence": 0.92,
+          "confidence": 0.9,
           "candidates": 8,
           "abstained": false
         },
@@ -196,7 +196,7 @@
           "field": "job_1_company",
           "label": "Job 1 company",
           "value": null,
-          "confidence": 0.1,
+          "confidence": 0.12,
           "candidates": 8,
           "abstained": true
         },
@@ -212,7 +212,7 @@
           "field": "job_1_summary",
           "label": "Job 1 summary",
           "value": null,
-          "confidence": 0.1,
+          "confidence": 0.11,
           "candidates": 8,
           "abstained": true
         },
@@ -228,7 +228,7 @@
           "field": "job_2_company",
           "label": "Job 2 company",
           "value": null,
-          "confidence": 0.16,
+          "confidence": 0.15,
           "candidates": 8,
           "abstained": true
         },
@@ -252,7 +252,7 @@
           "field": "project_1_tech",
           "label": "Project 1 tech",
           "value": null,
-          "confidence": 0.09,
+          "confidence": 0.12,
           "candidates": 8,
           "abstained": true
         },
@@ -260,7 +260,7 @@
           "field": "education_1_degree",
           "label": "Education 1 degree",
           "value": "2023",
-          "confidence": 0.54,
+          "confidence": 0.51,
           "candidates": 8,
           "abstained": false
         },
@@ -268,7 +268,7 @@
           "field": "education_1_school",
           "label": "Education 1 school",
           "value": null,
-          "confidence": 0.05,
+          "confidence": 0.06,
           "candidates": 8,
           "abstained": true
         },
@@ -276,7 +276,7 @@
           "field": "education_1_years",
           "label": "Education 1 years",
           "value": "2019",
-          "confidence": 0.77,
+          "confidence": 0.79,
           "candidates": 8,
           "abstained": false
         },
@@ -304,7 +304,7 @@
           "field": "merchant",
           "label": "Merchant",
           "value": "KRISHNA STORES",
-          "confidence": 0.96,
+          "confidence": 0.95,
           "candidates": 8,
           "abstained": false
         },
@@ -400,7 +400,7 @@
           "field": "reason",
           "label": "Reason",
           "value": null,
-          "confidence": 0.01,
+          "confidence": 0.02,
           "candidates": 8,
           "abstained": true
         }
@@ -436,7 +436,7 @@
           "field": "item_1_name",
           "label": "Item 1 name",
           "value": "Rice 5kg 1 420.00",
-          "confidence": 0.76,
+          "confidence": 0.73,
           "candidates": 8,
           "abstained": false
         },
@@ -460,7 +460,7 @@
           "field": "item_2_price",
           "label": "Item 2 price",
           "value": null,
-          "confidence": 0.07,
+          "confidence": 0.08,
           "candidates": 8,
           "abstained": true
         },
@@ -484,7 +484,7 @@
           "field": "item_4_name",
           "label": "Item 4 name",
           "value": null,
-          "confidence": 0.03,
+          "confidence": 0.04,
           "candidates": 8,
           "abstained": true
         },
@@ -500,7 +500,7 @@
           "field": "item_5_name",
           "label": "Item 5 name",
           "value": null,
-          "confidence": 0.29,
+          "confidence": 0.3,
           "candidates": 8,
           "abstained": true
         },
@@ -508,7 +508,7 @@
           "field": "item_5_price",
           "label": "Item 5 price",
           "value": null,
-          "confidence": 0.11,
+          "confidence": 0.09,
           "candidates": 8,
           "abstained": true
         },
@@ -516,7 +516,7 @@
           "field": "item_6_name",
           "label": "Item 6 name",
           "value": null,
-          "confidence": 0.12,
+          "confidence": 0.14,
           "candidates": 8,
           "abstained": true
         },

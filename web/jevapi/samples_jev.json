@@ -56,21 +56,21 @@
     {
       "field": "item_2_name",
       "value": "Wheat Flour 1kg",
-      "confidence": 0.66,
+      "confidence": 0.7,
       "jev": {
         "type": "noul",
-        "noul": 0.66,
-        "certainty": 0.32000000000000006
+        "noul": 0.7,
+        "certainty": 0.3999999999999999
       }
     },
     {
       "field": "item_2_price",
       "value": "58.00",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "jev": {
         "type": "noul",
-        "noul": 0.97,
-        "certainty": 0.94
+        "noul": 0.98,
+        "certainty": 0.96
       }
     },
     {
@@ -106,11 +106,11 @@
     {
       "field": "item_4_price",
       "value": "56.00",
-      "confidence": 0.8,
+      "confidence": 0.85,
       "jev": {
         "type": "noul",
-        "noul": 0.8,
-        "certainty": 0.6000000000000001
+        "noul": 0.85,
+        "certainty": 0.7
       }
     },
     {
