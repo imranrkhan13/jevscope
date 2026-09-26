@@ -209,37 +209,114 @@ summary:hover{color:var(--ink)}
 .flag{border:1px solid rgba(168,106,18,.15)}
 .preview{box-shadow:0 1px 2px rgba(30,25,15,.04)}
 @media (prefers-reduced-motion:reduce){.pane.on{animation:none}}
+
+/* redesign: one focused screen, one job at a time */
+body{background:radial-gradient(1000px 620px at 82% -12%,rgba(46,122,94,.08),transparent 62%),radial-gradient(700px 500px at -10% 110%,rgba(168,106,18,.05),transparent 60%),linear-gradient(180deg,#f8f6f1,#f4f2ed)}
+.wrap{max-width:720px;padding:16px 20px}
+header.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
+.brand{font-weight:600;font-size:16px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.brand span{color:var(--mut);font-weight:500}
+header.hd nav{display:flex;gap:6px;margin-left:auto}
+.tabs{display:flex;justify-content:center;margin:0 auto 14px;width:max-content}
+.tabs button i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--soft);border:1px solid var(--line);font-size:11px;font-style:normal;margin-right:6px;font-variant-numeric:tabular-nums}
+.tabs button.on i{background:rgba(255,255,255,.16);border-color:transparent}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column}
+.grid{display:block}
+.pane{display:none;flex:1;min-height:0;overflow:auto;border-radius:24px;padding:24px 28px}
+.pane.on{display:flex;animation:paneIn .35s cubic-bezier(.2,.7,.3,1) both}
+@media(max-width:820px){.pane{padding:20px;border-radius:20px}.hero-h{font-size:28px}.hero-s{margin:0 0 12px}.scard{padding:8px 10px;font-size:13.5px}.scard .ic{width:26px;height:26px;font-size:13px}.or{margin:10px 0}#docpane .drop{padding:12px}.peek{margin-top:8px}#keybox>summary,#jevbox>summary{font-size:13px}.flagline{margin:12px 0 0}}
+.hero-h{font-size:32px;letter-spacing:-.03em;margin:0 0 6px;font-weight:600;line-height:1.1}
+.hero-h span{color:var(--mut)}
+.hero-s{color:var(--mut);margin:0 0 16px;font-size:15px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:640px){.sgrid{grid-template-columns:1fr 1fr;gap:6px}}
+.scard{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;font:inherit;font-size:14px;font-weight:500;color:var(--ink);text-align:left;transition:all .18s ease;box-shadow:0 1px 2px rgba(30,25,15,.04)}
+.scard:hover{border-color:#cfc9bc;transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,25,15,.09)}
+.scard:active{transform:scale(.98)}
+.scard .ic{width:30px;height:30px;border-radius:9px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;font-size:14px;flex:none}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12.5px;margin:12px 0}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+#docpane .drop{margin-top:0;padding:14px;border-radius:16px}
+#docpane .drop b{font-weight:600}
+.drops{font-size:13px;color:var(--mut)}
+.peek{margin-top:10px}
+.peek summary{font-size:13.5px;color:var(--mut);font-weight:500}
+.peek textarea{margin-top:10px}
+#keybox,#jevbox{margin-top:8px}
+#keybox>summary,#jevbox>summary{font-size:13.5px;color:var(--mut);font-weight:500}
+.flagline{margin:16px 0 0;font-size:12px;text-align:center}
+#formpane .summary{margin-bottom:16px}
+.qtop{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:500}
+.qcard{padding:26px;border-radius:20px}
+.qgroup{font-size:12px;text-transform:uppercase;letter-spacing:.09em}
+.qname{font-size:24px;margin:4px 0 14px;letter-spacing:-.02em}
+.qcard input#qbox{font-size:16px;padding:12px 14px;border-radius:12px}
+.qmeta .sugg{font-size:16px}
+.qmeta .sugg b{font-size:16px}
+.qjev{font-size:13.5px;margin-top:10px}
+.qacts{margin-top:20px}
+.qacts button{padding:10px 24px;font-size:15px}
+.qdone .big{font-size:56px}
+.qdone h3{font-size:20px}
+.qdone{padding:44px 14px}
+.more-row{margin-top:auto;padding-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line)}
+.more-row .hint{font-size:12.5px;color:var(--mut);margin-left:auto;max-width:330px}
+button.ghost{background:transparent;box-shadow:none}
+.slider{margin-top:16px}
+@media (prefers-reduced-motion:reduce){.scard{transition:none}}
+
+/* theme: ultra-minimal black and white (Imran-approved direction 3) */
+:root{--bg:#ffffff;--card:#ffffff;--ink:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;--soft:#f5f5f7}
+body{background:#fff}
+.card{box-shadow:none;border-color:var(--line)}
+.scard,.scard:hover{box-shadow:none;transform:none}
+.scard:hover{border-color:#86868b}
+button,.btn{box-shadow:none;border-color:var(--line)}
+button:hover{border-color:#86868b;background:var(--soft);transform:none;box-shadow:none}
+button.primary,button.primary:hover{background:#1d1d1f;border-color:#1d1d1f;color:#fff;box-shadow:none}
+.f .meta .acts button.ok,.f .meta .acts button.ok:hover{background:#1d1d1f;border-color:#1d1d1f;color:#fff;box-shadow:none}
+.qcard{box-shadow:none;border-color:var(--line)}
+nav a,nav a:hover{box-shadow:none;transform:none;border-color:var(--line)}
+.tabs button{box-shadow:none}
+.prog{background:var(--soft)}
+.prog>i{background:#1d1d1f}
+.meter>i,.f.review .meter>i{background:#1d1d1f}
+.qmeta .sugg b,.f .sugg b,.f .meta .sugg b{color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:#86868b;box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+input[type=range]{accent-color:#1d1d1f}
+.drop:hover{border-color:#86868b;background:var(--soft);color:var(--ink)}
+.f.review,.f.done{background:var(--soft)}
+.fill .chip,.done .chip{color:var(--ink);background:var(--soft)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <div>
-    <h1 class="serif">Fill it, or check it?</h1>
-    <p class="sub">Upload a document. JevAPI fills the fields it can trust and flags the rest for a person to check.</p>
-    <span class="flag" id="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span>
-  </div>
+<header class="hd">
+  <a class="brand" href="/jevapi">JevAPI <span>demo</span></a>
   <nav><a href="/jevapi">Home</a><a href="/jevapi/docs">Docs</a><a href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav>
 </header>
 
 <div class="tabs" id="tabs" role="tablist">
-  <button type="button" data-pane="docpane">Document</button>
-  <button type="button" data-pane="formpane" class="on">Review</button>
-  <button type="button" data-pane="morepane">Details</button>
+  <button type="button" data-pane="docpane" class="on"><i>1</i> Document</button>
+  <button type="button" data-pane="formpane"><i>2</i> Review</button>
+  <button type="button" data-pane="morepane"><i>3</i> Details</button>
 </div>
 
-<div class="grid">
-  <section class="card pane" id="docpane" aria-label="Document">
-    <h2 class="serif">1. The document</h2>
-    <label class="small" for="samples" style="margin-top:0">Try a sample</label>
-    <select id="samples" aria-label="Sample documents"></select>
-    <label class="small" for="doc">Document text</label>
-    <div class="preview" id="preview" hidden></div>
-    <textarea id="doc" spellcheck="false"></textarea>
+<main class="stage">
+  <section class="card pane on" id="docpane" aria-label="Document">
+    <h1 class="hero-h">Fill it, <span>or check it?</span></h1>
+    <p class="hero-s">Pick a document. JevAPI fills the fields it trusts and leaves the rest to you.</p>
+    <div class="sgrid" id="sgrid" role="listbox" aria-label="Sample documents"></div>
+    <select id="samples" aria-label="Sample documents" hidden></select>
+    <div class="or"><span>or</span></div>
     <div class="drop" id="drop">
-      <label for="file" style="cursor:pointer"><u>Upload your own PDF or photo</u> (read in your browser, never uploaded)</label>
+      <label for="file" style="cursor:pointer"><b>Drop a PDF or photo here</b><br><span class="drops">read in this browser, never uploaded</span></label>
       <input id="file" type="file" accept="application/pdf,.pdf,.txt,image/*" style="display:none">
     </div>
+    <details class="peek"><summary>See the document text</summary>
+      <div class="preview" id="preview" hidden></div>
+      <textarea id="doc" spellcheck="false"></textarea>
+    </details>
     <details id="keybox">
       <summary>Use your own AI key for your own PDFs and photos</summary>
       <p class="sub">Your key goes with each request to the AI company you pick, through JevAPI's free endpoint. JevAPI's code does not save or log it, and this page forgets it when you close the tab. For full control, run the open-source package yourself.</p>
@@ -258,25 +335,29 @@ summary:hover{color:var(--ink)}
       <div class="row" style="margin-top:10px"><button class="primary" id="jevrun">Check these fields with Jev</button><button id="jevall" type="button">Find every field, then check with Jev</button></div>
     </details>
     <div class="err" id="err" role="alert"></div>
+    <p class="flagline"><span class="flag" id="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span></p>
   </section>
 
-  <section class="card pane on" id="formpane" aria-label="Form">
-    <h2 class="serif">2. The form</h2>
-    <div class="row" style="margin:-2px 0 12px"><button id="xfind" type="button">Let Jev find it</button><button id="xvs" type="button">Jev vs Lev</button><span class="small" style="margin:0">Jev picks each value out of the text itself - no rules, no AI writer</span></div>
+  <section class="card pane" id="formpane" aria-label="Review">
     <div class="summary" id="summary"></div>
     <form id="form" onsubmit="return false"></form>
     <div id="vs" hidden></div>
+    <div class="more-row">
+      <button id="xfind" type="button" class="ghost">Let Jev find it</button>
+      <button id="xvs" type="button" class="ghost">Jev vs Lev</button>
+      <span class="hint">Jev picks each value out of the text itself - no rules, no AI writer. Tuning lives in Details.</span>
+    </div>
+  </section>
+
+  <section class="card pane" id="morepane" aria-label="Details">
+    <h2>Details</h2>
+    <div id="how"></div>
+    <div class="note" id="note"></div>
     <div class="slider">
       <label class="small" for="cost">A wrong auto-fill costs as much as <b id="costv">20</b> human checks</label>
       <input id="cost" type="range" min="2" max="100" value="20">
       <div class="nums"><span>Bar to auto-fill: <b id="bar">95%</b></span><span>Calibrated on <b id="ncal">0</b> labelled examples (synthetic)</span></div>
     </div>
-  </section>
-
-  <section class="card pane" id="morepane" aria-label="Details">
-    <h2 class="serif">3. Details</h2>
-    <div id="how"></div>
-    <div class="note" id="note"></div>
     <details>
       <summary>See the API call</summary>
       <pre id="curl"></pre>
@@ -285,7 +366,7 @@ summary:hover{color:var(--ink)}
       JevAPI is free and open source (MIT). Run it yourself with <code>npm i jevapi</code> or <code>pip install jevapi</code>, or call the free hosted API. Part of <a href="https://github.com/imranrkhan13/jevscope">JevScope</a>.
     </div>
   </section>
-</div>
+</main>
 </div>
 
 <script type="module">
@@ -815,6 +896,39 @@ $("jevall").addEventListener("click", () => askJev(true));
 
 pickSample(SAMPLES[0]);
 loadProfile();
+</script>
+
+<script type="module">
+// Sample cards + step flow (additive; the main demo logic is above).
+const $2 = (id) => document.getElementById(id);
+const ICONS = { clean: "\u{1F9FE}", messy: "\u{1F4C4}", missing: "\u{2702}\uFE0F", resume: "\u{1F4BC}", receipt: "\u{1F9FE}", statement: "\u{1F3E6}", form: "\u{1F4DD}", photo: "\u{1F4F7}" };
+const sg = $2("sgrid");
+[...$2("samples").options].forEach((o) => {
+  if (!o.value) return;
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "scard";
+  b.setAttribute("role", "option");
+  const ic = document.createElement("span"); ic.className = "ic"; ic.textContent = ICONS[o.value] || "\u{1F4C4}";
+  const tx = document.createElement("span"); tx.textContent = o.textContent;
+  b.append(ic, tx);
+  b.addEventListener("click", () => { $2("samples").value = o.value; $2("samples").dispatchEvent(new Event("change")); });
+  sg.appendChild(b);
+});
+const go = (pane) => document.querySelector(`#tabs button[data-pane="${pane}"]`)?.click();
+$2("samples").addEventListener("change", () => go("formpane"));
+// After an upload, OCR/PDF reading is async: move to Review once the text lands.
+let filePoll = 0;
+$2("file").addEventListener("change", () => {
+  clearInterval(filePoll);
+  let tries = 0;
+  filePoll = setInterval(() => {
+    if ($2("doc").value.trim()) { clearInterval(filePoll); go("formpane"); }
+    else if (++tries > 110) clearInterval(filePoll);
+  }, 800);
+});
+new MutationObserver(() => { const p = $2("preview"); if (p && !p.hidden) { const d = p.closest("details"); if (d) d.open = true; } })
+  .observe($2("preview"), { attributes: true, attributeFilter: ["hidden"] });
 </script>
 </body>
 </html>
