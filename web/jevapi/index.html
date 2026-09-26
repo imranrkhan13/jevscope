@@ -153,6 +153,7 @@ summary{cursor:pointer;font-weight:500}
 code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
 pre{font-family:ui-monospace,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-size:12.5px}
 footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
+.vrow{border-top:1px solid var(--line);padding:10px 0}
 </style>
 </head>
 <body>
@@ -206,9 +207,10 @@ footer{margin-top:40px;color:var(--mut);font-size:13px;text-align:center}
 
   <section class="card pane on" id="formpane" aria-label="Form">
     <h2 class="serif">2. The form</h2>
-    <div class="row" style="margin:-2px 0 12px"><button id="xfind" type="button">Let Jev find it</button><span class="small" style="margin:0">Jev picks each value out of the text itself - no rules, no AI writer</span></div>
+    <div class="row" style="margin:-2px 0 12px"><button id="xfind" type="button">Let Jev find it</button><button id="xvs" type="button">Jev vs Lev</button><span class="small" style="margin:0">Jev picks each value out of the text itself - no rules, no AI writer</span></div>
     <div class="summary" id="summary"></div>
     <form id="form" onsubmit="return false"></form>
+    <div id="vs" hidden></div>
     <div class="slider">
       <label class="small" for="cost">A wrong auto-fill costs as much as <b id="costv">20</b> human checks</label>
       <input id="cost" type="range" min="2" max="100" value="20">
@@ -240,7 +242,7 @@ document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("cli
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".pane").forEach((pn) => pn.classList.toggle("on", pn.id === b.dataset.pane));
 }));
-const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, xbakes: null, jevStamp: null, view: "queue", qpos: 0, qcur: -1, qanim: false };
+const state = { sample: SAMPLES[0], extracted: SAMPLES[0].extracted, profile: null, cost: 20, judge: null, mine: {}, bakes: {}, xbakes: null, xvs: null, jevStamp: null, view: "queue", qpos: 0, qcur: -1, qanim: false };
 
 // Real Jev scores for the photo sample, checked against its OCR text when this page was last shipped.
 fetch("/web/jevapi/samples_jev.json").then((r) => (r.ok ? r.json() : null)).then((j) => {
@@ -248,6 +250,8 @@ fetch("/web/jevapi/samples_jev.json").then((r) => (r.ok ? r.json() : null)).then
 }).catch(() => {});
 // Jev-found values for every sample, picked out of the text by real Jev when this page was last shipped.
 fetch("/web/jevapi/samples_extract.json").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && j.samples) state.xbakes = j; }).catch(() => {});
+// Head-to-head: the same extraction questions asked of real Jev and a real local Lev, baked at the last ship.
+fetch("/web/jevapi/samples_vs.json").then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && j.samples) state.xvs = j; }).catch(() => {});
 
 function showPreview(src, caption) {
   const p = $("preview");
@@ -370,6 +374,7 @@ function howJevDid(decisions, fill, review) {
 }
 
 function render() {
+  $("form").hidden = false; $("vs").hidden = true;
   // The sample profile was measured on a simulated extractor, not on Jev, so Jev's numbers are shown raw.
   const byJev = state.judge === "jev";
   const { decisions, fill, review } = decideAll(byJev ? null : state.profile, state.extracted, byJev ? { costError: state.cost } : {});
@@ -727,6 +732,20 @@ async function askJev(discover) {
     $("err").textContent = x.message; $("err").classList.add("bad");
   }
 }
+$("xvs").addEventListener("click", () => {
+  $("err").classList.remove("bad");
+  const pack = state.xvs && state.xvs.samples[state.sample.id];
+  if (!pack) { $("err").textContent = "The Jev vs Lev comparison is baked for the bundled samples only (the long receipt is skipped to keep the bake small)."; return; }
+  const chip = (side) => {
+    if (side.value == null) return `<span class="pill">abstained${side.confidence != null ? ` (${Math.round(side.confidence * 100)}%)` : ""}</span>`;
+    return `<span class="pill"><b style="color:${side.right ? "var(--green)" : "var(--red)"}">${side.right ? "right" : "wrong"}</b> ${esc(side.value)} (${Math.round((side.confidence || 0) * 100)}%)</span>`;
+  };
+  $("vs").innerHTML = `<div class="small" style="margin:0 0 10px">Same questions and candidate values asked of both at the last ship (${esc(state.xvs.checkedAt)}). Jev: hosted ${esc(state.xvs.jev.model)}. Lev: real Lev v0.2.0 running locally, english encoder only (laya ModernBERT-large, 512-token context), no escalation. A value counts as right only on an exact match with this sample's hand-set values, case and punctuation aside - same ruler for both.</div>
+    <div style="margin-bottom:8px"><span class="pill"><b style="color:var(--green)">Jev ${pack.jevRight}</b> / ${pack.fields.length} right</span><span class="pill"><b style="color:var(--green)">Lev ${pack.levRight}</b> / ${pack.fields.length} right</span></div>
+    ${pack.fields.map((f) => `<div class="vrow"><b>${esc(f.label)}</b><span class="small" style="display:block;margin:2px 0 0">gold: ${esc(f.gold ?? "-")}</span><div style="margin-top:5px">Jev ${chip(f.jev)}</div><div style="margin-top:5px">Lev ${chip(f.lev)}${f.lev.truncated ? ` <span class="small">(over Lev's 512-token context, some text was cut)</span>` : ""}</div></div>`).join("")}`;
+  $("form").hidden = true; $("vs").hidden = false;
+  $("err").textContent = `Head-to-head on "${state.sample.label}": Jev ${pack.jevRight}/${pack.fields.length} exactly right, Lev ${pack.levRight}/${pack.fields.length}.`;
+});
 $("xfind").addEventListener("click", () => {
   $("err").classList.remove("bad");
   const bake = state.xbakes && state.xbakes.samples[state.sample.id];

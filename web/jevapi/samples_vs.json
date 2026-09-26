@@ -1,0 +1,1176 @@
+{
+  "checkedAt": "2026-09-26",
+  "how": "Extraction by verification: identical candidate spans and noul questions to both models. Jev: hosted TypeSafe model, baked this same ship. Lev: jlt-commons/lev v0.2.0, encoder checkpoint convaiinnovations/laya (english, ModernBERT-large, 512-token context), run locally in the ship job, no thinker and no escalation. Both sides keep a value only at raw probability >= 0.5, else abstain. Gold = the sample's hand-set values.",
+  "jev": {
+    "model": "jev-1.13.0",
+    "where": "hosted TypeSafe API"
+  },
+  "lev": {
+    "model": "english",
+    "repo": "https://github.com/jlt-commons/lev",
+    "weights": "https://huggingface.co/convaiinnovations/laya"
+  },
+  "samples": {
+    "clean": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "gold": "Acme Supplies Pvt Ltd",
+          "jev": {
+            "value": "ACME SUPPLIES PVT LTD",
+            "confidence": 0.95,
+            "right": true
+          },
+          "lev": {
+            "value": "Bill to: Kiran Traders, Pune",
+            "confidence": 0.789,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "gold": "INV-2231",
+          "jev": {
+            "value": "INV-2231",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.8897,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "gold": "2026-10-15",
+          "jev": {
+            "value": "2026",
+            "confidence": 0.51,
+            "right": false
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.8005,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "gold": "48200.00",
+          "jev": {
+            "value": "48,200.00",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.8486,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 3,
+      "levRight": 0,
+      "bothRight": 0,
+      "neither": 1,
+      "jevAbstain": 0,
+      "levAbstain": 0
+    },
+    "messy": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "gold": "North Star Logistics",
+          "jev": {
+            "value": "N0rth Star Logistics",
+            "confidence": 0.74,
+            "right": false
+          },
+          "lev": {
+            "value": "N0rth Star Logistics",
+            "confidence": 0.9372,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "gold": "NS-8819",
+          "jev": {
+            "value": "NS-88l9",
+            "confidence": 0.98,
+            "right": false
+          },
+          "lev": {
+            "value": "N0rth",
+            "confidence": 0.8743,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "gold": "2026-10-03",
+          "jev": {
+            "value": null,
+            "confidence": 0.04,
+            "right": false
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.8193,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "gold": "21450",
+          "jev": {
+            "value": "25,311",
+            "confidence": 0.99,
+            "right": false
+          },
+          "lev": {
+            "value": "25,311",
+            "confidence": 0.8399,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 0,
+      "levRight": 0,
+      "bothRight": 0,
+      "neither": 4,
+      "jevAbstain": 1,
+      "levAbstain": 0
+    },
+    "missing": {
+      "fields": [
+        {
+          "field": "vendor_name",
+          "label": "Vendor",
+          "gold": "Blue Lotus Design Studio",
+          "jev": {
+            "value": "Blue Lotus Design Studio",
+            "confidence": 0.75,
+            "right": true
+          },
+          "lev": {
+            "value": "Thank you!",
+            "confidence": 0.911,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "invoice_number",
+          "label": "Invoice number",
+          "gold": "BL-104",
+          "jev": {
+            "value": "BL-104",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "104",
+            "confidence": 0.8341,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "due_date",
+          "label": "Due date",
+          "gold": null,
+          "jev": {
+            "value": null,
+            "confidence": 0.03,
+            "right": false
+          },
+          "lev": {
+            "value": "15,000",
+            "confidence": 0.7631,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "total_amount",
+          "label": "Total amount",
+          "gold": "15000",
+          "jev": {
+            "value": "15,000",
+            "confidence": 0.94,
+            "right": true
+          },
+          "lev": {
+            "value": "15,000",
+            "confidence": 0.8671,
+            "right": true,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 3,
+      "levRight": 1,
+      "bothRight": 1,
+      "neither": 1,
+      "jevAbstain": 1,
+      "levAbstain": 0
+    },
+    "resume": {
+      "fields": [
+        {
+          "field": "name",
+          "label": "Name",
+          "gold": "Priya Sharma",
+          "jev": {
+            "value": "Priya Sharma",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.9306,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "headline",
+          "label": "Headline",
+          "gold": "Backend Engineer",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.8865,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "email",
+          "label": "Email",
+          "gold": "priya.sharma@example.com",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.8663,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "phone",
+          "label": "Phone",
+          "gold": "+91 98765 43210",
+          "jev": {
+            "value": "43210",
+            "confidence": 0.91,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.8185,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "location",
+          "label": "Location",
+          "gold": "Pune, India",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.9075,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "linkedin",
+          "label": "LinkedIn",
+          "gold": "linkedin.com/in/priya-sharma-example",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.9213,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "github",
+          "label": "GitHub",
+          "gold": "github.com/priya-example",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.8962,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "website",
+          "label": "Website",
+          "gold": "priya.example.dev",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.9031,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "summary",
+          "label": "Summary",
+          "gold": "Backend engineer who builds payment and billing APIs with Go, Python and PostgreSQL.",
+          "jev": {
+            "value": "Summary",
+            "confidence": 0.91,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.874,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_1_title",
+          "label": "Job 1 title",
+          "gold": "Software Engineer",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.9099,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_1_company",
+          "label": "Job 1 company",
+          "gold": "Lotus Payments Pvt Ltd",
+          "jev": {
+            "value": null,
+            "confidence": 0.09,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.8683,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_1_dates",
+          "label": "Job 1 dates",
+          "gold": "Jan 2024 - Present",
+          "jev": {
+            "value": null,
+            "confidence": null,
+            "right": false
+          },
+          "lev": {
+            "value": null,
+            "confidence": null,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_1_summary",
+          "label": "Job 1 summary",
+          "gold": "Built a refund service in Go that handles 40k requests per day with idempotent retries and audit logs.",
+          "jev": {
+            "value": null,
+            "confidence": 0.11,
+            "right": false
+          },
+          "lev": {
+            "value": "Summary",
+            "confidence": 0.9031,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_2_title",
+          "label": "Job 2 title",
+          "gold": "Software Engineering Intern",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.8916,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_2_company",
+          "label": "Job 2 company",
+          "gold": "Kiran Cloud Services, Pune",
+          "jev": {
+            "value": null,
+            "confidence": 0.16,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.8718,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "job_2_dates",
+          "label": "Job 2 dates",
+          "gold": "Jun 2023 - Dec 2023",
+          "jev": {
+            "value": null,
+            "confidence": null,
+            "right": false
+          },
+          "lev": {
+            "value": null,
+            "confidence": null,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "project_1_name",
+          "label": "Project 1 name",
+          "gold": "LedgerLite - Double-entry Bookkeeping API",
+          "jev": {
+            "value": null,
+            "confidence": 0.03,
+            "right": false
+          },
+          "lev": {
+            "value": "Pune, India | priya.sharma@example.com | +91 98765 43210",
+            "confidence": 0.9065,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "project_1_tech",
+          "label": "Project 1 tech",
+          "gold": "Go, PostgreSQL",
+          "jev": {
+            "value": null,
+            "confidence": 0.1,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.9011,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "education_1_degree",
+          "label": "Education 1 degree",
+          "gold": "BE in Computer Engineering",
+          "jev": {
+            "value": "2023",
+            "confidence": 0.54,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.9605,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "education_1_school",
+          "label": "Education 1 school",
+          "gold": "Savitribai Phule Pune University",
+          "jev": {
+            "value": null,
+            "confidence": 0.05,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.9303,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "education_1_years",
+          "label": "Education 1 years",
+          "gold": "2019 - 2023",
+          "jev": {
+            "value": "2019",
+            "confidence": 0.75,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.928,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "skills_languages",
+          "label": "Skills: Languages",
+          "gold": "Go, Python, SQL, TypeScript",
+          "jev": {
+            "value": null,
+            "confidence": 0.01,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.8639,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "skills_tools",
+          "label": "Skills: Tools",
+          "gold": "PostgreSQL, Redis, Docker, Kubernetes, GitHub Actions, Grafana",
+          "jev": {
+            "value": null,
+            "confidence": 0.01,
+            "right": false
+          },
+          "lev": {
+            "value": "2019",
+            "confidence": 0.8582,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 1,
+      "levRight": 0,
+      "bothRight": 0,
+      "neither": 22,
+      "jevAbstain": 18,
+      "levAbstain": 2
+    },
+    "receipt": {
+      "fields": [
+        {
+          "field": "merchant",
+          "label": "Merchant",
+          "gold": "Krishna Stores",
+          "jev": {
+            "value": "KRISHNA STORES",
+            "confidence": 0.96,
+            "right": true
+          },
+          "lev": {
+            "value": "1 Tata Salt 1kg 28.00",
+            "confidence": 0.8117,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "total",
+          "label": "Total",
+          "gold": "127.00",
+          "jev": {
+            "value": "127.00",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "127.00",
+            "confidence": 0.817,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "change",
+          "label": "Change",
+          "gold": "32.00",
+          "jev": {
+            "value": "23.00",
+            "confidence": 0.99,
+            "right": false
+          },
+          "lev": {
+            "value": "23.00",
+            "confidence": 0.8373,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "date",
+          "label": "Date",
+          "gold": "12/09/2026",
+          "jev": {
+            "value": "12/09/2026",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "12/09/2026",
+            "confidence": 0.7544,
+            "right": true,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 3,
+      "levRight": 2,
+      "bothRight": 2,
+      "neither": 1,
+      "jevAbstain": 0,
+      "levAbstain": 0
+    },
+    "statement": {
+      "fields": [
+        {
+          "field": "bank_name",
+          "label": "Bank",
+          "gold": "Lakeview Bank",
+          "jev": {
+            "value": "LAKEVIEW BANK",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "Account Statement",
+            "confidence": 0.9316,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "account_number",
+          "label": "Account number",
+          "gold": "50200123456",
+          "jev": {
+            "value": "50200123456",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "50200123456",
+            "confidence": 0.9,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "closing_balance",
+          "label": "Closing balance",
+          "gold": "9,804.00",
+          "jev": {
+            "value": "9,804.00",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "9,804.00",
+            "confidence": 0.8133,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "opening_balance",
+          "label": "Opening balance",
+          "gold": "12,500",
+          "jev": {
+            "value": "12,500.00",
+            "confidence": 0.99,
+            "right": false
+          },
+          "lev": {
+            "value": "0001234",
+            "confidence": 0.749,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 3,
+      "levRight": 2,
+      "bothRight": 2,
+      "neither": 1,
+      "jevAbstain": 0,
+      "levAbstain": 0
+    },
+    "form": {
+      "fields": [
+        {
+          "field": "name",
+          "label": "Name",
+          "gold": "Meera Nair",
+          "jev": {
+            "value": "Meera Nair",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "LEAVE APPLICATION FORM",
+            "confidence": 0.9543,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "department",
+          "label": "Department",
+          "gold": "Accounts",
+          "jev": {
+            "value": "DEPARTMENT: Accounts",
+            "confidence": 0.99,
+            "right": false
+          },
+          "lev": {
+            "value": "12345",
+            "confidence": 0.8869,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "from_date",
+          "label": "From date",
+          "gold": "05/10/2026",
+          "jev": {
+            "value": "05/10/2026",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "05/10/2026",
+            "confidence": 0.8329,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "reason",
+          "label": "Reason",
+          "gold": "Family function",
+          "jev": {
+            "value": null,
+            "confidence": 0.02,
+            "right": false
+          },
+          "lev": {
+            "value": "LEAVE APPLICATION FORM",
+            "confidence": 0.9601,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 2,
+      "levRight": 1,
+      "bothRight": 1,
+      "neither": 2,
+      "jevAbstain": 1,
+      "levAbstain": 0
+    },
+    "photo": {
+      "fields": [
+        {
+          "field": "merchant",
+          "label": "Merchant",
+          "gold": "City Fresh Mart",
+          "jev": {
+            "value": "CITY FRESH MART",
+            "confidence": 0.97,
+            "right": true
+          },
+          "lev": {
+            "value": "CITY FRESH MART",
+            "confidence": 0.8973,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "bill_no",
+          "label": "Bill number",
+          "gold": "8841",
+          "jev": {
+            "value": "8841",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "560042",
+            "confidence": 0.8618,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "date",
+          "label": "Date",
+          "gold": "21/09/2026",
+          "jev": {
+            "value": "21/09/2026",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "21/09/2026",
+            "confidence": 0.8519,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_1_name",
+          "label": "Item 1 name",
+          "gold": "Rice 5kg",
+          "jev": {
+            "value": "Rice 5kg 1 420.00",
+            "confidence": 0.74,
+            "right": false
+          },
+          "lev": {
+            "value": "Rice 5kg 1 420.00",
+            "confidence": 0.8257,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_1_price",
+          "label": "Item 1 price",
+          "gold": "420.00",
+          "jev": {
+            "value": "420.00",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.7981,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_2_name",
+          "label": "Item 2 name",
+          "gold": "Wheat Flour 1kg",
+          "jev": {
+            "value": null,
+            "confidence": 0.05,
+            "right": false
+          },
+          "lev": {
+            "value": "Milk 500m1 2 56.00",
+            "confidence": 0.8499,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_2_price",
+          "label": "Item 2 price",
+          "gold": "58.00",
+          "jev": {
+            "value": null,
+            "confidence": 0.07,
+            "right": false
+          },
+          "lev": {
+            "value": "560042",
+            "confidence": 0.8257,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_3_name",
+          "label": "Item 3 name",
+          "gold": "Sunflower Oil 1L",
+          "jev": {
+            "value": null,
+            "confidence": 0.04,
+            "right": false
+          },
+          "lev": {
+            "value": "CITY FRESH MART",
+            "confidence": 0.8727,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_3_price",
+          "label": "Item 3 price",
+          "gold": "165.00",
+          "jev": {
+            "value": null,
+            "confidence": 0.04,
+            "right": false
+          },
+          "lev": {
+            "value": "2026",
+            "confidence": 0.7986,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_4_name",
+          "label": "Item 4 name",
+          "gold": "Milk 500ml",
+          "jev": {
+            "value": null,
+            "confidence": 0.04,
+            "right": false
+          },
+          "lev": {
+            "value": "Rice 5kg 1 420.00",
+            "confidence": 0.8259,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_4_price",
+          "label": "Item 4 price",
+          "gold": "56.00",
+          "jev": {
+            "value": null,
+            "confidence": 0.06,
+            "right": false
+          },
+          "lev": {
+            "value": "560042",
+            "confidence": 0.7949,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_5_name",
+          "label": "Item 5 name",
+          "gold": "Sugar 1kg",
+          "jev": {
+            "value": null,
+            "confidence": 0.29,
+            "right": false
+          },
+          "lev": {
+            "value": "Milk 500m1 2 56.00",
+            "confidence": 0.8597,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_5_price",
+          "label": "Item 5 price",
+          "gold": "45.00",
+          "jev": {
+            "value": null,
+            "confidence": 0.09,
+            "right": false
+          },
+          "lev": {
+            "value": "560042",
+            "confidence": 0.8083,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_6_name",
+          "label": "Item 6 name",
+          "gold": "Tea Powder 250g",
+          "jev": {
+            "value": null,
+            "confidence": 0.1,
+            "right": false
+          },
+          "lev": {
+            "value": "Milk 500m1 2 56.00",
+            "confidence": 0.8464,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "item_6_price",
+          "label": "Item 6 price",
+          "gold": "120.00",
+          "jev": {
+            "value": null,
+            "confidence": 0.08,
+            "right": false
+          },
+          "lev": {
+            "value": "560042",
+            "confidence": 0.795,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "subtotal",
+          "label": "Subtotal",
+          "gold": "864.00",
+          "jev": {
+            "value": "864.00",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "820.80",
+            "confidence": 0.8406,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "discount",
+          "label": "Discount",
+          "gold": "-43.20",
+          "jev": {
+            "value": "43.20",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "820.80",
+            "confidence": 0.8947,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "total",
+          "label": "Total",
+          "gold": "820.80",
+          "jev": {
+            "value": "820.80",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "820.80",
+            "confidence": 0.8543,
+            "right": true,
+            "truncated": false
+          }
+        },
+        {
+          "field": "cash",
+          "label": "Cash",
+          "gold": "100.00",
+          "jev": {
+            "value": "1000.00",
+            "confidence": 0.99,
+            "right": false
+          },
+          "lev": {
+            "value": "1000.00",
+            "confidence": 0.9612,
+            "right": false,
+            "truncated": false
+          }
+        },
+        {
+          "field": "change",
+          "label": "Change",
+          "gold": "179.20",
+          "jev": {
+            "value": "179.20",
+            "confidence": 0.99,
+            "right": true
+          },
+          "lev": {
+            "value": "820.80",
+            "confidence": 0.8358,
+            "right": false,
+            "truncated": false
+          }
+        }
+      ],
+      "jevRight": 8,
+      "levRight": 3,
+      "bothRight": 3,
+      "neither": 12,
+      "jevAbstain": 10,
+      "levAbstain": 0
+    }
+  },
+  "totals": {
+    "fields": 67,
+    "jevRight": 23,
+    "levRight": 9,
+    "bothRight": 9,
+    "neither": 44,
+    "jevAbstain": 31,
+    "levAbstain": 2
+  }
+}
