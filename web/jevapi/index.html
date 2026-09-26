@@ -894,8 +894,16 @@ const sg = $2("sgrid");
 });
 const go = (pane) => document.querySelector(`#tabs button[data-pane="${pane}"]`)?.click();
 $2("samples").addEventListener("change", () => go("formpane"));
-new MutationObserver(() => { if ($2("doc").value.trim() && !$2("formpane").classList.contains("on")) go("formpane"); })
-  .observe($2("form"), { childList: true });
+// After an upload, OCR/PDF reading is async: move to Review once the text lands.
+let filePoll = 0;
+$2("file").addEventListener("change", () => {
+  clearInterval(filePoll);
+  let tries = 0;
+  filePoll = setInterval(() => {
+    if ($2("doc").value.trim()) { clearInterval(filePoll); go("formpane"); }
+    else if (++tries > 110) clearInterval(filePoll);
+  }, 800);
+});
 new MutationObserver(() => { const p = $2("preview"); if (p && !p.hidden) { const d = p.closest("details"); if (d) d.open = true; } })
   .observe($2("preview"), { attributes: true, attributeFilter: ["hidden"] });
 </script>
