@@ -610,50 +610,46 @@ async function readImage(file) {
       document.head.appendChild(sc);
     });
   }
+  const logger = (m) => { if (m.status === "recognizing text") $("err").textContent = `Reading the photo... ${Math.round(m.progress * 100)}%`; };
   const clean = await prepImage(file);
-  const out = await Tesseract.recognize(clean, "eng", {
-    logger: (m) => { if (m.status === "recognizing text") $("err").textContent = `Reading the photo... ${Math.round(m.progress * 100)}%`; },
-  });
-  return out.data.text;
+  const out = await Tesseract.recognize(clean, "eng", { logger });
+  if (out.data.text.trim()) return out.data.text;
+  // Cleaned image read empty - give the untouched photo one try before giving up.
+  const raw = await Tesseract.recognize(file, "eng", { logger });
+  return raw.data.text;
 }
-// Clean a photo before OCR, all in this tab: upscale, grayscale, contrast stretch, Otsu binarize.
-// Phone photos of receipts are skewed and low-contrast; this makes the text much easier to read.
+// Clean a photo before OCR, all in this tab: decode it (EXIF-safe), shrink big phone photos.
+// Tesseract does its own thresholding - the old hand-rolled contrast stretch and Otsu step
+// turned flat scans fully black and made noisy photos worse, so they were removed.
 async function prepImage(file) {
-  const bmp = await createImageBitmap(file);
-  const scale = Math.min(3, Math.max(1.5, 1800 / bmp.width));
-  const c = document.createElement("canvas");
-  c.width = Math.round(bmp.width * scale);
-  c.height = Math.round(bmp.height * scale);
-  const ctx = c.getContext("2d", { willReadFrequently: true });
-  ctx.drawImage(bmp, 0, 0, c.width, c.height);
-  const im = ctx.getImageData(0, 0, c.width, c.height);
-  const d = im.data, n = d.length / 4, g = new Uint8Array(n), hist = new Uint32Array(256);
-  for (let i = 0, j = 0; i < d.length; i += 4, j++) { const v = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000 | 0; g[j] = v; hist[v]++; }
-  let lo = 0, hi = 255, acc = 0;
-  for (let t = 0; t < 256; t++) { acc += hist[t]; if (acc >= n * 0.01) { lo = t; break; } }
-  acc = 0;
-  for (let t = 255; t >= 0; t--) { acc += hist[t]; if (acc >= n * 0.01) { hi = t; break; } }
-  const rng = Math.max(1, hi - lo);
-  for (let j = 0; j < n; j++) g[j] = Math.min(255, Math.max(0, (g[j] - lo) * 255 / rng)) | 0;
-  hist.fill(0);
-  for (let j = 0; j < n; j++) hist[g[j]]++;
-  let sum = 0;
-  for (let t = 0; t < 256; t++) sum += t * hist[t];
-  let sumB = 0, wB = 0, best = -1, thr = 140;
-  for (let t = 0; t < 256; t++) {
-    wB += hist[t];
-    if (!wB || wB === n) continue;
-    sumB += t * hist[t];
-    const mB = sumB / wB, mF = (sum - sumB) / (n - wB), v = wB * (n - wB) * (mB - mF) ** 2;
-    if (v > best) { best = v; thr = t; }
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const w = img.naturalWidth, h = img.naturalHeight;
+    if (!w || !h) throw new Error("empty image");
+    // Phone photos are huge; ~2000px on the long edge is what OCR reads best, and big
+    // canvases can crash mobile browsers.
+    const scale = Math.min(2, Math.max(0.25, 2000 / Math.max(w, h)));
+    const c = document.createElement("canvas");
+    c.width = Math.round(w * scale);
+    c.height = Math.round(h * scale);
+    const ctx = c.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  } finally {
+    URL.revokeObjectURL(url);
   }
-  for (let i = 0, j = 0; j < n; i += 4, j++) { const v = g[j] > thr ? 255 : 0; d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255; }
-  ctx.putImageData(im, 0, 0);
-  return c;
 }
 $("file").addEventListener("change", async (e) => {
   const f = e.target.files[0];
   if (!f) return;
+  if (!f.size) {
+    $("err").textContent = "That file came through empty (0 bytes). Save the photo to your device first, then pick it again.";
+    $("err").classList.add("bad");
+    return;
+  }
   $("err").textContent = "Reading " + f.name + "..."; $("err").classList.remove("bad");
   try {
     let text, doc = null;
