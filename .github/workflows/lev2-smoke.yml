@@ -1,0 +1,45 @@
+name: lev2 smoke
+on:
+  workflow_dispatch:
+  push:
+    branches: [demo-redesign]
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install CPU-only torch, then lev"
+        run: |
+          pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --no-cache-dir "lev[serve] @ git+https://github.com/Abhinavexists/lev#subdirectory=packages/lev"
+          python -c "import torch, transformers, peft; print('torch', torch.__version__)"
+      - name: "Write smoke script"
+        run: |
+          cat > /tmp/smoke.py <<'PYEOF'
+          import time, json, lev
+          t0 = time.time()
+          model = lev.load("interfaze-ai/lev")
+          t1 = time.time()
+          STATE = "ACME SUPPLIES PVT LTD\nTax Invoice\nInvoice No: INV-2231\nDate: 2026-09-15\nDue date: 2026-10-15\nBill to: Kiran Traders, Pune\nItems: 40 x Steel brackets @ 1,205.00\nTotal amount: \u20b948,200.00"
+          cands = {
+            "vendor_name": ["ACME SUPPLIES PVT LTD", "Tax Invoice", "Kiran Traders, Pune", "INV-2231", "Acme Supplies", "Steel brackets"],
+            "due_date": ["2026-10-15", "2026-09-15", "1,205.00", "48,200.00"],
+            "total_amount": ["\u20b948,200.00", "48,200.00", "1,205.00", "40"],
+          }
+          questions = {}
+          for field, opts in cands.items():
+            for i, c in enumerate(opts):
+              questions[f"{field}_{i}"] = {"type": "noul", "instructions": f"In this document, is the {field.replace('_',' ')} \"{c}\"?"}
+          t2 = time.time()
+          r = model.system_one(STATE, questions)
+          t3 = time.time()
+          print("LOAD_SEC", round(t1 - t0, 1))
+          print("PASS_SEC", round(t3 - t2, 2))
+          print("N_QUESTIONS", len(questions))
+          d = r.model_dump() if hasattr(r, "model_dump") else dict(r)
+          print(json.dumps(d, indent=1)[:4000])
+          PYEOF
+          python /tmp/smoke.py
