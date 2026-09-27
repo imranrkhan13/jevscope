@@ -24,14 +24,15 @@ a{color:var(--green);text-underline-offset:3px}
 .top nav a:hover,.top nav a.cur{background:var(--card);color:var(--ink)}
 code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
-.hero{max-width:1120px;margin:0 auto;padding:72px 24px 40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:56px;align-items:center}
+.art{height:430px;margin-top:-58px;overflow:hidden}.art svg{width:100%;height:100%;display:block}
+.hero{max-width:860px;margin:0 auto;padding:8px 24px 0;display:block;text-align:center;position:relative}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .eyebrow b{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,122,94,.35)}50%{box-shadow:0 0 0 6px rgba(46,122,94,0)}}
-h1{font-size:60px;line-height:1.02;letter-spacing:-.035em;margin:18px 0 18px;font-weight:600}
+h1{font-size:64px;line-height:1.02;letter-spacing:-.035em;margin:18px 0 18px;font-weight:600}
 h1 span{color:var(--mut)}
-.lead{font-size:18px;color:#46433d;max-width:520px;margin:0 0 28px}
-.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.lead{font-size:18px;color:#46433d;max-width:560px;margin:0 auto 28px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;text-decoration:none;padding:12px 20px;border-radius:999px;border:1px solid var(--line);color:var(--ink);background:var(--card);transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
 .btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(30,25,15,.08);border-color:#d6d0c5}
 .btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -39,7 +40,7 @@ h1 span{color:var(--mut)}
 .btn .ar{transition:transform .2s}
 .btn:hover .ar{transform:translateX(3px)}
 .small{font-size:13px;color:var(--mut);margin-top:16px}
-.demo{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 2px rgba(30,25,15,.04),0 24px 60px rgba(30,25,15,.08);overflow:hidden;animation:float 7s ease-in-out infinite;position:relative}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 2px rgba(30,25,15,.04),0 24px 60px rgba(30,25,15,.08);overflow:hidden;animation:float 7s ease-in-out infinite;position:relative;text-align:left;margin:52px auto 0;max-width:780px}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .demo .bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mut)}
 .demo .bar i{width:9px;height:9px;border-radius:50%;background:#e6e1d7}
@@ -64,6 +65,20 @@ h1 span{color:var(--mut)}
 @keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
 .demo .cap{font-size:12px;color:var(--mut);padding:10px 18px 14px;border-top:1px solid var(--line)}
 section.s{max-width:1120px;margin:0 auto;padding:72px 24px}
+.glass{max-width:960px;margin:0 auto;background:rgba(24,24,28,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:14px;box-shadow:0 30px 70px rgba(30,25,15,.22)}
+.glist{display:flex;flex-direction:column;gap:4px}
+.gitem{background:transparent;border:0;border-radius:14px;padding:16px 18px;text-align:left;cursor:pointer;font:inherit;color:#f5f5f7;display:flex;flex-direction:column;gap:3px}
+.gitem:hover{background:rgba(255,255,255,.07)}
+.gitem.on{background:rgba(255,255,255,.12)}
+.gt2{font-size:15.5px;font-weight:600}
+.gd2{font-size:13px;color:rgba(245,245,247,.55)}
+.gcard{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:26px;color:#f5f5f7;animation:fade .35s ease}
+.gcard .gn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f5f5f7;color:#1d1c1a;font-weight:600;font-size:14px;margin-bottom:14px}
+.gcard h3{margin:0 0 8px;font-size:19px;font-weight:600}
+.gcard p{margin:0;color:rgba(245,245,247,.72);font-size:14.5px;line-height:1.6}
+@media(max-width:900px){.glass{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){.art{height:300px}h1{font-size:44px}}
+
 h2{font-size:36px;letter-spacing:-.025em;line-height:1.1;margin:0 0 12px;font-weight:600}
 .sub{color:var(--mut);font-size:17px;max-width:600px;margin:0 0 32px}
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -115,6 +130,29 @@ body{background:radial-gradient(900px 520px at 88% -4%,rgba(46,122,94,.08),trans
 <body>
 <header class="top"><div class="in"><a class="logo" href="/jevapi"><i></i>JevAPI</a><nav><a class="hide" href="#how">How it works</a><a href="/jevapi/demo">Demo</a><a href="/jevapi/docs">Docs</a><a class="hide" href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav></div></header>
 
+
+<div class="art" aria-hidden="true"><svg viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="hsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcd7ec"/><stop offset=".45" stop-color="#f6ddc0"/><stop offset="1" stop-color="#f9ede0"/></linearGradient>
+<linearGradient id="hfd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f5f0" stop-opacity="0"/><stop offset="1" stop-color="#f7f5f0"/></linearGradient>
+<filter id="hbl" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter>
+<filter id="hbl2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+<rect width="1440" height="520" fill="url(#hsk)"/>
+<circle cx="1140" cy="120" r="70" fill="#fff3dd" opacity=".9" filter="url(#hbl2)"/>
+<g filter="url(#hbl)">
+<ellipse cx="240" cy="360" rx="520" ry="150" fill="#b9cba2" opacity=".7"/>
+<ellipse cx="1080" cy="390" rx="600" ry="170" fill="#9db87e" opacity=".6"/>
+<ellipse cx="700" cy="450" rx="700" ry="150" fill="#dccfa9" opacity=".55"/>
+<ellipse cx="480" cy="500" rx="500" ry="90" fill="#c3d8e4" opacity=".6"/>
+</g>
+<g filter="url(#hbl2)" opacity=".8">
+<path d="M180 120 q14 -12 28 0 M196 112 q10 -8 20 0" stroke="#5a5a55" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M320 90 q12 -10 24 0" stroke="#5a5a55" stroke-width="3" fill="none" stroke-linecap="round"/>
+</g>
+<rect y="400" width="1440" height="120" fill="url(#hfd)"/>
+</svg></div>
+
 <div class="hero">
   <div>
     <span class="eyebrow"><b></b>Free, open source, runs on Jev</span>
@@ -142,10 +180,13 @@ Total:       Rs 48,200.00</div>
 <section class="s rv" id="how">
   <h2>How it works</h2>
   <p class="sub">Three steps. One request to Jev per document.</p>
-  <div class="cards">
-    <div class="card"><div class="n">1</div><h3>Send the text and values</h3><p>Values from your own extractor or your AI. Or send only the text, and JevAPI finds the fields for resumes and labelled lines.</p></div>
-    <div class="card"><div class="n">2</div><h3>Jev checks each field</h3><p>For every field Jev answers "does the document really say this?" as a probability, or picks the right option from your list.</p></div>
-    <div class="card"><div class="n">3</div><h3>Fill or review</h3><p>Fields that clear your bar are filled. The rest go to a person with a plain reason. Calibrate on your own labelled documents when you are ready.</p></div>
+  <div class="glass" id="glass">
+    <div class="glist" role="tablist" aria-label="How it works">
+      <button type="button" class="gitem on" data-g="0" role="tab" aria-selected="true"><span class="gt2">Send the text and values</span><span class="gd2">Your extractor&rsquo;s output, or just the text</span></button>
+      <button type="button" class="gitem" data-g="1" role="tab" aria-selected="false"><span class="gt2">Jev checks each field</span><span class="gd2">&ldquo;Does the document really say this?&rdquo;</span></button>
+      <button type="button" class="gitem" data-g="2" role="tab" aria-selected="false"><span class="gt2">Fill or review</span><span class="gd2">Sure fields fill, the rest go to a person</span></button>
+    </div>
+    <div class="gcard" id="gcard" role="tabpanel"></div>
   </div>
 </section>
 
@@ -236,6 +277,16 @@ else{
 const rv=[...document.querySelectorAll(".rv")];
 if(reduce||!("IntersectionObserver" in window))rv.forEach(e=>e.classList.add("in"));
 else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.05,rootMargin:"0px 0px -5% 0px"});rv.forEach(e=>io.observe(e));}
+
+const GSTEPS=[
+ {n:"1",t:"Send the text and values",p:"Values from your own extractor or your AI. Or send only the text, and JevAPI finds the fields for resumes and labelled lines."},
+ {n:"2",t:"Jev checks each field",p:"For every field Jev answers \u201cdoes the document really say this?\u201d as a probability, or picks the right option from your list."},
+ {n:"3",t:"Fill or review",p:"Fields that clear your bar are filled. The rest go to a person with a plain reason. Calibrate on your own labelled documents when you are ready."}
+];
+const gcard=document.getElementById("gcard"),gitems=[...document.querySelectorAll(".gitem")];
+const gshow=(k)=>{gitems.forEach((b,j)=>{b.classList.toggle("on",j===k);b.setAttribute("aria-selected",j===k);});const g=GSTEPS[k];gcard.innerHTML=`<span class="gn">${g.n}</span><h3>${g.t}</h3><p>${g.p}</p>`;};
+gitems.forEach((b,k)=>{b.addEventListener("click",()=>gshow(k));b.addEventListener("mouseenter",()=>gshow(k));});
+gshow(0);
 </script>
 </body>
 </html>
