@@ -314,6 +314,7 @@ input[type=range]{accent-color:#1d1d1f}
 /* wizard flow (step-by-step, one pane per screen) */
 .ptitle{font-size:18px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
 .tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs button{white-space:nowrap}
 .tabs::-webkit-scrollbar{display:none}
 @media(max-width:760px){.tabs{justify-content:flex-start;width:100%}.tabs button span{display:none}.tabs button i{margin-right:0}}
 .howgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 14px}
@@ -383,8 +384,8 @@ input[type=range]{accent-color:#1d1d1f}
       <div class="howcard"><span class="hic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg></span><div><b>3. You check the rest</b><span>Unsure fields wait for a person instead of being silently wrong.</span></div></div>
     </div>
     <div class="miniex">
-      <div class="mrow"><span class="mn">01</span><span class="mf"><small>Vendor</small>Acme Supplies Pvt Ltd</span><span class="chip2 ok">filled Â· 99%</span></div>
-      <div class="mrow"><span class="mn">02</span><span class="mf"><small>Due date</small>2026-10-15?</span><span class="chip2 warn">check Â· 62%</span></div>
+      <div class="mrow"><span class="mn">01</span><span class="mf"><small>Vendor</small>Acme Supplies Pvt Ltd</span><span class="chip2 ok">filled · 99%</span></div>
+      <div class="mrow"><span class="mn">02</span><span class="mf"><small>Due date</small>2026-10-15?</span><span class="chip2 warn">check · 62%</span></div>
     </div>
     <div><button type="button" class="primary" id="startBtn" style="padding:10px 22px;font-size:15px">Start - pick a document</button></div>
   </section>
@@ -469,7 +470,7 @@ for (const d of decisions) {
   if (d.action === "fill") autoFill(d.field, d.value);      // Jev is sure
   else                     sendToHumanReview(d.field, d.value); // a person checks
 }</pre></div>
-    <p class="small" style="margin-top:4px"><code>npm i jevapi</code> or <code>pip install jevapi</code> Â· <a href="/jevapi/docs">Read the docs</a> Â· <button type="button" class="linklike" id="toDetails">How Jev scored this demo &rarr;</button></p>
+    <p class="small" style="margin-top:4px"><code>npm i jevapi</code> or <code>pip install jevapi</code> · <a href="/jevapi/docs">Read the docs</a> · <button type="button" class="linklike" id="toDetails">How Jev scored this demo &rarr;</button></p>
   </section>
 
   <section class="card pane" id="morepane" aria-label="Details">
@@ -577,11 +578,11 @@ function groupOf(field, label) {
 }
 function groupTitle(g, rows) {
   const v = (k) => rows.find((r) => r.sub === k)?.ex.value;
-  if (g.kind === "job") return [v("title"), v("company")].filter(Boolean).join(" Â· ") || `Job ${g.n}`;
+  if (g.kind === "job") return [v("title"), v("company")].filter(Boolean).join(" · ") || `Job ${g.n}`;
   if (g.kind === "item") return v("name") || `Item ${g.n}`;
-  if (g.kind === "row" || g.kind === "transaction") return [v("date"), v("description")].filter(Boolean).join(" Â· ") || `${KIND[g.kind]} ${g.n}`;
+  if (g.kind === "row" || g.kind === "transaction") return [v("date"), v("description")].filter(Boolean).join(" · ") || `${KIND[g.kind]} ${g.n}`;
   if (g.kind === "project") return v("name") || `Project ${g.n}`;
-  if (g.kind === "education") return [v("degree"), v("school")].filter(Boolean).join(" Â· ") || `Education ${g.n}`;
+  if (g.kind === "education") return [v("degree"), v("school")].filter(Boolean).join(" · ") || `Education ${g.n}`;
   return g.title;
 }
 const box = (i, v, hint) => (String(v || hint).length > 70
@@ -643,7 +644,7 @@ function render() {
   // Fields still waiting on a person: not filled, not accepted, not typed in.
   const queueList = decisions.map((d, i) => ({ d, i })).filter(({ d, i }) => d.action !== "fill" && !(state.mine[i] && (state.mine[i].how === "accepted" || state.mine[i].value)));
   $("summary").innerHTML = `<span class="pill"><i class="pic ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><i class="pic warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg></i><b style="color:var(--amber)">${queueList.length}</b> to check</span>
-    ${state.view === "all" && queueList.length ? `<button type="button" class="primary" data-next title="Jump to the next field that needs a person">Next to check â</button>` : ""}
+    ${state.view === "all" && queueList.length ? `<button type="button" class="primary" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
     <span class="row filter" role="group" aria-label="View"><button type="button" data-v="inspect" class="${state.view === "inspect" ? "on" : ""}">Field list</button><button type="button" data-v="queue" class="${state.view === "queue" ? "on" : ""}">One at a time</button><button type="button" data-v="all" class="${state.view === "all" ? "on" : ""}">All fields</button></span>
     <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
   $("how").innerHTML = howJevDid(decisions, fill, review);
@@ -755,7 +756,7 @@ function render() {
     </div></div>`;
   } else if (state.view !== "all" && decisions.length) {
     if (!queueList.length) {
-      $("form").innerHTML = `<div class="qdone${state.qanim ? " in qcard" : ""}"><div class="big">â</div><h3>All set</h3><p>${fill ? `${fill} field${fill === 1 ? "" : "s"} filled on its own. ` : ""}${nMine ? `${nMine} checked by you. ` : ""}Nothing left to check.</p><button type="button" data-v="all">See the full form</button></div>`;
+      $("form").innerHTML = `<div class="qdone${state.qanim ? " in qcard" : ""}"><div class="big">✓</div><h3>All set</h3><p>${fill ? `${fill} field${fill === 1 ? "" : "s"} filled on its own. ` : ""}${nMine ? `${nMine} checked by you. ` : ""}Nothing left to check.</p><button type="button" data-v="all">See the full form</button></div>`;
     } else {
       if (state.qpos >= queueList.length) state.qpos = 0;
       const { d, i } = queueList[state.qpos];
@@ -779,7 +780,7 @@ function render() {
           ${byJev ? `<div class="qjev">${jevSays(ex)}</div>` : ""}
           <div class="qacts">
             ${hasSugg ? `<button type="button" class="primary" data-qact="accept">Accept</button><button type="button" data-qact="edit">Edit</button>` : ""}
-            <button type="button" data-qact="skip">${queueList.length > 1 ? "Skip â" : "Later"}</button>
+            <button type="button" data-qact="skip">${queueList.length > 1 ? "Skip →" : "Later"}</button>
           </div>
         </div>
       </div>`;
@@ -789,7 +790,7 @@ function render() {
       ? `<div class="group"><div>${decisions.map((d, i) => row(byI[i])).join("")}</div></div>`
       : [...groups.values()].map((g) => {
           const nf = g.rows.filter((r) => r.d.action === "fill").length, nr = g.rows.length - nf;
-          return `<details class="group${nr ? "" : " allfill"}"${nr ? " open" : ""}><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> Â· ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
+          return `<details class="group${nr ? "" : " allfill"}"${nr ? " open" : ""}><summary><span class="gt">${esc(groupTitle(g, g.rows))}</span><span class="gc">${nr ? `<b style="color:var(--amber)">${nr} to check</b> · ` : ""}${nf} filled</span></summary>${g.rows.map(row).join("")}</details>`;
         }).join("");
     fitBoxes();
   }
