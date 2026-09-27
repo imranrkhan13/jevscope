@@ -23,10 +23,10 @@
         {
           "field": "due_date",
           "label": "Due date",
-          "value": "2026",
-          "confidence": 0.5,
+          "value": null,
+          "confidence": 0.47,
           "candidates": 4,
-          "abstained": false
+          "abstained": true
         },
         {
           "field": "total_amount",
@@ -44,7 +44,7 @@
           "field": "vendor_name",
           "label": "Vendor",
           "value": "N0rth Star Logistics",
-          "confidence": 0.76,
+          "confidence": 0.73,
           "candidates": 8,
           "abstained": false
         },
@@ -60,7 +60,7 @@
           "field": "due_date",
           "label": "Due date",
           "value": null,
-          "confidence": 0.05,
+          "confidence": 0.04,
           "candidates": 4,
           "abstained": true
         },
@@ -80,7 +80,7 @@
           "field": "vendor_name",
           "label": "Vendor",
           "value": "Blue Lotus Design Studio",
-          "confidence": 0.76,
+          "confidence": 0.72,
           "candidates": 6,
           "abstained": false
         },
@@ -140,7 +140,7 @@
           "field": "phone",
           "label": "Phone",
           "value": "43210",
-          "confidence": 0.92,
+          "confidence": 0.9,
           "candidates": 8,
           "abstained": false
         },
@@ -188,7 +188,7 @@
           "field": "job_1_title",
           "label": "Job 1 title",
           "value": null,
-          "confidence": 0.02,
+          "confidence": 0.03,
           "candidates": 8,
           "abstained": true
         },
@@ -196,7 +196,7 @@
           "field": "job_1_company",
           "label": "Job 1 company",
           "value": null,
-          "confidence": 0.13,
+          "confidence": 0.11,
           "candidates": 8,
           "abstained": true
         },
@@ -212,7 +212,7 @@
           "field": "job_1_summary",
           "label": "Job 1 summary",
           "value": null,
-          "confidence": 0.11,
+          "confidence": 0.1,
           "candidates": 8,
           "abstained": true
         },
@@ -220,7 +220,7 @@
           "field": "job_2_title",
           "label": "Job 2 title",
           "value": null,
-          "confidence": 0.02,
+          "confidence": 0.03,
           "candidates": 8,
           "abstained": true
         },
@@ -252,15 +252,15 @@
           "field": "project_1_tech",
           "label": "Project 1 tech",
           "value": null,
-          "confidence": 0.1,
+          "confidence": 0.08,
           "candidates": 8,
           "abstained": true
         },
         {
           "field": "education_1_degree",
           "label": "Education 1 degree",
-          "value": "2019",
-          "confidence": 0.56,
+          "value": "2023",
+          "confidence": 0.53,
           "candidates": 8,
           "abstained": false
         },
@@ -276,7 +276,7 @@
           "field": "education_1_years",
           "label": "Education 1 years",
           "value": "2019",
-          "confidence": 0.79,
+          "confidence": 0.77,
           "candidates": 8,
           "abstained": false
         },
@@ -492,7 +492,7 @@
           "field": "item_4_price",
           "label": "Item 4 price",
           "value": null,
-          "confidence": 0.07,
+          "confidence": 0.06,
           "candidates": 8,
           "abstained": true
         },
@@ -500,7 +500,7 @@
           "field": "item_5_name",
           "label": "Item 5 name",
           "value": null,
-          "confidence": 0.27,
+          "confidence": 0.31,
           "candidates": 8,
           "abstained": true
         },
@@ -516,7 +516,7 @@
           "field": "item_6_name",
           "label": "Item 6 name",
           "value": null,
-          "confidence": 0.14,
+          "confidence": 0.15,
           "candidates": 8,
           "abstained": true
         },

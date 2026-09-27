@@ -50,8 +50,8 @@
           "label": "Due date",
           "gold": "2026-10-15",
           "jev": {
-            "value": "2026",
-            "confidence": 0.5,
+            "value": null,
+            "confidence": 0.47,
             "right": false
           },
           "lev": {
@@ -82,7 +82,7 @@
       "levRight": 0,
       "bothRight": 0,
       "neither": 1,
-      "jevAbstain": 0,
+      "jevAbstain": 1,
       "levAbstain": 0
     },
     "messy": {
@@ -93,7 +93,7 @@
           "gold": "North Star Logistics",
           "jev": {
             "value": "N0rth Star Logistics",
-            "confidence": 0.76,
+            "confidence": 0.73,
             "right": false
           },
           "lev": {
@@ -125,7 +125,7 @@
           "gold": "2026-10-03",
           "jev": {
             "value": null,
-            "confidence": 0.05,
+            "confidence": 0.04,
             "right": false
           },
           "lev": {
@@ -167,7 +167,7 @@
           "gold": "Blue Lotus Design Studio",
           "jev": {
             "value": "Blue Lotus Design Studio",
-            "confidence": 0.76,
+            "confidence": 0.72,
             "right": true
           },
           "lev": {
@@ -289,7 +289,7 @@
           "gold": "+91 98765 43210",
           "jev": {
             "value": "43210",
-            "confidence": 0.92,
+            "confidence": 0.9,
             "right": false
           },
           "lev": {
@@ -385,7 +385,7 @@
           "gold": "Software Engineer",
           "jev": {
             "value": null,
-            "confidence": 0.02,
+            "confidence": 0.03,
             "right": false
           },
           "lev": {
@@ -401,7 +401,7 @@
           "gold": "Lotus Payments Pvt Ltd",
           "jev": {
             "value": null,
-            "confidence": 0.13,
+            "confidence": 0.11,
             "right": false
           },
           "lev": {
@@ -433,7 +433,7 @@
           "gold": "Built a refund service in Go that handles 40k requests per day with idempotent retries and audit logs.",
           "jev": {
             "value": null,
-            "confidence": 0.11,
+            "confidence": 0.1,
             "right": false
           },
           "lev": {
@@ -449,7 +449,7 @@
           "gold": "Software Engineering Intern",
           "jev": {
             "value": null,
-            "confidence": 0.02,
+            "confidence": 0.03,
             "right": false
           },
           "lev": {
@@ -513,7 +513,7 @@
           "gold": "Go, PostgreSQL",
           "jev": {
             "value": null,
-            "confidence": 0.1,
+            "confidence": 0.08,
             "right": false
           },
           "lev": {
@@ -528,8 +528,8 @@
           "label": "Education 1 degree",
           "gold": "BE in Computer Engineering",
           "jev": {
-            "value": "2019",
-            "confidence": 0.56,
+            "value": "2023",
+            "confidence": 0.53,
             "right": false
           },
           "lev": {
@@ -561,7 +561,7 @@
           "gold": "2019 - 2023",
           "jev": {
             "value": "2019",
-            "confidence": 0.79,
+            "confidence": 0.77,
             "right": false
           },
           "lev": {
@@ -1001,7 +1001,7 @@
           "gold": "56.00",
           "jev": {
             "value": null,
-            "confidence": 0.07,
+            "confidence": 0.06,
             "right": false
           },
           "lev": {
@@ -1017,7 +1017,7 @@
           "gold": "Sugar 1kg",
           "jev": {
             "value": null,
-            "confidence": 0.27,
+            "confidence": 0.31,
             "right": false
           },
           "lev": {
@@ -1049,7 +1049,7 @@
           "gold": "Tea Powder 250g",
           "jev": {
             "value": null,
-            "confidence": 0.14,
+            "confidence": 0.15,
             "right": false
           },
           "lev": {
@@ -1170,7 +1170,7 @@
     "levRight": 9,
     "bothRight": 9,
     "neither": 44,
-    "jevAbstain": 31,
+    "jevAbstain": 32,
     "levAbstain": 2
   }
 }
