@@ -24,7 +24,7 @@ a{color:var(--green);text-underline-offset:3px}
 .top nav a:hover,.top nav a.cur{background:var(--card);color:var(--ink)}
 code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
-.art{height:430px;margin-top:-58px;overflow:hidden}.art svg{width:100%;height:100%;display:block}
+.art{height:430px;margin-top:-58px;overflow:hidden;position:relative}.art img{width:100%;height:100%;object-fit:cover;display:block}.art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,205,160,.22),rgba(247,245,240,0) 55%,#f7f5f0 97%)}
 .hero{max-width:860px;margin:0 auto;padding:8px 24px 0;display:block;text-align:center;position:relative}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .eyebrow b{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
@@ -125,33 +125,15 @@ body{background:radial-gradient(900px 520px at 88% -4%,rgba(46,122,94,.08),trans
 *::-webkit-scrollbar-thumb{background:#d5d0c4;border-radius:99px;border:2px solid var(--bg)}
 *::-webkit-scrollbar-thumb:hover{background:#c0baad}
 *::-webkit-scrollbar-track{background:transparent}
+.credit{font-size:11px;color:#b7af9c;text-align:right;padding:4px 16px;margin:0}
 </style>
 </head>
 <body>
 <header class="top"><div class="in"><a class="logo" href="/jevapi"><i></i>JevAPI</a><nav><a class="hide" href="#how">How it works</a><a href="/jevapi/demo">Demo</a><a href="/jevapi/docs">Docs</a><a class="hide" href="https://github.com/imranrkhan13/jevscope/tree/main/jevapi">GitHub</a></nav></div></header>
 
 
-<div class="art" aria-hidden="true"><svg viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice">
-<defs>
-<linearGradient id="hsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcd7ec"/><stop offset=".45" stop-color="#f6ddc0"/><stop offset="1" stop-color="#f9ede0"/></linearGradient>
-<linearGradient id="hfd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f5f0" stop-opacity="0"/><stop offset="1" stop-color="#f7f5f0"/></linearGradient>
-<filter id="hbl" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter>
-<filter id="hbl2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
-</defs>
-<rect width="1440" height="520" fill="url(#hsk)"/>
-<circle cx="1140" cy="120" r="70" fill="#fff3dd" opacity=".9" filter="url(#hbl2)"/>
-<g filter="url(#hbl)">
-<ellipse cx="240" cy="360" rx="520" ry="150" fill="#b9cba2" opacity=".7"/>
-<ellipse cx="1080" cy="390" rx="600" ry="170" fill="#9db87e" opacity=".6"/>
-<ellipse cx="700" cy="450" rx="700" ry="150" fill="#dccfa9" opacity=".55"/>
-<ellipse cx="480" cy="500" rx="500" ry="90" fill="#c3d8e4" opacity=".6"/>
-</g>
-<g filter="url(#hbl2)" opacity=".8">
-<path d="M180 120 q14 -12 28 0 M196 112 q10 -8 20 0" stroke="#5a5a55" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path d="M320 90 q12 -10 24 0" stroke="#5a5a55" stroke-width="3" fill="none" stroke-linecap="round"/>
-</g>
-<rect y="400" width="1440" height="120" fill="url(#hfd)"/>
-</svg></div>
+<div class="art" aria-hidden="true"><img src="hero.jpg" alt=""></div>
+<p class="credit">Art: Ferdinand Katona, public domain (CC0)</p>
 
 <div class="hero">
   <div>
