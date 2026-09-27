@@ -1,6 +1,8 @@
 name: lev2 smoke
 on:
   workflow_dispatch:
+  push:
+    branches: [demo-redesign]
 jobs:
   smoke:
     runs-on: ubuntu-latest
