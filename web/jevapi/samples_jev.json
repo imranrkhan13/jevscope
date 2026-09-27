@@ -1,7 +1,7 @@
 {
   "sample": "photo",
   "model": "jev-1.13.0",
-  "checkedAt": "2026-09-26",
+  "checkedAt": "2026-09-27",
   "fields": [
     {
       "field": "merchant",
@@ -56,11 +56,11 @@
     {
       "field": "item_2_name",
       "value": "Wheat Flour 1kg",
-      "confidence": 0.7,
+      "confidence": 0.65,
       "jev": {
         "type": "noul",
-        "noul": 0.7,
-        "certainty": 0.3999999999999999
+        "noul": 0.65,
+        "certainty": 0.30000000000000004
       }
     },
     {
@@ -96,21 +96,21 @@
     {
       "field": "item_4_name",
       "value": "Milk 500ml",
-      "confidence": 0.84,
-      "jev": {
-        "type": "noul",
-        "noul": 0.84,
-        "certainty": 0.6799999999999999
-      }
-    },
-    {
-      "field": "item_4_price",
-      "value": "56.00",
       "confidence": 0.85,
       "jev": {
         "type": "noul",
         "noul": 0.85,
         "certainty": 0.7
+      }
+    },
+    {
+      "field": "item_4_price",
+      "value": "56.00",
+      "confidence": 0.84,
+      "jev": {
+        "type": "noul",
+        "noul": 0.84,
+        "certainty": 0.6799999999999999
       }
     },
     {

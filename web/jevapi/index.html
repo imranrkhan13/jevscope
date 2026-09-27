@@ -310,6 +310,54 @@ input[type=range]{accent-color:#1d1d1f}
 .drop:hover{border-color:#86868b;background:var(--soft);color:var(--ink)}
 .f.review,.f.done{background:var(--soft)}
 .fill .chip,.done .chip{color:var(--ink);background:var(--soft)}
+
+/* wizard flow (step-by-step, one pane per screen) */
+.ptitle{font-size:18px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs button{white-space:nowrap}
+.tabs::-webkit-scrollbar{display:none}
+@media(max-width:760px){.tabs{justify-content:flex-start;width:100%}.tabs button span{display:none}.tabs button i{margin-right:0}}
+.howgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 14px}
+.howcard{border:1px solid var(--line);border-radius:14px;background:var(--soft);padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.howcard .hic{width:30px;height:30px;flex:none;border-radius:9px;background:var(--greenT);color:var(--green);display:inline-flex;padding:6px}
+.howcard .hic svg{width:100%;height:100%;display:block}
+.howcard b{display:block;font-size:14.5px;margin-bottom:2px}
+.howcard span{font-size:13px;color:var(--mut);line-height:1.45;display:block}
+@media(max-width:640px){.howgrid{grid-template-columns:1fr;gap:8px;margin:12px 0}.howcard{padding:10px 14px;align-items:center}}
+.miniex{border:1px solid #ece5d3;background:#fffdf7;border-radius:14px;padding:4px 16px;margin:0 0 16px}
+.mrow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f0ebdd;font-size:14px}
+.mrow:last-child{border:0}
+.mrow .mn{font-size:11px;color:#b9b2a4;width:16px;font-variant-numeric:tabular-nums}
+.mrow .mf{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .mf small{display:block;color:var(--mut);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase}
+.chip2{font-size:12px;padding:2px 9px;border-radius:999px;white-space:nowrap;flex:none}
+.chip2.ok{color:var(--green);background:var(--greenT)}
+.chip2.warn{color:var(--amber);background:var(--amberT)}
+.uploadcard{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-style:dashed;color:var(--mut)}
+.uploadcard:hover{color:var(--ink)}
+.scard .ic svg{width:100%;height:100%;display:block}
+.linklike{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:#c9c3b8;font-size:inherit;box-shadow:none;border-radius:0}
+.linklike:hover{color:var(--green)}
+.drop.big{padding:44px 20px;margin-top:16px}
+.pstage{flex:1;min-height:140px;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;background:var(--soft);overflow:hidden;margin:10px 0 12px}
+#prevpane .preview{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;overflow:auto}
+#prevpane .preview img,#prevpane .preview canvas{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;background:#fff}
+#prevpane .preview .cap{font-size:12.5px;color:var(--mut);margin-top:8px;text-align:center}
+.doctext{flex:1;min-height:0;overflow:auto;padding:18px 22px;white-space:pre-wrap;font-size:13.5px;line-height:1.65}
+.pnav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.codewrap{position:relative;border:1px solid #33302b;border-radius:14px;background:#1d1c1a;margin:14px 0}
+.codewrap pre{margin:0;background:transparent;border:0;padding:16px 18px;overflow:auto;font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f5f2ea;white-space:pre}
+#copycode{position:absolute;top:8px;right:8px;font-size:12px;padding:3px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;font-size:13.5px}
+.pill .pic{display:inline-flex;width:14px;height:14px;flex:none}
+.pill .pic svg{width:14px;height:14px;display:block}
+.pill .pic.ok{color:var(--green)}
+.pill .pic.warn{color:var(--amber)}
+.prog{height:3px}
+[hidden]{display:none!important}
+.tabs{gap:4px}
+.tabs button{padding:6px 10px;white-space:nowrap}
+@media(max-width:560px){.drop.big{padding:30px 14px}}
 </style>
 </head>
 <body>
@@ -320,24 +368,57 @@ input[type=range]{accent-color:#1d1d1f}
 </header>
 
 <div class="tabs" id="tabs" role="tablist">
-  <button type="button" data-pane="docpane" class="on"><i>1</i> Document</button>
-  <button type="button" data-pane="formpane"><i>2</i> Review</button>
-  <button type="button" data-pane="morepane"><i>3</i> Details</button>
+  <button type="button" data-pane="stephow" class="on"><i>1</i><span>How it works</span></button>
+  <button type="button" data-pane="docpane"><i>2</i><span>Pick</span></button>
+  <button type="button" data-pane="upane"><i>3</i><span>Upload</span></button>
+  <button type="button" data-pane="prevpane"><i>4</i><span>Preview</span></button>
+  <button type="button" data-pane="formpane"><i>5</i><span>Fields</span></button>
+  <button type="button" data-pane="codepane"><i>6</i><span>Use it</span></button>
+  <button type="button" data-pane="morepane"><i>7</i><span>Details</span></button>
 </div>
 
 <main class="stage">
-  <section class="card pane on" id="docpane" aria-label="Document">
+  <section class="card pane on" id="stephow" aria-label="How it works">
     <h1 class="hero-h">Fill it, <span>or check it?</span></h1>
-    <p class="hero-s">Pick a document. JevAPI fills the fields it trusts and leaves the rest to you.</p>
+    <p class="hero-s">JevAPI reads a document, fills the fields it is sure of, and leaves the rest to a person. Here is the whole thing, step by step.</p>
+    <div class="howgrid">
+      <div class="howcard"><span class="hic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V5m0 0-4 4m4-4 4 4"/><path d="M5 19h14"/></svg></span><div><b>1. Give it a document</b><span>A PDF, a photo, or one of the samples - read right here in your browser.</span></div></div>
+      <div class="howcard"><span class="hic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>2. Jev fills what it trusts</b><span>Every value gets a confidence from the document text itself.</span></div></div>
+      <div class="howcard"><span class="hic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg></span><div><b>3. You check the rest</b><span>Unsure fields wait for a person instead of being silently wrong.</span></div></div>
+    </div>
+    <div class="miniex">
+      <div class="mrow"><span class="mn">01</span><span class="mf"><small>Vendor</small>Acme Supplies Pvt Ltd</span><span class="chip2 ok">filled · 99%</span></div>
+      <div class="mrow"><span class="mn">02</span><span class="mf"><small>Due date</small>2026-10-15?</span><span class="chip2 warn">check · 62%</span></div>
+    </div>
+    <div><button type="button" class="primary" id="startBtn" style="padding:10px 22px;font-size:15px">Start - pick a document</button></div>
+  </section>
+
+  <section class="card pane" id="docpane" aria-label="Pick a document">
+    <h2 class="ptitle">Pick a document</h2>
+    <p class="hero-s">Try a sample, or use your own file.</p>
     <div class="sgrid" id="sgrid" role="listbox" aria-label="Sample documents"></div>
     <select id="samples" aria-label="Sample documents" hidden></select>
     <div class="or"><span>or</span></div>
-    <div class="drop" id="drop">
+    <button type="button" class="scard uploadcard" id="goUpload"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V5m0 0-4 4m4-4 4 4"/><path d="M5 19h14"/></svg></span><span>Upload your own PDF or photo</span></button>
+  </section>
+
+  <section class="card pane" id="upane" aria-label="Upload">
+    <h2 class="ptitle">Upload your document</h2>
+    <p class="hero-s">It is read right here in your browser. Nothing is uploaded anywhere.</p>
+    <div class="drop big" id="drop">
       <label for="file" style="cursor:pointer"><b>Drop a PDF or photo here</b><br><span class="drops">read in this browser, never uploaded</span></label>
       <input id="file" type="file" accept="application/pdf,.pdf,.txt,image/*" style="display:none">
     </div>
-    <details class="peek"><summary>See the document text</summary>
+    <p class="small" style="margin-top:12px">No file handy? <button type="button" class="linklike" id="backSamples">Pick a sample instead</button></p>
+  </section>
+
+  <section class="card pane" id="prevpane" aria-label="Preview">
+    <h2 class="ptitle">Your document</h2>
+    <div class="pstage">
       <div class="preview" id="preview" hidden></div>
+      <div class="doctext" id="doctext" hidden></div>
+    </div>
+    <details class="peek"><summary>See the document text</summary>
       <textarea id="doc" spellcheck="false"></textarea>
     </details>
     <details id="keybox">
@@ -358,7 +439,7 @@ input[type=range]{accent-color:#1d1d1f}
       <div class="row" style="margin-top:10px"><button class="primary" id="jevrun">Check these fields with Jev</button><button id="jevall" type="button">Find every field, then check with Jev</button></div>
     </details>
     <div class="err" id="err" role="alert"></div>
-    <p class="flagline"><span class="flag" id="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span></p>
+    <div class="pnav"><button type="button" id="backPick">&larr; Back</button><button type="button" class="primary" id="toFields">See the fields &rarr;</button></div>
   </section>
 
   <section class="card pane" id="formpane" aria-label="Review">
@@ -370,6 +451,29 @@ input[type=range]{accent-color:#1d1d1f}
       <button id="xvs" type="button" class="ghost">Jev vs Lev</button>
       <span class="hint">Jev picks each value out of the text itself - no rules, no AI writer. Tuning lives in Details.</span>
     </div>
+    <p class="flagline"><span class="flag" id="flag">Demo data is synthetic. The calibration below comes from made-up examples, not a real model.</span></p>
+  </section>
+
+  <section class="card pane" id="codepane" aria-label="Use it in your app">
+    <h2 class="ptitle">Use it in your app</h2>
+    <p class="hero-s">JevAPI is a small open-source library (MIT). Your extractor gives values with confidences; JevAPI decides which ones a person can skip.</p>
+    <div class="codewrap"><button type="button" id="copycode">Copy</button><pre id="codesnip">import { calibrate, decideAll } from "jevapi";
+
+// 1. Your extractor reads the document and gives values + confidences.
+const extracted = [
+  { field: "vendor_name", value: "Acme Supplies Pvt Ltd", confidence: 0.99 },
+  { field: "due_date",    value: "2026-10-15",            confidence: 0.62 },
+];
+
+// 2. JevAPI decides per field: fill it, or check it?
+const profile = calibrate(myLabelledExamples, { costError: 20 });
+const { decisions } = decideAll(profile, extracted);
+
+for (const d of decisions) {
+  if (d.action === "fill") autoFill(d.field, d.value);      // Jev is sure
+  else                     sendToHumanReview(d.field, d.value); // a person checks
+}</pre></div>
+    <p class="small" style="margin-top:4px"><code>npm i jevapi</code> or <code>pip install jevapi</code> · <a href="/jevapi/docs">Read the docs</a> · <button type="button" class="linklike" id="toDetails">How Jev scored this demo &rarr;</button></p>
   </section>
 
   <section class="card pane" id="morepane" aria-label="Details">
@@ -542,7 +646,7 @@ function render() {
   const nDone = fill + nMine;
   // Fields still waiting on a person: not filled, not accepted, not typed in.
   const queueList = decisions.map((d, i) => ({ d, i })).filter(({ d, i }) => d.action !== "fill" && !(state.mine[i] && (state.mine[i].how === "accepted" || state.mine[i].value)));
-  $("summary").innerHTML = `<span class="pill"><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><b style="color:var(--amber)">${queueList.length}</b> to check</span>
+  $("summary").innerHTML = `<span class="pill"><i class="pic ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><b style="color:var(--green)">${fill}</b> filled</span><span class="pill"><i class="pic warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg></i><b style="color:var(--amber)">${queueList.length}</b> to check</span>
     ${state.view === "all" && queueList.length ? `<button type="button" class="primary" data-next title="Jump to the next field that needs a person">Next to check ↓</button>` : ""}
     <span class="row filter" role="group" aria-label="View"><button type="button" data-v="inspect" class="${state.view === "inspect" ? "on" : ""}">Field list</button><button type="button" data-v="queue" class="${state.view === "queue" ? "on" : ""}">One at a time</button><button type="button" data-v="all" class="${state.view === "all" ? "on" : ""}">All fields</button></span>
     <div class="prog" title="${nDone} of ${decisions.length} fields done"><i style="width:${decisions.length ? Math.round((100 * nDone) / decisions.length) : 0}%"></i></div>`;
@@ -982,7 +1086,7 @@ loadProfile();
 <script type="module">
 // Sample cards + step flow (additive; the main demo logic is above).
 const $2 = (id) => document.getElementById(id);
-const ICONS = { clean: "\u{1F9FE}", messy: "\u{1F4C4}", missing: "\u{2702}\uFE0F", resume: "\u{1F4BC}", receipt: "\u{1F9FE}", statement: "\u{1F3E6}", form: "\u{1F4DD}", photo: "\u{1F4F7}" };
+const ICONS = { clean: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z"/><path d="M9 8h6M9 12h6"/></svg>`, messy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M7 12h2l1.5-2 2 4 1.5-2h3"/></svg>`, missing: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="7" r="2.2"/><circle cx="6.5" cy="17" r="2.2"/><path d="M8.3 8.6 20 19M8.3 15.4 20 5"/></svg>`, resume: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"/></svg>`, receipt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z"/><path d="M9 8h6M9 12h6"/></svg>`, longreceipt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z"/><path d="M9 7h6M9 10.5h6M9 14h6M9 17.5h4"/></svg>`, statement: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 10.5v7M9.5 10.5v7M14.5 10.5v7M19 10.5v7M3 20h18"/></svg>`, form: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg>`, photo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-2.5h5L16 7"/></svg>` };
 const sg = $2("sgrid");
 [...$2("samples").options].forEach((o) => {
   if (!o.value) return;
@@ -990,26 +1094,44 @@ const sg = $2("sgrid");
   b.type = "button";
   b.className = "scard";
   b.setAttribute("role", "option");
-  const ic = document.createElement("span"); ic.className = "ic"; ic.textContent = ICONS[o.value] || "\u{1F4C4}";
+  const ic = document.createElement("span"); ic.className = "ic"; ic.innerHTML = ICONS[o.value] || ICONS.clean;
   const tx = document.createElement("span"); tx.textContent = o.textContent;
   b.append(ic, tx);
   b.addEventListener("click", () => { $2("samples").value = o.value; $2("samples").dispatchEvent(new Event("change")); });
   sg.appendChild(b);
 });
 const go = (pane) => document.querySelector(`#tabs button[data-pane="${pane}"]`)?.click();
-$2("samples").addEventListener("change", () => go("formpane"));
+const syncPrev = () => requestAnimationFrame(() => {
+  const hasImg = !!$2("preview").querySelector("img,canvas");
+  $2("preview").hidden = !hasImg;
+  $2("doctext").hidden = hasImg;
+  if (!hasImg) $2("doctext").textContent = $2("doc").value;
+});
+$2("samples").addEventListener("change", () => { go("prevpane"); syncPrev(); });
+syncPrev();
 // After an upload, OCR/PDF reading is async: move to Review once the text lands.
 let filePoll = 0;
 $2("file").addEventListener("change", () => {
   clearInterval(filePoll);
   let tries = 0;
   filePoll = setInterval(() => {
-    if ($2("doc").value.trim()) { clearInterval(filePoll); go("formpane"); }
+    if ($2("doc").value.trim()) { clearInterval(filePoll); go("prevpane"); }
     else if (++tries > 110) clearInterval(filePoll);
   }, 800);
 });
 new MutationObserver(() => { const p = $2("preview"); if (p && !p.hidden) { const d = p.closest("details"); if (d) d.open = true; } })
   .observe($2("preview"), { attributes: true, attributeFilter: ["hidden"] });
+$2("startBtn").addEventListener("click", () => go("docpane"));
+$2("goUpload").addEventListener("click", () => go("upane"));
+$2("backSamples").addEventListener("click", () => go("docpane"));
+$2("backPick").addEventListener("click", () => go("docpane"));
+$2("toFields").addEventListener("click", () => go("formpane"));
+$2("toDetails").addEventListener("click", () => go("morepane"));
+$2("copycode").addEventListener("click", async (e) => {
+  try { await navigator.clipboard.writeText($2("codesnip").textContent); e.target.textContent = "Copied"; }
+  catch { e.target.textContent = "Select and copy"; }
+  setTimeout(() => { e.target.textContent = "Copy"; }, 1600);
+});
 </script>
 </body>
 </html>
